@@ -1,0 +1,18 @@
+{
+    "name": "mariopereira/fedex",
+    "description": "A PHP interface to the Fedex's APIs",
+    "type": "library",
+    "license": "GPL-3.0-or-later",
+    "autoload": {
+        "psr-4": {
+            "Mariopereira\\Fedex\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mário Pereira",
+            "email": "bin.to.hex@gmail.com"
+        }
+    ],
+    "require": {}
+}
