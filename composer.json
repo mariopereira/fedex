@@ -14,5 +14,12 @@
             "email": "bin.to.hex@gmail.com"
         }
     ],
-    "require": {}
+    "require-dev": {
+        "phpdocumentor/shim": "^3.10"
+    },
+    "config": {
+        "allow-plugins": {
+            "phpdocumentor/shim": true
+        }
+    }
 }
