@@ -13,6 +13,8 @@ use Mariopereira\Fedex\Misc\FedexConstants;
 
 class FedexAuth
 {
+    private const EXPIRY_MARGIN = 60;
+
     /**
      * Are we using sandbox or production?
      * @var bool
@@ -127,6 +129,15 @@ class FedexAuth
     }
 
     /**
+     * Are we running in the sandbox
+     * @return bool
+     */
+    public function inSandbox() : bool
+    {
+        return $this->sandbox;
+    }
+
+    /**
      * Create the body to send to the authorization endpoint
      * @return string
      */
@@ -185,27 +196,28 @@ class FedexAuth
             $data = null;
 
             if (200 === $httpCode) {
-                throw new FedexAuthException('Invalid data received from server', 0, null, [], $response, null);
+                throw new FedexAuthException('Invalid data received from server', 0, null, 0, null, [], $response);
             }
         }
 
         if (200 !== $httpCode) {
             if (is_null($data)) {
-                throw new FedexAuthException(FedexConstants::httpStatusText($httpCode, true));
+                throw new FedexAuthException(FedexConstants::httpStatusText($httpCode, true), 0, null, $httpCode);
             }
 
             throw new FedexAuthException(
                 FedexConstants::httpStatusText($httpCode, true),
                 0,
                 null,
+                $httpCode,
+                $data->transactionId ?? null,
                 $data->errors ?? [],
-                null,
-                $data->transactionId ?? null
+                null
             );
         }
 
         if (!($data instanceof \stdClass)) {
-            throw new FedexAuthException('Invalid data received from server', 0, null, [], $response, null);
+            throw new FedexAuthException('Invalid data received from server', 0, null, 0, null, [], $response);
         }
 
         $this->setToken($data);
@@ -239,14 +251,14 @@ class FedexAuth
         $this->clearToken();
 
         if (!isset($authData->access_token) || !isset($authData->token_type) || !isset($authData->expires_in) || !isset($authData->scope)) {
-            throw new FedexAuthException('Invalid data received from server', 0, null, [], $authData, null);
+            throw new FedexAuthException('Invalid data received from server', 0, null, 0, null, [], $authData);
         }
 
         $this->accessToken = $authData->access_token;
         $this->tokenType = $authData->token_type;
         $this->tokenScope = $authData->scope;
         $this->tokenDuration = $authData->expires_in;
-        $this->tokenExpiration = time() + $authData->expires_in;
+        $this->tokenExpiration = time() + $authData->expires_in - self::EXPIRY_MARGIN;
 
         return $this;
     }
@@ -261,9 +273,7 @@ class FedexAuth
             return $this;
         }
 
-        $now = time();
-
-        if ($now >= $this->tokenExpiration) {
+        if (time() >= $this->tokenExpiration) {
             $this->clearToken();
         }
     }
@@ -282,11 +292,17 @@ class FedexAuth
     /**
      * Get the current access token data
      * @param bool $refresh If there is no current token (or if expired) attempt to retrieve new token
+     * @param bool $forceRefresh Force token refresh, even if there is a current token
      * @return \stdClass|null Null if no token obtained or if expired, object with token, type, scope and duration properties
      * @throws FedexAuthException
      */
-    public function getTokenData(bool $refresh = false) : ?\stdClass
+    public function getTokenData(bool $refresh = true, bool $forceRefresh = false) : ?\stdClass
     {
+        if ($forceRefresh) {
+            $refresh = true;
+            $this->clearToken();
+        }
+
         if (!$this->hasToken()) {
             if (!$refresh) {
                 return null;
@@ -303,5 +319,23 @@ class FedexAuth
         ];
 
         return $data;
+    }
+
+    /**
+     * Get the current access token
+     * @param bool $refresh If there is no current token (or if expired) attempt to retrieve new token
+     * @param bool $forceRefresh Force token refresh, even if there is a current token
+     * @return string Access token
+     * @throws FedexAuthException
+     */
+    public function getToken(bool $refresh = true, bool $forceRefresh = false) : string
+    {
+        $data = $this->getTokenData($refresh, $forceRefresh);
+
+        if (is_null($data)) {
+            throw new FedexAuthException('Unable to retrieve access token');
+        }
+
+        return $data->token;
     }
 }

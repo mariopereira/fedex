@@ -8,33 +8,29 @@
 
 namespace Mariopereira\Fedex\Exception;
 
-class FedexAuthException extends FedexException
-{
+class FedexAuthException extends FedexException {
     /**
-     * Transaction id returned from server (null if none)
-     * @var string|null
+     * Initialize the exception
+     * @param string $message The Exception message to throw
+     * @param int $code The Exception code
+     * @param \Throwable|null $previous The previous exception used for the exception chaining
+     * @param int $httpStatus HTTP status code returned by the call that generated the exception
+     * @param string|null $transactionId Unique identifier returned in the reply and helps you match the request to the reply.
+     * @param array $errors Array of errors returned
+     * @param mixed $data Any other data to send with the exception
+     * @param string|null $customerTransactionId Unique identifier supplied when calling the API
      */
-    protected ?string $transactionId = null;
-
     public function __construct(
         string $message = '',
         int $code = 0,
         ?\Throwable $previous = null,
+        int $httpStatus = 0,
+        ?string $transactionId = null,
         array $errors = [],
         $data = null,
-        ?string $transactionId = null
+        ?string $customerTransactionId = null
     )
     {
-        parent::__construct($message, $code, $previous, $errors, $data);
-        $this->transactionId = $transactionId;
-    }
-
-    /**
-     * Get the transaction id returned from the server
-     * @return string|null
-     */
-    public function getTransactionId() : ?string
-    {
-        return $this->transactionId;
+        parent::__construct($message, $code, $previous, $httpStatus, $transactionId, $errors, $data, $customerTransactionId);
     }
 }
