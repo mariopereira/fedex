@@ -8,8 +8,43 @@
 
 namespace Mariopereira\Fedex\Exception;
 
+use Mariopereira\Fedex\Misc\FedexUtils;
+
+/**
+ * Base exception of the package: carries the details returned by FedEx, if any
+ */
 class FedexException extends \RuntimeException
 {
+    /**
+     * Error code: a required parameter is missing
+     * @var int
+     */
+    public const EC_MISSING_PARAMETER = 1;
+
+    /**
+     * Error code: a parameter has an invalid value
+     * @var int
+     */
+    public const EC_BAD_PARAMETER = 2;
+
+    /**
+     * Error code: the request failed (network failure or HTTP error status)
+     * @var int
+     */
+    public const EC_TRANSPORT_ERROR = 100;
+
+    /**
+     * Error code: the response received is not valid
+     * @var int
+     */
+    public const EC_BAD_RESULT_RETURNED = 101;
+
+    /**
+     * Error code: authentication failed (no access token could be obtained, or HTTP status 401)
+     * @var int
+     */
+    public const EC_UNABLE_TO_AUTHENTICATE = 200;
+
     /**
      * HTTP status code returned by the call that generated the exception
      * @var int
@@ -23,7 +58,7 @@ class FedexException extends \RuntimeException
     protected ?string $transactionId = null;
 
     /**
-     * Errors returned from server (
+     * Errors returned from server
      * @var array
      */
     protected array $errors = [];
@@ -95,7 +130,7 @@ class FedexException extends \RuntimeException
      */
     public function getErrors() : array
     {
-        return $this->errors();
+        return $this->errors;
     }
 
     /**
@@ -104,34 +139,48 @@ class FedexException extends \RuntimeException
      */
     public function getErrorsAsString() : string
     {
-        if (!count($this->errors)) {
-            return '';
-        }
-
         $errors = [];
 
         foreach ($this->errors as $err) {
-            $tmp = '';
-
-            if (isset($err['code'])) {
-                $tmp = $err['code'];
+            // Plain text errors (e.g. from the schema validator) are used as they are
+            if (is_string($err)) {
+                $errors[] = $err;
+                continue;
             }
 
-            if (isset($err['message'])) {
+            if (is_array($err)) {
+                $err = FedexUtils::arrayToObject($err);
+            }
+
+            if (!is_object($err)) {
+                continue;
+            }
+
+            $tmp = '';
+
+            if (isset($err->code)) {
+                $tmp = $err->code;
+            }
+
+            if (isset($err->message)) {
                 if (!empty($tmp)) {
                     $tmp .= ': ';
                 }
 
-                $tmp .= $err['message'];
+                $tmp .= $err->message;
             }
 
-            if (isset($err['parameterList']) && is_array($err['parameterList'])) {
+            if (isset($err->parameterList) && is_array($err->parameterList)) {
                 $tmpParam = [];
 
-                foreach ($err['parameterList'] as $p) {
-                    $ptext = isset($p['key']) ? $p['key'] : '?key?';
+                foreach ($err->parameterList as $p) {
+                    if (is_array($p)) {
+                        $p = FedexUtils::arrayToObject($p);
+                    }
+
+                    $ptext = isset($p->key) ? $p->key : '?key?';
                     $ptext .= ' = ';
-                    $ptext .= isset($p['value']) ? $p['value'] : '?value?';
+                    $ptext .= isset($p->value) ? $p->value : '?value?';
 
                     $tmpParam[] = $ptext;
                 }
@@ -146,19 +195,14 @@ class FedexException extends \RuntimeException
             }
         }
 
-        if (!count($errors)) {
-            return '';
-        }
-
-        $errors = array_map('trim', $errors);
-        $errors = array_filter($errors);
+        $errors = array_filter(array_map('trim', $errors), 'strlen');
 
         return implode('; ', $errors);
     }
 
     /**
-     * Get aditional data sent to the exception
-     * @return type
+     * Get additional data sent to the exception
+     * @return mixed
      */
     public function getData()
     {

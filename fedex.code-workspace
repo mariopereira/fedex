@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"intelephense.stubs": [
+			"Core",
+			"curl",
+			"date",
+			"json",
+			"mbstring",
+			"pcre",
+			"random",
+			"SPL",
+			"standard"
+		],
+		"intelephense.environment.phpVersion": "7.4.0",
+		"intelephense.environment.documentRoot": "."
+	}
+}

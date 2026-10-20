@@ -8,6 +8,9 @@
 
 namespace Mariopereira\Fedex\Exception;
 
+/**
+ * Exception thrown by the authorization process
+ */
 class FedexAuthException extends FedexException {
     /**
      * Initialize the exception
