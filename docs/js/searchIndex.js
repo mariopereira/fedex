@@ -896,6 +896,76 @@ Search.appendIndex(
             "summary": "Description\u0020of\u0020the\u0020failure\u0020when\u0020the\u0020request\u0020could\u0020not\u0020be\u0020completed,\u0020null\u0020if\u0020it\u0020was\u0020completed",
             "url": "classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#property_error"
         },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Misc\\FedexLabels",
+            "name": "FedexLabels",
+            "summary": "Helpers\u0020for\u0020the\u0020labels\u0020and\u0020the\u0020other\u0020documents\u0020that\u0020FedEx\u0020returns\u0020in\u0020the\u0020response\u0020of\u0020a\u0020shipment\u003A\u0020find\u0020them,\u0020decode\nthem\u0020and\u0020save\u0020them.",
+            "url": "classes/Mariopereira-Fedex-Misc-FedexLabels.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Misc\\FedexLabels\u003A\u003Adocuments\u0028\u0029",
+            "name": "documents",
+            "summary": "Find\u0020the\u0020documents\u0020of\u0020a\u0020shipment\u0020response\u0020\u0028create\u0020shipment,\u0020or\u0020the\u0020async\u0020results\u0029.\u0020They\u0020are\u0020at\noutput.transactionShipments\u005B\u005D.shipmentDocuments\u005B\u005D\u0020and\u0020output.transactionShipments\u005B\u005D.pieceResponses\u005B\u005D.packageDocuments\u005B\u005D.",
+            "url": "classes/Mariopereira-Fedex-Misc-FedexLabels.html#method_documents"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Misc\\FedexLabels\u003A\u003Adecode\u0028\u0029",
+            "name": "decode",
+            "summary": "Decode\u0020a\u0020document\u003A\u0020the\u0020bytes\u0020of\u0020the\u0020label,\u0020in\u0020the\u0020format\u0020that\u0020was\u0020asked\u0020for",
+            "url": "classes/Mariopereira-Fedex-Misc-FedexLabels.html#method_decode"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Misc\\FedexLabels\u003A\u003AisFormat\u0028\u0029",
+            "name": "isFormat",
+            "summary": "Check\u0020that\u0020some\u0020bytes\u0020look\u0020like\u0020a\u0020format,\u0020by\u0020their\u0020start\u0020\u0028PDF\u0020and\u0020PNG\u0029\u0020or\u0020by\u0020the\u0020ZPL\u0020start\u002Dof\u002Dlabel\u0020command.",
+            "url": "classes/Mariopereira-Fedex-Misc-FedexLabels.html#method_isFormat"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Misc\\FedexLabels\u003A\u003Asave\u0028\u0029",
+            "name": "save",
+            "summary": "Decode\u0020a\u0020document\u0020and\u0020save\u0020it\u0020to\u0020a\u0020file.\u0020Nothing\u0020is\u0020written\u0020when\u0020the\u0020document\u0020cannot\u0020be\u0020decoded",
+            "url": "classes/Mariopereira-Fedex-Misc-FedexLabels.html#method_save"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Misc\\FedexLabels\u003A\u003AasArray\u0028\u0029",
+            "name": "asArray",
+            "summary": "Give\u0020a\u0020document\u0020as\u0020an\u0020array",
+            "url": "classes/Mariopereira-Fedex-Misc-FedexLabels.html#method_asArray"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Misc\\FedexLabels\u003A\u003Achild\u0028\u0029",
+            "name": "child",
+            "summary": "Get\u0020a\u0020key\u0020of\u0020an\u0020array\u0020when\u0020it\u0020is\u0020an\u0020array",
+            "url": "classes/Mariopereira-Fedex-Misc-FedexLabels.html#method_child"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Misc\\FedexLabels\u003A\u003Aitems\u0028\u0029",
+            "name": "items",
+            "summary": "Get\u0020the\u0020members\u0020of\u0020a\u0020list\u0020that\u0020are\u0020arrays,\u0020keeping\u0020their\u0020positions",
+            "url": "classes/Mariopereira-Fedex-Misc-FedexLabels.html#method_items"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Misc\\FedexLabels\u003A\u003Adescribe\u0028\u0029",
+            "name": "describe",
+            "summary": "Describe\u0020a\u0020document\u0020for\u0020documents\u0028\u0029",
+            "url": "classes/Mariopereira-Fedex-Misc-FedexLabels.html#method_describe"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Misc\\FedexLabels\u003A\u003ASCOPE_SHIPMENT",
+            "name": "SCOPE_SHIPMENT",
+            "summary": "Scope\u0020of\u0020a\u0020document\u0020that\u0020belongs\u0020to\u0020the\u0020whole\u0020shipment\u0020\u0028an\u0020invoice,\u0020for\u0020example\u0029",
+            "url": "classes/Mariopereira-Fedex-Misc-FedexLabels.html#constant_SCOPE_SHIPMENT"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Misc\\FedexLabels\u003A\u003ASCOPE_PACKAGE",
+            "name": "SCOPE_PACKAGE",
+            "summary": "Scope\u0020of\u0020a\u0020document\u0020that\u0020belongs\u0020to\u0020one\u0020package\u0020\u0028the\u0020label,\u0020for\u0020example\u0029",
+            "url": "classes/Mariopereira-Fedex-Misc-FedexLabels.html#constant_SCOPE_PACKAGE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Misc\\FedexLabels\u003A\u003APNG_SIGNATURE",
+            "name": "PNG_SIGNATURE",
+            "summary": "Signature\u0020of\u0020a\u0020PNG\u0020file",
+            "url": "classes/Mariopereira-Fedex-Misc-FedexLabels.html#constant_PNG_SIGNATURE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Misc\\FedexLabels\u003A\u003APDF_HEADER_WINDOW",
+            "name": "PDF_HEADER_WINDOW",
+            "summary": "Number\u0020of\u0020bytes\u0020at\u0020the\u0020start\u0020of\u0020a\u0020file\u0020where\u0020a\u0020PDF\u0020header\u0020may\u0020appear",
+            "url": "classes/Mariopereira-Fedex-Misc-FedexLabels.html#constant_PDF_HEADER_WINDOW"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Misc\\FedexLabels\u003A\u003ACHECKABLE_FORMATS",
+            "name": "CHECKABLE_FORMATS",
+            "summary": "Formats\u0020whose\u0020content\u0020can\u0020be\u0020checked",
+            "url": "classes/Mariopereira-Fedex-Misc-FedexLabels.html#constant_CHECKABLE_FORMATS"
+        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Misc\\FedexUtils",
             "name": "FedexUtils",
             "summary": "Constants\u0020and\u0020helper\u0020functions\u0020shared\u0020by\u0020the\u0020package",

@@ -258,6 +258,28 @@ The request is checked before it is sent, and a problem is reported with a `Fede
 * The id given to `cancelTag()` cannot be empty, `.` or `..`.
 * The response is checked against the schema as well. A field that FedEx adds to the response is accepted, and an invalid response is reported with the response in the exception (`getData()`).
 
+#### Labels
+
+FedEx returns each label already in the format asked for in `labelSpecification.imageType` (`PDF`, `PNG`, `ZPLII` or `EPL2`), as text in the field `encodedLabel`. Nothing is converted: `FedexLabels` finds the documents of a response and decodes them to the bytes of that format. Ask for `'labelResponseOptions' => 'LABEL'` to get the label in the response (with `URL_ONLY`, FedEx returns a `url` instead).
+
+```php
+use Mariopereira\Fedex\Misc\FedexLabels;
+
+$request['labelResponseOptions'] = 'LABEL';
+$result = $ship->create($request);
+
+foreach (FedexLabels::documents($result) as $document) {
+    if ($document['hasContent']) {
+        FedexLabels::save($document, '/labels/' . $document['trackingNumber'] . '.pdf');
+    }
+}
+```
+
+* `documents()` lists the documents of a create or async results response: `output.transactionShipments[].shipmentDocuments[]` (scope `shipment`, for example an invoice) and `output.transactionShipments[].pieceResponses[].packageDocuments[]` (scope `package`, the labels). Each one has `scope`, `transactionIndex`, `pieceIndex`, `trackingNumber`, `contentType`, `docType`, `copiesToPrint`, `contentKey`, `url`, `encodedLabel` and `hasContent`. What the response does not have is skipped. The response of `createTag()` has no documents in this path.
+* `decode()` returns the bytes of a document, from an element of the response or of `documents()`. `save()` writes them to a file and returns the number of bytes. `save()` refuses to replace a file unless its third argument is `true`, and writes nothing when the document cannot be decoded.
+* A document without `encodedLabel`, or with content that is not valid Base64, throws a `FedexShipException`. The schema does not say how `encodedLabel` is encoded: it is treated as standard Base64, and this has not been tried against FedEx.
+* The format check is optional. `decode()` and `save()` take `$verifyFormat` (and a `$format`, when it is not the `docType` of the document): the bytes must then look like PDF (`%PDF-` in the first 1024 bytes), PNG (the PNG signature) or ZPL (`^XA` in the content), or a `FedexShipException` is thrown. `FedexLabels::isFormat()` does the same check on any bytes. EPL2 cannot be checked and is refused when the check is asked for.
+
 ### Parent/child credentials
 
 ```php
