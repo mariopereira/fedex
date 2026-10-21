@@ -1448,7 +1448,8 @@ final class FedexLocationsSearchTest extends TestCase
                 return ($p->hasType() ? $p->getType()->getName() : '') . ' ' . $p->getName() . '=' . var_export($p->isDefaultValueAvailable() ? $p->getDefaultValue() : '?', true);
             }, (new \ReflectionMethod($class, '__construct'))->getParameters()));
         };
-        $this->assertSame($signature(FedexClientException::class), $signature(FedexLocationsSearchException::class), 'the exception constructor has the same signature as FedexClientException');
+        $this->assertSame($signature(FedexException::class), $signature(FedexLocationsSearchException::class), 'the exception constructor has the same signature as FedexException');
+        $this->assertSame($signature(FedexLocationsSearchException::class) . ',int retryAfter=NULL', $signature(FedexClientException::class), 'FedexClientException only adds the Retry-After');
 
         $this->assertSame('ADDRESS', FedexLocationsSearch::CRITERION_ADDRESS);
         $this->assertSame('GEOGRAPHIC_COORDINATES', FedexLocationsSearch::CRITERION_GEOGRAPHIC_COORDINATES);

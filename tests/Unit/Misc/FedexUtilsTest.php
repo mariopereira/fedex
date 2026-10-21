@@ -458,4 +458,87 @@ final class FedexUtilsTest extends TestCase
         $this->assertSame('Unknown HTTP status code: 999', FedexUtils::httpStatusText(999));
         $this->assertSame('999: Unknown HTTP status code', FedexUtils::httpStatusText(999, true));
     }
+
+    /**
+     * The seconds of a Retry-After are read
+     * @return void
+     */
+    public function testTheSecondsOfARetryAfterAreRead(): void
+    {
+        $this->assertSame(120, FedexUtils::parseRetryAfter('120'));
+        $this->assertSame(0, FedexUtils::parseRetryAfter('0'));
+        $this->assertSame(5, FedexUtils::parseRetryAfter(" 5\t"));
+        $this->assertSame(7, FedexUtils::parseRetryAfter('0000000007'));
+        $this->assertSame(9999999999, FedexUtils::parseRetryAfter('9999999999'));
+    }
+
+    /**
+     * A Retry-After that is not valid is ignored
+     * @return void
+     */
+    public function testARetryAfterThatIsNotValidIsIgnored(): void
+    {
+        foreach ([null, '', '   ', '-1', '+5', '1.5', '1e3', '5 s', 'abc', '99999999999', "5\n", "5\r\n", '0x10', '१२', 'Sun', 'Sun, 06 Nov 1994'] as $value) {
+            $this->assertNull(FedexUtils::parseRetryAfter($value), var_export($value, true));
+        }
+    }
+
+    /**
+     * The three date formats of HTTP are read as seconds from now
+     * @return void
+     */
+    public function testTheThreeDateFormatsOfHttpAreReadAsSecondsFromNow(): void
+    {
+        $at = 784111777; // 1994-11-06 08:49:37 UTC
+
+        $this->assertSame(30, FedexUtils::parseRetryAfter('Sun, 06 Nov 1994 08:49:37 GMT', $at - 30));
+        $this->assertSame(30, FedexUtils::parseRetryAfter('Sunday, 06-Nov-94 08:49:37 GMT', $at - 30));
+        $this->assertSame(30, FedexUtils::parseRetryAfter('Sun Nov  6 08:49:37 1994', $at - 30));
+        $this->assertSame(30, FedexUtils::parseRetryAfter('Sun Nov 6 08:49:37 1994', $at - 30), 'a single space is read too');
+        $this->assertSame(14 * 86400 + 30, FedexUtils::parseRetryAfter('Sun Nov 20 08:49:37 1994', $at - 30));
+        $this->assertSame(30, FedexUtils::parseRetryAfter("  Sun, 06 Nov 1994 08:49:37 GMT\t", $at - 30));
+    }
+
+    /**
+     * A date in the past is no wait, and a date is read against the current time by default
+     * @return void
+     */
+    public function testADateInThePastIsNoWaitAndADateIsReadAgainstTheCurrentTimeByDefault(): void
+    {
+        $at = 784111777;
+
+        $this->assertSame(0, FedexUtils::parseRetryAfter('Sun, 06 Nov 1994 08:49:37 GMT', $at));
+        $this->assertSame(0, FedexUtils::parseRetryAfter('Sun, 06 Nov 1994 08:49:37 GMT', $at + 5000));
+        $this->assertSame(0, FedexUtils::parseRetryAfter('Sun, 06 Nov 1994 08:49:37 GMT'));
+
+        $seconds = FedexUtils::parseRetryAfter(gmdate('D, d M Y H:i:s', time() + 100) . ' GMT');
+
+        $this->assertGreaterThanOrEqual(98, $seconds);
+        $this->assertLessThanOrEqual(100, $seconds);
+    }
+
+    /**
+     * A date that is not a real one is ignored
+     * @return void
+     */
+    public function testADateThatIsNotARealOneIsIgnored(): void
+    {
+        $dates = [
+            'Mon, 06 Nov 1994 08:49:37 GMT',
+            'Sun, 31 Feb 1994 08:49:37 GMT',
+            'Sun, 06 Nov 1994 25:49:37 GMT',
+            'Sun, 06 Nov 1994 08:49:37 UTC',
+            'Sun, 06 Nov 1994 08:49:37 gmt',
+            'Sun, 06 Nov 1994 08:49:37 +0000',
+            'Sun, 06 Nov 1994 08:49:37',
+            'Monday, 06-Nov-94 08:49:37 GMT',
+            'Sun Nov  6 08:49:37 1995',
+            '1994-11-06T08:49:37Z',
+            'Sun, 06 Nov 1994 08:49:37 GMT trailing',
+        ];
+
+        foreach ($dates as $date) {
+            $this->assertNull(FedexUtils::parseRetryAfter($date, 0), $date);
+        }
+    }
 }

@@ -17,7 +17,8 @@ use Mariopereira\Fedex\Misc\FedexUtils;
 /**
  * JSON HTTP client for the FedEx APIs: adds the authorization headers and retries once when the token is rejected.
  * Optionally (see setRetryPolicy()) it also retries, with exponential backoff, the requests that are marked as safe to
- * repeat when FedEx answers 429, 503 or 504 or when the request could not be completed
+ * repeat when FedEx answers 429, 503 or 504 or when the request could not be completed, waiting at least as long as
+ * the Retry-After header asks
  */
 class FedexClient
 {
@@ -82,6 +83,12 @@ class FedexClient
     protected int $maxDelayMs = 5000;
 
     /**
+     * Longest Retry-After, in milliseconds, that is waited for. A longer one stops the retries. Zero ignores the header
+     * @var int
+     */
+    protected int $maxRetryAfterMs = 30000;
+
+    /**
      * Function that waits for the given number of milliseconds, null for the default (usleep)
      * @var callable|null
      */
@@ -126,14 +133,18 @@ class FedexClient
      * They are retried when FedEx answers 429, 503 or 504, or when the request could not be completed (network
      * failure, timeout, ...). The delay before the attempt n is a random value between 0 and
      * min($maxDelayMs, $baseDelayMs * 2^(n-1)). The refresh of a rejected token (401) is separate and does not count
-     * as an attempt. Without calling this method nothing is retried
+     * as an attempt. When FedEx sends a valid Retry-After header with the failure, the wait is the longer of the header
+     * and the backoff delay; if the header asks for more than $maxRetryAfterMs the retries stop and the failure is
+     * thrown. Without calling this method nothing is retried
      * @param int $maxAttempts Total number of attempts, from 1 (no retry) to 10
      * @param int $baseDelayMs Delay in milliseconds that the backoff starts from, 0 or more
      * @param int $maxDelayMs Longest delay in milliseconds, not less than $baseDelayMs
+     * @param int $maxRetryAfterMs Longest Retry-After in milliseconds that is waited for, 0 or more. Zero ignores the
+     * header and uses only the backoff
      * @return FedexClient
      * @throws FedexClientException When a value is out of range
      */
-    public function setRetryPolicy(int $maxAttempts = 3, int $baseDelayMs = 500, int $maxDelayMs = 5000) : FedexClient
+    public function setRetryPolicy(int $maxAttempts = 3, int $baseDelayMs = 500, int $maxDelayMs = 5000, int $maxRetryAfterMs = 30000) : FedexClient
     {
         if (($maxAttempts < 1) || ($maxAttempts > self::MAX_ATTEMPTS_LIMIT)) {
             throw new FedexClientException(
@@ -142,7 +153,7 @@ class FedexClient
             );
         }
 
-        if (($baseDelayMs < 0) || ($maxDelayMs < $baseDelayMs)) {
+        if (($baseDelayMs < 0) || ($maxDelayMs < $baseDelayMs) || ($maxRetryAfterMs < 0)) {
             throw new FedexClientException(
                 'The delays must not be negative and the maximum must not be less than the base delay',
                 FedexException::EC_BAD_PARAMETER
@@ -152,6 +163,7 @@ class FedexClient
         $this->maxAttempts = $maxAttempts;
         $this->baseDelayMs = $baseDelayMs;
         $this->maxDelayMs = $maxDelayMs;
+        $this->maxRetryAfterMs = $maxRetryAfterMs;
 
         return $this;
     }
@@ -242,6 +254,16 @@ class FedexClient
 
             $cap = (int) min($this->maxDelayMs, $this->baseDelayMs * (2 ** ($attempt - 1)));
             $delay = $this->jitter ? (int) ($this->jitter)(0, $cap) : random_int(0, $cap);
+            $retryAfter = $ex->getRetryAfter();
+
+            if ((null !== $retryAfter) && ($this->maxRetryAfterMs > 0)) {
+                // Never earlier than FedEx asked, and no wait that would hold the request for too long
+                if ($retryAfter * 1000 > $this->maxRetryAfterMs) {
+                    throw $ex;
+                }
+
+                $delay = max($delay, (int) ($retryAfter * 1000));
+            }
 
             if ($this->sleeper) {
                 ($this->sleeper)($delay);
@@ -365,26 +387,38 @@ class FedexClient
             );
         }
 
-        return $this->parse($response->getBody(), $response->getStatus());
+        return $this->parse(
+            $response->getBody(),
+            $response->getStatus(),
+            FedexUtils::parseRetryAfter($response->getHeader('Retry-After'))
+        );
     }
 
     /**
      * Parse the data received from a JSON FedexApi response
      * @param string $raw Response data
      * @param int $status Http status code
+     * @param int|null $retryAfter Seconds that FedEx asked to wait (the Retry-After header). It is kept in the
+     * exception of a response that is not a success
      * @return mixed
      * @throws FedexClientException
      */
-    protected function parse(string $raw, int $status)
+    protected function parse(string $raw, int $status, ?int $retryAfter = null)
     {
         $data = ($raw === '') ? null : json_decode($raw);
+        $retryAfter = (($status < 200) || ($status >= 300)) ? $retryAfter : null;
 
         if (($raw !== '') && is_null($data)) {
             throw new FedexClientException(
                 'Invalid JSON response (HTTP ' . $status . ')',
                 FedexException::EC_BAD_RESULT_RETURNED,
                 null,
-                $status
+                $status,
+                null,
+                [],
+                null,
+                null,
+                $retryAfter
             );
         }
 
@@ -397,7 +431,8 @@ class FedexClient
                 FedexUtils::extractString($data, 'transactionId'),
                 FedexUtils::extractErrors($data),
                 null,
-                FedexUtils::extractString($data, 'customerTransactionId')
+                FedexUtils::extractString($data, 'customerTransactionId'),
+                $retryAfter
             );
         }
 

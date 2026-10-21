@@ -711,6 +711,16 @@ Search.appendIndex(
             "summary": "Initialize\u0020the\u0020exception",
             "url": "classes/Mariopereira-Fedex-Exception-FedexClientException.html#method___construct"
         },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexClientException\u003A\u003AgetRetryAfter\u0028\u0029",
+            "name": "getRetryAfter",
+            "summary": "Get\u0020the\u0020seconds\u0020that\u0020FedEx\u0020asked\u0020to\u0020wait\u0020before\u0020trying\u0020again",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexClientException.html#method_getRetryAfter"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexClientException\u003A\u003A\u0024retryAfter",
+            "name": "retryAfter",
+            "summary": "Seconds\u0020that\u0020FedEx\u0020asked\u0020to\u0020wait\u0020before\u0020trying\u0020again\u0020\u0028the\u0020Retry\u002DAfter\u0020header\u0029,\u0020null\u0020if\u0020it\u0020did\u0020not\u0020ask",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexClientException.html#property_retryAfter"
+        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexException",
             "name": "FedexException",
             "summary": "Base\u0020exception\u0020of\u0020the\u0020package\u003A\u0020carries\u0020the\u0020details\u0020returned\u0020by\u0020FedEx,\u0020if\u0020any",
@@ -841,6 +851,11 @@ Search.appendIndex(
             "summary": "Send\u0020an\u0020HTTP\u0020request\u0020with\u0020cURL\u0020and\u0020return\u0020what\u0020was\u0020received",
             "url": "classes/Mariopereira-Fedex-Http-CurlTransport.html#method_send"
         },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\CurlTransport\u003A\u003AMAX_HEADERS",
+            "name": "MAX_HEADERS",
+            "summary": "Most\u0020response\u0020headers\u0020that\u0020are\u0020kept,\u0020so\u0020that\u0020a\u0020server\u0020cannot\u0020make\u0020them\u0020grow\u0020without\u0020limit",
+            "url": "classes/Mariopereira-Fedex-Http-CurlTransport.html#constant_MAX_HEADERS"
+        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient",
             "name": "FedexClient",
             "summary": "JSON\u0020HTTP\u0020client\u0020for\u0020the\u0020FedEx\u0020APIs\u003A\u0020adds\u0020the\u0020authorization\u0020headers\u0020and\u0020retries\u0020once\u0020when\u0020the\u0020token\u0020is\u0020rejected.",
@@ -946,6 +961,11 @@ Search.appendIndex(
             "summary": "Longest\u0020delay,\u0020in\u0020milliseconds,\u0020between\u0020two\u0020attempts",
             "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#property_maxDelayMs"
         },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient\u003A\u003A\u0024maxRetryAfterMs",
+            "name": "maxRetryAfterMs",
+            "summary": "Longest\u0020Retry\u002DAfter,\u0020in\u0020milliseconds,\u0020that\u0020is\u0020waited\u0020for.\u0020A\u0020longer\u0020one\u0020stops\u0020the\u0020retries.\u0020Zero\u0020ignores\u0020the\u0020header",
+            "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#property_maxRetryAfterMs"
+        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient\u003A\u003A\u0024sleeper",
             "name": "sleeper",
             "summary": "Function\u0020that\u0020waits\u0020for\u0020the\u0020given\u0020number\u0020of\u0020milliseconds,\u0020null\u0020for\u0020the\u0020default\u0020\u0028usleep\u0029",
@@ -975,6 +995,16 @@ Search.appendIndex(
             "name": "__construct",
             "summary": "Initialize\u0020the\u0020object",
             "url": "classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#method___construct"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexTransportResponse\u003A\u003AgetHeaders\u0028\u0029",
+            "name": "getHeaders",
+            "summary": "Get\u0020the\u0020headers\u0020received",
+            "url": "classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#method_getHeaders"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexTransportResponse\u003A\u003AgetHeader\u0028\u0029",
+            "name": "getHeader",
+            "summary": "Get\u0020a\u0020header\u0020received",
+            "url": "classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#method_getHeader"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexTransportResponse\u003A\u003AgetStatus\u0028\u0029",
             "name": "getStatus",
@@ -1010,6 +1040,11 @@ Search.appendIndex(
             "name": "error",
             "summary": "Description\u0020of\u0020the\u0020failure\u0020when\u0020the\u0020request\u0020could\u0020not\u0020be\u0020completed,\u0020null\u0020if\u0020it\u0020was\u0020completed",
             "url": "classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#property_error"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexTransportResponse\u003A\u003A\u0024headers",
+            "name": "headers",
+            "summary": "Headers\u0020received,\u0020by\u0020name\u0020in\u0020lower\u0020case.\u0020The\u0020value\u0020of\u0020a\u0020header\u0020that\u0020was\u0020received\u0020more\u0020than\u0020once\u0020has\u0020the\u0020values\njoined\u0020with\u0020a\u0020comma",
+            "url": "classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#property_headers"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Misc\\FedexLabels",
             "name": "FedexLabels",
@@ -1145,6 +1180,11 @@ Search.appendIndex(
             "name": "isDateValid",
             "summary": "Validate\u0020if\u0020a\u0020date\u0020string\u0020is\u0020valid\u0020in\u0020the\u0020specified\u0020format",
             "url": "classes/Mariopereira-Fedex-Misc-FedexUtils.html#method_isDateValid"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Misc\\FedexUtils\u003A\u003AparseRetryAfter\u0028\u0029",
+            "name": "parseRetryAfter",
+            "summary": "Read\u0020the\u0020value\u0020of\u0020a\u0020Retry\u002DAfter\u0020header\u003A\u0020a\u0020number\u0020of\u0020seconds,\u0020or\u0020an\u0020HTTP\u0020date\u0020\u0028any\u0020of\u0020the\u0020three\u0020formats\u0020that\u0020the\nHTTP\u0020standard,\u0020RFC\u00209110,\u0020requires\u0020to\u0020be\u0020accepted\u0029.\u0020Anything\u0020else\u0020is\u0020not\u0020a\u0020valid\u0020value",
+            "url": "classes/Mariopereira-Fedex-Misc-FedexUtils.html#method_parseRetryAfter"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Misc\\FedexUtils\u003A\u003AuuidV4\u0028\u0029",
             "name": "uuidV4",

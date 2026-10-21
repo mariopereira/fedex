@@ -345,6 +345,44 @@ class FedexUtils
     }
 
     /**
+     * Read the value of a Retry-After header: a number of seconds, or an HTTP date (any of the three formats that the
+     * HTTP standard, RFC 9110, requires to be accepted). Anything else is not a valid value
+     * @param string|null $value The value of the header
+     * @param int|null $now The current time as a Unix timestamp, null for the current time
+     * @return int|null The seconds to wait (0 when the date is in the past), null when there is no valid value
+     */
+    public static function parseRetryAfter(?string $value, ?int $now = null) : ?int
+    {
+        $value = trim((string) $value, " \t");
+
+        if ('' === $value) {
+            return null;
+        }
+
+        if (preg_match('/^[0-9]{1,10}$/D', $value)) {
+            return (int) $value;
+        }
+
+        $formats = [
+            'D, d M Y H:i:s \G\M\T',
+            'l, d-M-y H:i:s \G\M\T',
+            'D M j H:i:s Y'
+        ];
+        $utc = new \DateTimeZone('UTC');
+
+        foreach ($formats as $format) {
+            // The date of the last format has two spaces before a day of one digit
+            $date = \DateTimeImmutable::createFromFormat($format, preg_replace('/ {2,}/', ' ', $value), $utc);
+
+            if ((false !== $date) && ($date->format($format) === preg_replace('/ {2,}/', ' ', $value))) {
+                return max(0, $date->getTimestamp() - ($now ?? time()));
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Generate a random UUID v4
      * @return string
      */

@@ -594,4 +594,47 @@ final class ApiLoopbackTest extends LoopbackTestCase
         $this->assertCount(3, $apiTransport->calls);
         $this->assertSame(['POST /token-ok'], self::$server->seen());
     }
+
+
+    /**
+     * A 429 with a Retry-After is waited for and then retried on the wire
+     * @return void
+     */
+    public function testA429WithARetryAfterIsWaitedForAndThenRetriedOnTheWire(): void
+    {
+        [, $client] = self::chain(self::$server->port(), self::$server->port());
+        $waits = [];
+        $client->setRetryPolicy(3, 0, 0)->setRetryHooks(function (int $ms) use (&$waits) {
+            $waits[] = $ms;
+        }, null);
+
+        $result = $client->request('POST', 'ra-flaky', ['a' => 1], [], [], null, true);
+
+        $this->assertSame(true, $result->ok);
+        $this->assertSame(2, $result->attempt);
+        $this->assertSame([1000], $waits, 'the one second that the server asked for');
+        $this->assertSame(['POST /token-ok', 'POST /ra-flaky', 'POST /ra-flaky'], self::$server->seen());
+        self::$server->get('/ra-flaky-reset');
+    }
+
+    /**
+     * A Retry-After that is too long ends the retries on the wire
+     * @return void
+     */
+    public function testARetryAfterThatIsTooLongEndsTheRetriesOnTheWire(): void
+    {
+        [, $client] = self::chain(self::$server->port(), self::$server->port());
+        $client->setRetryPolicy(3, 0, 0)->setRetryHooks(function (int $ms) {
+            throw new \RuntimeException('it must not wait');
+        }, null);
+
+        $e = self::thrown(function () use ($client) {
+            $client->request('POST', 'ra/503/31', ['a' => 1], [], [], null, true);
+        });
+
+        $this->assertInstanceOf(FedexClientException::class, $e);
+        $this->assertSame(503, $e->getStatusCode());
+        $this->assertSame(31, $e->getRetryAfter());
+        $this->assertSame(['POST /token-ok', 'POST /ra/503/31'], self::$server->seen());
+    }
 }

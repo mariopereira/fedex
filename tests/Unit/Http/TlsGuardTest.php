@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
  * A guard for the rule that TLS verification is never weakened. The package relies on the defaults of cURL, which verify the
  * certificate of the server and its name, and sends everything over https. These tests read the PHP code of src/ (its tokens,
  * so comments and docblocks do not count) and fail if something that could change that appears: an option of cURL that is not
- * one of the six that were reviewed, a stream context, a change of the settings of PHP, an address that is not https. They only
+ * one of the seven that were reviewed, a stream context, a change of the settings of PHP, an address that is not https. They only
  * read files: no request is made
  */
 final class TlsGuardTest extends TestCase
@@ -24,7 +24,7 @@ final class TlsGuardTest extends TestCase
      * The options of cURL that CurlTransport sets, which are the only ones that were reviewed. Adding one, even a safe one,
      * fails the test, so that it is a decision and not an accident
      */
-    private const REVIEWED_OPTIONS = ['CURLOPT_CONNECTTIMEOUT', 'CURLOPT_CUSTOMREQUEST', 'CURLOPT_HTTPHEADER', 'CURLOPT_POSTFIELDS', 'CURLOPT_RETURNTRANSFER', 'CURLOPT_TIMEOUT'];
+    private const REVIEWED_OPTIONS = ['CURLOPT_CONNECTTIMEOUT', 'CURLOPT_CUSTOMREQUEST', 'CURLOPT_HEADERFUNCTION', 'CURLOPT_HTTPHEADER', 'CURLOPT_POSTFIELDS', 'CURLOPT_RETURNTRANSFER', 'CURLOPT_TIMEOUT'];
 
     /**
      * Functions that src/ must not call at all: they set an option of cURL one at a time, or open connections or contexts that

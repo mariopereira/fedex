@@ -4,7 +4,8 @@
  *
  * It listens on 127.0.0.1 ONLY, and appends the raw head and body of every request it receives to <logfile>, as JSON
  * lines. It answers according to the path: /ok, /status/<code>, /nobody, /redirect, /slow (3 seconds), /bad-json,
- * /html502, /big, /token-ok, /token-401, /flaky, /flaky-reset, /always-401, /quit and, for any other path, an echo of
+ * /html502, /big, /token-ok, /token-401, /flaky, /flaky-reset, /always-401, /ra/<code>/<url encoded Retry-After value>, /ra-flaky,
+ * /ra-flaky-reset, /quit and, for any other path, an echo of
  * the request. It handles one connection at a time.
  *
  * @author Mário Pereira <bin.to.hex@gmail.com>
@@ -69,7 +70,7 @@ while ($conn = @stream_socket_accept($server, 120)) {
     $need = preg_match('/^Content-Length:\s*(\d+)/mi', $head, $m) ? (int) $m[1] : 0;
 
     if (preg_match('/^Expect:\s*100-continue/mi', $head) && strlen($body) < $need) {
-        @fwrite($conn, "HTTP/1.1 100 Continue\r\n\r\n");
+        @fwrite($conn, "HTTP/1.1 100 Continue\r\nX-Interim: yes\r\n\r\n");
     }
 
     while (strlen($body) < $need) {
@@ -119,6 +120,21 @@ while ($conn = @stream_socket_accept($server, 120)) {
         }
     } elseif ($path === '/flaky-reset') {
         $counters['flaky'] = 0;
+        respond($conn, 200, '{"reset":true}');
+    } elseif (preg_match('#^/ra/(\d+)/(.*)$#', $path, $s)) {
+        // Answers with the status and a Retry-After header with the value given, and with two headers of the same name
+        respond($conn, (int) $s[1], json_encode(['transactionId' => 'T-' . $s[1], 'errors' => [['code' => 'ERR.' . $s[1], 'message' => 'status ' . $s[1]]]]), ['Retry-After: ' . rawurldecode($s[2]), 'X-Twice: one', 'X-Twice: two', 'x-mixed: a', 'X-MIXED: b']);
+    } elseif ($path === '/ra-flaky') {
+        // 429 with Retry-After: 1 on the first request, 200 afterwards (until /ra-flaky-reset)
+        $counters['ra'] = ($counters['ra'] ?? 0) + 1;
+
+        if ($counters['ra'] === 1) {
+            respond($conn, 429, '{"transactionId":"T","errors":[{"code":"TOO.MANY.REQUESTS","message":"Slow down."}]}', ['Retry-After: 1']);
+        } else {
+            respond($conn, 200, '{"ok":true,"attempt":' . $counters['ra'] . '}');
+        }
+    } elseif ($path === '/ra-flaky-reset') {
+        $counters['ra'] = 0;
         respond($conn, 200, '{"reset":true}');
     } elseif ($path === '/always-401') {
         respond($conn, 401, '{"transactionId":"T","errors":[{"code":"NOT.AUTHORIZED.ERROR","message":"Access token expired."}]}');

@@ -169,6 +169,14 @@
 <dd>Description of the failure when the request could not be completed, null if it was completed</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
+    <a class="" href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#property_headers">$headers</a>
+    <span>
+                        &nbsp;: array&lt;string|int, mixed&gt;            </span>
+</dt>
+<dd>Headers received, by name in lower case. The value of a header that was received more than once has the values
+joined with a comma</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
     <a class="" href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#property_status">$status</a>
     <span>
                         &nbsp;: int            </span>
@@ -203,6 +211,20 @@
                                 &nbsp;: string|null    </span>
 </dt>
 <dd>Get the description of the failure</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#method_getHeader">getHeader()</a>
+    <span>
+                                &nbsp;: string|null    </span>
+</dt>
+<dd>Get a header received</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#method_getHeaders">getHeaders()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
+</dt>
+<dd>Get the headers received</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#method_getStatus">getStatus()</a>
@@ -314,6 +336,45 @@
             -protected
                                                                     "
 >
+    <h4 class="phpdocumentor-element__name" id="property_headers">
+        $headers
+        <a href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#property_headers" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexTransportResponse.php"><a href="files/src-http-fedextransportresponse.html"><abbr title="src/Http/FedexTransportResponse.php">FedexTransportResponse.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">39</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Headers received, by name in lower case. The value of a header that was received more than once has the values
+joined with a comma</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">protected</span>
+            <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
+    <span class="phpdocumentor-signature__name">$headers</span>
+     = <span class="phpdocumentor-signature__default-value">[]</span></code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -protected
+                                                                    "
+>
     <h4 class="phpdocumentor-element__name" id="property_status">
         $status
         <a href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#property_status" class="headerlink"><i class="fas fa-link"></i></a>
@@ -367,7 +428,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexTransportResponse.php"><a href="files/src-http-fedextransportresponse.html"><abbr title="src/Http/FedexTransportResponse.php">FedexTransportResponse.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">40</span>
+    <span class="phpdocumentor-element-found-in__line">50</span>
 
     </aside>
 
@@ -375,7 +436,7 @@
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$status</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$body</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">''</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">string|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$error</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$status</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$body</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">''</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">string|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$error</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$headers</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">[]</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -410,6 +471,17 @@
 </section>
 
             </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$headers</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">[]</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Headers received, as name =&gt; value (a name may be written in any case, a value that is a
+list is joined with a comma). Optional: a transport that does not give them is not affected, only what needs a
+header (the Retry-After of a retry) is not available</p>
+</section>
+
+            </dd>
             </dl>
 
     
@@ -432,7 +504,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexTransportResponse.php"><a href="files/src-http-fedextransportresponse.html"><abbr title="src/Http/FedexTransportResponse.php">FedexTransportResponse.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">60</span>
+    <span class="phpdocumentor-element-found-in__line">101</span>
 
     </aside>
 
@@ -475,7 +547,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexTransportResponse.php"><a href="files/src-http-fedextransportresponse.html"><abbr title="src/Http/FedexTransportResponse.php">FedexTransportResponse.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">69</span>
+    <span class="phpdocumentor-element-found-in__line">110</span>
 
     </aside>
 
@@ -510,6 +582,104 @@
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_getHeader">
+        getHeader()
+        <a href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#method_getHeader" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexTransportResponse.php"><a href="files/src-http-fedextransportresponse.html"><abbr title="src/Http/FedexTransportResponse.php">FedexTransportResponse.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">83</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Get a header received</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">getHeader</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$name</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string|null</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$name</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The name of the header, in any case</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string|null</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The value, null when the header was not received</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_getHeaders">
+        getHeaders()
+        <a href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#method_getHeaders" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexTransportResponse.php"><a href="files/src-http-fedextransportresponse.html"><abbr title="src/Http/FedexTransportResponse.php">FedexTransportResponse.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">73</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Get the headers received</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">getHeaders</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The values by name, the names in lower case. Empty when the transport gave none</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_getStatus">
         getStatus()
         <a href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#method_getStatus" class="headerlink"><i class="fas fa-link"></i></a>
@@ -518,7 +688,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexTransportResponse.php"><a href="files/src-http-fedextransportresponse.html"><abbr title="src/Http/FedexTransportResponse.php">FedexTransportResponse.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">51</span>
+    <span class="phpdocumentor-element-found-in__line">92</span>
 
     </aside>
 
@@ -561,7 +731,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexTransportResponse.php"><a href="files/src-http-fedextransportresponse.html"><abbr title="src/Http/FedexTransportResponse.php">FedexTransportResponse.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">79</span>
+    <span class="phpdocumentor-element-found-in__line">120</span>
 
     </aside>
 
@@ -612,6 +782,7 @@
                     <ul class="phpdocumentor-list -clean">
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#property_body">$body</a></li>
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#property_error">$error</a></li>
+                                                    <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#property_headers">$headers</a></li>
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#property_status">$status</a></li>
                                             </ul>
                 </li>
@@ -622,6 +793,8 @@
                                             <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#method___construct">__construct()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#method_getBody">getBody()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#method_getError">getError()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#method_getHeader">getHeader()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#method_getHeaders">getHeaders()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#method_getStatus">getStatus()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexTransportResponse.html#method_hasFailed">hasFailed()</a></li>
                                     </ul>

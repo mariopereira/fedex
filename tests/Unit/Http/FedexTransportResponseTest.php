@@ -84,4 +84,64 @@ final class FedexTransportResponseTest extends TestCase
     {
         $this->assertInstanceOf(FedexTransport::class, new CurlTransport());
     }
+
+    /**
+     * Without headers there are none
+     * @return void
+     */
+    public function testWithoutHeadersThereAreNone(): void
+    {
+        $r = new FedexTransportResponse(200, 'x');
+
+        $this->assertSame([], $r->getHeaders());
+        $this->assertNull($r->getHeader('Retry-After'));
+    }
+
+    /**
+     * The names of the headers are lower case and are looked up in any case
+     * @return void
+     */
+    public function testTheNamesOfTheHeadersAreLowerCaseAndAreLookedUpInAnyCase(): void
+    {
+        $r = new FedexTransportResponse(429, '', null, ['Retry-After' => ' 30 ', 'X-Other' => 'a', ' Content-Type ' => 'application/json']);
+
+        $this->assertSame(['retry-after' => '30', 'x-other' => 'a', 'content-type' => 'application/json'], $r->getHeaders());
+
+        foreach (['Retry-After', 'retry-after', 'RETRY-AFTER', ' Retry-After '] as $name) {
+            $this->assertSame('30', $r->getHeader($name), $name);
+        }
+
+        $this->assertNull($r->getHeader('Missing'));
+    }
+
+    /**
+     * The values that are lists are joined and what is not usable is left out
+     * @return void
+     */
+    public function testTheValuesThatAreListsAreJoinedAndWhatIsNotUsableIsLeftOut(): void
+    {
+        $r = new FedexTransportResponse(200, '', null, [
+            'A' => ['one', 'two'],
+            'B' => 5,
+            'C' => ['x', ['nested'], 'y'],
+            'D' => new \stdClass(),
+            'E' => null,
+            '' => 'no name',
+            '  ' => 'blank name',
+            'F' => '',
+        ]);
+
+        $this->assertSame(['a' => 'one, two', 'b' => '5', 'c' => 'x, y', 'f' => ''], $r->getHeaders());
+    }
+
+    /**
+     * The headers do not change the other data of the response
+     * @return void
+     */
+    public function testTheHeadersDoNotChangeTheOtherDataOfTheResponse(): void
+    {
+        $r = new FedexTransportResponse(503, 'body', 'error', ['A' => 'b']);
+
+        $this->assertSame([503, 'body', 'error', true], [$r->getStatus(), $r->getBody(), $r->getError(), $r->hasFailed()]);
+    }
 }

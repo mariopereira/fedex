@@ -305,17 +305,18 @@ Nothing is retried by default, apart from a rejected token (401), which is refre
 
 ```php
 $client = new FedexClient($auth, 'en_US', 30, 10);
-$client->setRetryPolicy(3, 500, 5000); // total attempts, base delay and longest delay, in milliseconds
+$client->setRetryPolicy(3, 500, 5000, 30000); // total attempts, base delay, longest delay and longest Retry-After, in milliseconds
 
 $locations = new FedexLocationsSearch($auth, 'en_US', 30, 10, $client);
 ```
 
-`setRetryPolicy()` without arguments uses those same values (3 attempts, 500 ms, 5000 ms). The attempts go from 1 (no retry) to 10.
+`setRetryPolicy()` without arguments uses those same values (3 attempts, 500 ms, 5000 ms, 30000 ms). The attempts go from 1 (no retry) to 10.
 
 * A request is retried when FedEx answers 429, 503 or 504, or when it could not be completed (network failure, timeout, ...). Any other failure is thrown at once.
 * The wait before the attempt *n* is a random number of milliseconds between 0 and `min(longest delay, base delay * 2^(n-1))`. When the attempts are over, the last failure is thrown as usual.
 * Only the operations that do not change data in FedEx are retried: postal code validation, locations search, address validation, `FedexShip::validate()` and the async results of `FedexShip`. `create()`, `cancel()`, `createTag()` and `cancelTag()` are never retried, because repeating them could create or cancel a shipment twice.
-* The `Retry-After` header of FedEx is not used.
+* When the failure comes with a valid `Retry-After` header (a number of seconds, or an HTTP date), the wait is the longer of the header and the backoff, so that a retry is never sent before FedEx asked. If the header asks for more than the fourth argument of `setRetryPolicy()` (30 seconds by default), the retries stop and the failure is thrown, instead of holding the request for that long. With `0` the header is ignored and only the backoff is used. A header that is not valid is ignored. This is the behaviour of the HTTP standard (RFC 9110): the FedEx schemas that came with the package do not mention the header, so it has not been confirmed that FedEx sends it.
+* The failure keeps the header, so that your code can use it too: `FedexClientException::getRetryAfter()` gives the seconds that FedEx asked to wait, or `null`.
 * To retry your own calls to `FedexClient::request()`, pass `true` as its last argument, and only for requests that are safe to repeat.
 
 ### Token cache
@@ -377,7 +378,7 @@ $result = $postal->validate('FDXG', 'US', 'TN', '38017', '2030-01-15');
 echo $result->output->cleanedPostalCode;
 ```
 
-`send()` receives the HTTP method, the full url, the header lines (`'Name: value'`, including the `Authorization` header, so do not log them as they are), the body or `null`, and the timeouts in seconds. It returns a `FedexTransportResponse` with the status and the body.
+`send()` receives the HTTP method, the full url, the header lines (`'Name: value'`, including the `Authorization` header, so do not log them as they are), the body or `null`, and the timeouts in seconds. It returns a `FedexTransportResponse` with the status and the body, and optionally the response headers as a fourth argument (`new FedexTransportResponse(503, $body, null, ['Retry-After' => '30'])`, the names in any case, read with `getHeader()` and `getHeaders()`). A transport that does not give the headers works as before, and only what needs one (the `Retry-After` of a retry) is not available. `CurlTransport` gives them.
 
 * An HTTP error status (401, 500, ...) is not a failure of the transport: return it with its body, and the package turns it into the exceptions described below.
 * A request that could not be completed (network failure, timeout, ...) is returned as `new FedexTransportResponse(0, '', 'the error text')`. The transport must not throw.

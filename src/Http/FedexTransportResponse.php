@@ -32,16 +32,57 @@ class FedexTransportResponse
     protected ?string $error;
 
     /**
+     * Headers received, by name in lower case. The value of a header that was received more than once has the values
+     * joined with a comma
+     * @var array
+     */
+    protected array $headers = [];
+
+    /**
      * Initialize the object
      * @param int $status HTTP status code received, 0 if no response was received
      * @param string $body Body received, empty if there is none
      * @param string|null $error Description of the failure when the request could not be completed, null if it was completed
+     * @param array $headers Headers received, as name => value (a name may be written in any case, a value that is a
+     * list is joined with a comma). Optional: a transport that does not give them is not affected, only what needs a
+     * header (the Retry-After of a retry) is not available
      */
-    public function __construct(int $status, string $body = '', ?string $error = null)
+    public function __construct(int $status, string $body = '', ?string $error = null, array $headers = [])
     {
         $this->status = $status;
         $this->body = $body;
         $this->error = $error;
+
+        foreach ($headers as $name => $value) {
+            $name = strtolower(trim((string) $name));
+
+            if (is_array($value)) {
+                $value = implode(', ', array_filter($value, 'is_scalar'));
+            }
+
+            if (('' !== $name) && is_scalar($value)) {
+                $this->headers[$name] = trim((string) $value);
+            }
+        }
+    }
+
+    /**
+     * Get the headers received
+     * @return array The values by name, the names in lower case. Empty when the transport gave none
+     */
+    public function getHeaders() : array
+    {
+        return $this->headers;
+    }
+
+    /**
+     * Get a header received
+     * @param string $name The name of the header, in any case
+     * @return string|null The value, null when the header was not received
+     */
+    public function getHeader(string $name) : ?string
+    {
+        return $this->headers[strtolower(trim($name))] ?? null;
     }
 
     /**

@@ -35,6 +35,73 @@ final class CurlTransportLoopbackTest extends LoopbackTestCase
     }
 
     /**
+     * The headers of the answer are collected with the names in lower case
+     * @return void
+     */
+    public function testTheHeadersOfTheAnswerAreCollectedWithTheNamesInLowerCase(): void
+    {
+        $response = $this->send('GET', '/ra/429/7');
+
+        $this->assertSame(429, $response->getStatus());
+        $this->assertSame('7', $response->getHeader('Retry-After'));
+        $this->assertSame('7', $response->getHeader('retry-after'));
+        $this->assertSame('application/json', $response->getHeader('Content-Type'));
+        $this->assertSame('one, two', $response->getHeader('X-Twice'), 'a header that comes twice is joined');
+        $this->assertSame('a, b', $response->getHeader('X-Mixed'), 'and so is one that comes twice in different cases');
+        $this->assertSame((string) strlen($response->getBody()), $response->getHeader('Content-Length'));
+        $this->assertSame('close', $response->getHeader('connection'));
+        $this->assertArrayNotHasKey('http/1.1 429 too many requests', $response->getHeaders(), 'the status line is not a header');
+
+        foreach (array_keys($response->getHeaders()) as $name) {
+            $this->assertSame(strtolower($name), $name);
+        }
+    }
+
+    /**
+     * Only the headers of the last answer are kept, not those of a 100 Continue
+     * @return void
+     */
+    public function testOnlyTheHeadersOfTheLastAnswerAreKeptNotThoseOfA100Continue(): void
+    {
+        $response = $this->send('POST', '/ra/503/9', ['Expect: 100-continue', 'Content-Type: application/json'], json_encode(['data' => str_repeat('x', 5000)]));
+
+        $this->assertSame(503, $response->getStatus());
+        $this->assertSame('9', $response->getHeader('Retry-After'));
+        $this->assertNotNull($response->getHeader('Content-Length'));
+        $this->assertNull($response->getHeader('X-Interim'), 'the header of the 100 Continue is not kept');
+        $this->assertSame([], array_filter(array_keys($response->getHeaders()), function (string $name) {
+            return strpos($name, 'http/') === 0;
+        }));
+    }
+
+    /**
+     * A header that is a date is kept as it was sent
+     * @return void
+     */
+    public function testAHeaderThatIsADateIsKeptAsItWasSent(): void
+    {
+        $date = 'Sun, 06 Nov 1994 08:49:37 GMT';
+        $response = $this->send('GET', '/ra/503/' . rawurlencode($date));
+
+        $this->assertSame($date, $response->getHeader('Retry-After'));
+    }
+
+    /**
+     * An answer without a Retry-After has none and a failure has no headers
+     * @return void
+     */
+    public function testAnAnswerWithoutARetryAfterHasNoneAndAFailureHasNoHeaders(): void
+    {
+        $this->assertNull($this->send('GET', '/ok')->getHeader('Retry-After'));
+        $this->assertNotNull($this->send('GET', '/ok')->getHeader('Content-Type'));
+
+        $failed = (new CurlTransport())->send('GET', 'http://127.0.0.1:' . self::$closedPort . '/ok', [], null, 5, 5);
+
+        $this->assertTrue($failed->hasFailed());
+        $this->assertSame([], $failed->getHeaders());
+    }
+
+    /**
      * A get returns the status and the body
      * @return void
      */

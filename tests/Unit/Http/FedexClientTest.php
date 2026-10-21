@@ -982,4 +982,278 @@ final class FedexClientTest extends TestCase
         $this->assertSame($client, $client->setRetryPolicy(2, 1, 2));
         $this->assertSame($client, $client->setRetryHooks(null, null));
     }
+
+    // ---------------------------------------------------------------- the Retry-After header
+
+    /**
+     * An answer that is not a success with a Retry-After
+     * @param int $status HTTP status
+     * @param string|null $retryAfter The value of the header, null for none
+     * @param string $body The body
+     * @return \Mariopereira\Fedex\Http\FedexTransportResponse
+     */
+    private static function slowDown(int $status, ?string $retryAfter, string $body = '{"errors":[]}'): \Mariopereira\Fedex\Http\FedexTransportResponse
+    {
+        return Responses::make($status, $body, null, ($retryAfter === null) ? [] : ['Retry-After' => $retryAfter]);
+    }
+
+    /**
+     * The failure keeps the Retry-After of the answer
+     * @return void
+     */
+    public function testTheFailureKeepsTheRetryAfterOfTheAnswer(): void
+    {
+        $cases = [
+            '503 with seconds' => [self::slowDown(503, '7'), 7],
+            '429 with seconds' => [self::slowDown(429, '12'), 12],
+            '504 with seconds' => [self::slowDown(504, '3'), 3],
+            '400 with seconds' => [self::slowDown(400, '9'), 9],
+            '503 with zero' => [self::slowDown(503, '0'), 0],
+            '503 with an html body' => [self::slowDown(503, '4', '<html>Unavailable</html>'), 4],
+            '503 with no body' => [self::slowDown(503, '5', ''), 5],
+            '503 with a header that is not valid' => [self::slowDown(503, 'soon'), null],
+            '503 with an empty header' => [self::slowDown(503, ''), null],
+            '503 without the header' => [self::slowDown(503, null), null],
+            '200 with invalid json' => [self::slowDown(200, '8', 'not json'), null],
+            'the failure of the transport' => [Responses::make(0, '', 'timed out'), null],
+        ];
+
+        foreach ($cases as $label => [$response, $expected]) {
+            $e = $this->failure($this->client(new FakeTransport([], $response)));
+
+            $this->assertInstanceOf(FedexClientException::class, $e, $label);
+            $this->assertSame($expected, $e->getRetryAfter(), $label);
+        }
+    }
+
+    /**
+     * The name of the header is read in any case and a success has nothing to keep
+     * @return void
+     */
+    public function testTheNameOfTheHeaderIsReadInAnyCaseAndASuccessHasNothingToKeep(): void
+    {
+        foreach (['retry-after', 'RETRY-AFTER', 'Retry-After'] as $name) {
+            $e = $this->failure($this->client(new FakeTransport([], Responses::make(503, '{"errors":[]}', null, [$name => '6']))));
+
+            $this->assertSame(6, $e->getRetryAfter(), $name);
+        }
+
+        $this->assertTrue($this->client(new FakeTransport([], Responses::make(200, '{"ok":true}', null, ['Retry-After' => '6'])))->request('GET', 'x')->ok);
+    }
+
+    /**
+     * The retry waits as long as the Retry-After asks when that is longer than the backoff
+     * @return void
+     */
+    public function testTheRetryWaitsAsLongAsTheRetryAfterAsksWhenThatIsLongerThanTheBackoff(): void
+    {
+        $transport = new FakeTransport([self::slowDown(503, '2'), self::slowDown(429, '0'), self::slowDown(504, '1'), Responses::make(200, '{"ok":"fourth"}')]);
+        $client = $this->retrying($transport, 4, 500, 5000);
+
+        $this->assertSame('fourth', $this->safeRequest($client)->ok);
+        $this->assertSame([2000, 1000, 2000], $this->sleeps, 'the longer of the header and the backoff (the jitter gives the cap: 500, 1000, 2000)');
+        $this->assertSame([[0, 500], [0, 1000], [0, 2000]], $this->jitterCalls, 'the backoff is calculated as before');
+    }
+
+    /**
+     * Every status that is retried honours the Retry-After
+     * @return void
+     */
+    public function testEveryStatusThatIsRetriedHonoursTheRetryAfter(): void
+    {
+        foreach ([429, 503, 504] as $status) {
+            $transport = new FakeTransport([self::slowDown($status, '3'), Responses::make(200, '{"ok":1}')]);
+
+            $this->safeRequest($this->retrying($transport, 2, 0, 0));
+
+            $this->assertSame([3000], $this->sleeps, "HTTP $status");
+        }
+    }
+
+    /**
+     * A Retry-After that is a date is waited for
+     * @return void
+     */
+    public function testARetryAfterThatIsADateIsWaitedFor(): void
+    {
+        $transport = new FakeTransport([self::slowDown(503, gmdate('D, d M Y H:i:s', time() + 5) . ' GMT'), self::slowDown(503, gmdate('D, d M Y H:i:s', time() - 100) . ' GMT'), Responses::make(200, '{"ok":1}')]);
+
+        $this->safeRequest($this->retrying($transport, 3, 0, 0));
+
+        $this->assertCount(2, $this->sleeps);
+        $this->assertGreaterThanOrEqual(3000, $this->sleeps[0]);
+        $this->assertLessThanOrEqual(5000, $this->sleeps[0]);
+        $this->assertSame(0, $this->sleeps[1], 'a date in the past is no wait');
+    }
+
+    /**
+     * A backoff that is longer than the Retry-After is the wait
+     * @return void
+     */
+    public function testABackoffThatIsLongerThanTheRetryAfterIsTheWait(): void
+    {
+        $transport = new FakeTransport([self::slowDown(503, '1'), Responses::make(200, '{"ok":1}')]);
+
+        $this->safeRequest($this->retrying($transport, 2, 4000, 4000));
+
+        $this->assertSame([4000], $this->sleeps);
+    }
+
+    /**
+     * A Retry-After that is not valid is ignored and the backoff is the wait
+     * @return void
+     */
+    public function testARetryAfterThatIsNotValidIsIgnoredAndTheBackoffIsTheWait(): void
+    {
+        foreach (['soon', '-1', '1.5', '', '1e3', 'Mon, 06 Nov 1994 08:49:37 GMT'] as $value) {
+            $transport = new FakeTransport([self::slowDown(503, $value), Responses::make(200, '{"ok":1}')]);
+
+            $this->safeRequest($this->retrying($transport, 2, 500, 5000));
+
+            $this->assertSame([500], $this->sleeps, var_export($value, true));
+        }
+    }
+
+    /**
+     * A Retry-After that is longer than the ceiling stops the retries
+     * @return void
+     */
+    public function testARetryAfterThatIsLongerThanTheCeilingStopsTheRetries(): void
+    {
+        $transport = new FakeTransport([self::slowDown(503, '31'), Responses::make(200, '{"ok":1}')]);
+
+        try {
+            $this->safeRequest($this->retrying($transport, 5, 0, 0));
+            $this->fail('The request had to throw');
+        } catch (FedexClientException $e) {
+            $this->assertSame(503, $e->getStatusCode());
+            $this->assertSame(31, $e->getRetryAfter());
+        }
+
+        $this->assertCount(1, $transport->calls, 'nothing is sent again');
+        $this->assertSame([], $this->sleeps, 'and nothing is waited for');
+    }
+
+    /**
+     * The ceiling itself is waited for and it can be changed
+     * @return void
+     */
+    public function testTheCeilingItselfIsWaitedForAndItCanBeChanged(): void
+    {
+        $transport = new FakeTransport([self::slowDown(503, '30'), Responses::make(200, '{"ok":1}')]);
+
+        $this->safeRequest($this->retrying($transport, 2, 0, 0));
+
+        $this->assertSame([30000], $this->sleeps, 'thirty seconds is the default ceiling and it is allowed');
+
+        foreach ([['5', 5000, true], ['6', 5000, false], ['1', 999, false], ['1', 1000, true]] as [$value, $ceiling, $waits]) {
+            $transport = new FakeTransport([self::slowDown(503, $value), Responses::make(200, '{"ok":1}')]);
+            $client = $this->retrying($transport, 2, 0, 0)->setRetryPolicy(2, 0, 0, $ceiling);
+            $error = null;
+
+            try {
+                $this->safeRequest($client);
+            } catch (FedexClientException $e) {
+                $error = $e;
+            }
+
+            $this->assertSame($waits, $error === null, "Retry-After $value with a ceiling of $ceiling ms");
+            $this->assertCount($waits ? 2 : 1, $transport->calls);
+        }
+    }
+
+    /**
+     * A ceiling of zero ignores the header
+     * @return void
+     */
+    public function testACeilingOfZeroIgnoresTheHeader(): void
+    {
+        $transport = new FakeTransport([self::slowDown(503, '999'), Responses::make(200, '{"ok":1}')]);
+        $client = $this->retrying($transport, 2, 500, 5000)->setRetryPolicy(2, 500, 5000, 0);
+
+        $this->safeRequest($client);
+
+        $this->assertSame([500], $this->sleeps, 'only the backoff');
+        $this->assertCount(2, $transport->calls);
+    }
+
+    /**
+     * A request that is not marked as safe never waits for a Retry-After
+     * @return void
+     */
+    public function testARequestThatIsNotMarkedAsSafeNeverWaitsForARetryAfter(): void
+    {
+        $transport = new FakeTransport([self::slowDown(503, '1'), Responses::make(200, '{"ok":1}')]);
+
+        try {
+            $this->retrying($transport)->request('POST', 'x', ['a' => 1]);
+            $this->fail('The request had to throw');
+        } catch (FedexClientException $e) {
+            $this->assertSame(1, $e->getRetryAfter(), 'it is still given to the caller');
+        }
+
+        $this->assertCount(1, $transport->calls);
+        $this->assertSame([], $this->sleeps);
+    }
+
+    /**
+     * When the attempts are over the last failure keeps its Retry-After
+     * @return void
+     */
+    public function testWhenTheAttemptsAreOverTheLastFailureKeepsItsRetryAfter(): void
+    {
+        $transport = new FakeTransport([self::slowDown(503, '1'), self::slowDown(503, '2')], self::slowDown(429, '3'));
+
+        try {
+            $this->safeRequest($this->retrying($transport, 2, 0, 0));
+            $this->fail('The request had to throw');
+        } catch (FedexClientException $e) {
+            $this->assertSame(2, $e->getRetryAfter(), 'the failure of the second and last attempt');
+            $this->assertSame(503, $e->getStatusCode());
+        }
+
+        $this->assertSame([1000], $this->sleeps);
+    }
+
+    /**
+     * The failure of the transport waits for the backoff only
+     * @return void
+     */
+    public function testTheFailureOfTheTransportWaitsForTheBackoffOnly(): void
+    {
+        $transport = new FakeTransport([Responses::make(0, '', 'timed out', ['Retry-After' => '9']), Responses::make(200, '{"ok":1}')]);
+
+        $this->safeRequest($this->retrying($transport, 2, 500, 5000));
+
+        $this->assertSame([500], $this->sleeps);
+    }
+
+    /**
+     * The ceiling of the Retry-After has a default and a negative one is refused
+     * @return void
+     */
+    public function testTheCeilingOfTheRetryAfterHasADefaultAndANegativeOneIsRefused(): void
+    {
+        $client = $this->client(new FakeTransport());
+
+        $this->assertSame(30000, Reflect::prop($client, FedexClient::class, 'maxRetryAfterMs'));
+
+        $client->setRetryPolicy(3, 500, 5000, 1234);
+
+        $this->assertSame(1234, Reflect::prop($client, FedexClient::class, 'maxRetryAfterMs'));
+
+        try {
+            $client->setRetryPolicy(2, 0, 0, -1);
+            $this->fail('setRetryPolicy() had to throw');
+        } catch (FedexClientException $e) {
+            $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
+        }
+
+        $this->assertSame(3, Reflect::prop($client, FedexClient::class, 'maxAttempts'), 'the policy that was set is kept');
+        $this->assertSame(1234, Reflect::prop($client, FedexClient::class, 'maxRetryAfterMs'));
+
+        $client->setRetryPolicy();
+
+        $this->assertSame(30000, Reflect::prop($client, FedexClient::class, 'maxRetryAfterMs'), 'setRetryPolicy() without arguments restores the default');
+    }
 }

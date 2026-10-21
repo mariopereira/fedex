@@ -20,11 +20,12 @@ final class Responses
      * @param int $status HTTP status, 0 when the request failed before getting one
      * @param string $body Response body
      * @param string|null $error Transport error, or null when there was none
+     * @param array $headers Headers of the response, as name => value
      * @return FedexTransportResponse
      */
-    public static function make(int $status, string $body = '', ?string $error = null): FedexTransportResponse
+    public static function make(int $status, string $body = '', ?string $error = null, array $headers = []): FedexTransportResponse
     {
-        return new FedexTransportResponse($status, $body, $error);
+        return new FedexTransportResponse($status, $body, $error, $headers);
     }
 
     /**

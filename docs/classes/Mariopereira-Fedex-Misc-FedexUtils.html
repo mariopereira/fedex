@@ -282,6 +282,14 @@
 <dd>Convert an object to an array, recursively</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Mariopereira-Fedex-Misc-FedexUtils.html#method_parseRetryAfter">parseRetryAfter()</a>
+    <span>
+                                &nbsp;: int|null    </span>
+</dt>
+<dd>Read the value of a Retry-After header: a number of seconds, or an HTTP date (any of the three formats that the
+HTTP standard, RFC 9110, requires to be accepted). Anything else is not a valid value</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Mariopereira-Fedex-Misc-FedexUtils.html#method_pruneEmpty">pruneEmpty()</a>
     <span>
                                 &nbsp;: mixed    </span>
@@ -1195,6 +1203,71 @@ with an optional sign and optional white space around it</p>
             -public
                                     -static                    "
 >
+    <h4 class="phpdocumentor-element__name" id="method_parseRetryAfter">
+        parseRetryAfter()
+        <a href="classes/Mariopereira-Fedex-Misc-FedexUtils.html#method_parseRetryAfter" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/FedexUtils.php"><a href="files/src-misc-fedexutils.html"><abbr title="src/Misc/FedexUtils.php">FedexUtils.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">354</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Read the value of a Retry-After header: a number of seconds, or an HTTP date (any of the three formats that the
+HTTP standard, RFC 9110, requires to be accepted). Anything else is not a valid value</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">parseRetryAfter</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">int|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$now</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">int|null</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$value</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string|null</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The value of the header</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$now</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int|null</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">null</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The current time as a Unix timestamp, null for the current time</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">int|null</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The seconds to wait (0 when the date is in the past), null when there is no valid value</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                    -static                    "
+>
     <h4 class="phpdocumentor-element__name" id="method_pruneEmpty">
         pruneEmpty()
         <a href="classes/Mariopereira-Fedex-Misc-FedexUtils.html#method_pruneEmpty" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1260,7 +1333,7 @@ with an optional sign and optional white space around it</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/FedexUtils.php"><a href="files/src-misc-fedexutils.html"><abbr title="src/Misc/FedexUtils.php">FedexUtils.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">351</span>
+    <span class="phpdocumentor-element-found-in__line">389</span>
 
     </aside>
 
@@ -1330,6 +1403,7 @@ with an optional sign and optional white space around it</p>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Misc-FedexUtils.html#method_isDateValid">isDateValid()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Misc-FedexUtils.html#method_isValidGrantType">isValidGrantType()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Misc-FedexUtils.html#method_objectToArray">objectToArray()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Misc-FedexUtils.html#method_parseRetryAfter">parseRetryAfter()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Misc-FedexUtils.html#method_pruneEmpty">pruneEmpty()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Misc-FedexUtils.html#method_uuidV4">uuidV4()</a></li>
                                     </ul>
