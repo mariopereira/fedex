@@ -167,6 +167,13 @@
 <dd>Child key field name as written in the FedEx API schema</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -constant -private">
+    <a class="" href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#constant_CACHE_VERSION">CACHE_VERSION</a>
+    <span>
+        &nbsp;: int&nbsp;= 1                            </span>
+</dt>
+<dd>Version of the entry that is stored in the token cache</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -private">
     <a class="" href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#constant_EXPIRY_MARGIN">EXPIRY_MARGIN</a>
     <span>
         &nbsp;: int&nbsp;= 60                            </span>
@@ -239,6 +246,14 @@
 <dd>The type of grant to request</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
+    <a class="" href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_lastCacheError">$lastCacheError</a>
+    <span>
+                        &nbsp;: string|null            </span>
+</dt>
+<dd>The latest problem that the token cache had (it never stops the authorization), null when there was none since
+the cache was set. It never contains the token</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
     <a class="" href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_sandbox">$sandbox</a>
     <span>
                         &nbsp;: bool            </span>
@@ -251,6 +266,13 @@
                         &nbsp;: int            </span>
 </dt>
 <dd>Timeout in seconds for the token request</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
+    <a class="" href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_tokenCache">$tokenCache</a>
+    <span>
+                        &nbsp;: <a href="classes/Mariopereira-Fedex-Auth-FedexTokenCache.html"><abbr title="\Mariopereira\Fedex\Auth\FedexTokenCache">FedexTokenCache</abbr></a>|null            </span>
+</dt>
+<dd>Where the access token is kept between PHP requests, null to keep it only in this object</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
     <a class="" href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_tokenDuration">$tokenDuration</a>
@@ -317,6 +339,14 @@
 <dd>Clear token data</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_getLastCacheError">getLastCacheError()</a>
+    <span>
+                                &nbsp;: string|null    </span>
+</dt>
+<dd>The latest problem that the token cache had since it was set: a failure of the store, or an entry that was not
+valid. The text never contains the token</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_getToken">getToken()</a>
     <span>
                                 &nbsp;: string    </span>
@@ -335,7 +365,7 @@
     <span>
                                 &nbsp;: bool    </span>
 </dt>
-<dd>Check if we have a token</dd>
+<dd>Check if this object has a token that has not expired (the token cache is not looked at)</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_inSandbox">inSandbox()</a>
@@ -358,12 +388,37 @@
 </dt>
 <dd>Set the timeouts used when requesting a token</dd>
 
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_setTokenCache">setTokenCache()</a>
+    <span>
+                                &nbsp;: <a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html"><abbr title="\Mariopereira\Fedex\Auth\FedexAuth">FedexAuth</abbr></a>    </span>
+</dt>
+<dd>Keep the access token in a cache, so that it is shared between PHP requests: a token that is still valid is read
+from it instead of being requested from FedEx, and a token that FedEx gives is stored in it. A problem of the
+cache never stops the authorization: the token is requested from FedEx, and the problem can be read with
+getLastCacheError(). Without a cache the token is kept only in this object</dd>
+
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_body">body()</a>
     <span>
                                 &nbsp;: string    </span>
 </dt>
 <dd>Create the body to send to the authorization endpoint</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -protected">
+    <a class="" href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_cacheKey">cacheKey()</a>
+    <span>
+                                &nbsp;: string    </span>
+</dt>
+<dd>The key of the token in the cache: a digest of the environment and the credentials, so that tokens of another
+environment or other credentials are never taken for this one, and no credential can be read from it</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -protected">
+    <a class="" href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_cacheProblem">cacheProblem()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Note a problem of the token cache</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_checkExpiration">checkExpiration()</a>
@@ -373,11 +428,32 @@
 <dd>Check if stored token has expired and clear it if so</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
+    <a class="" href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_forgetCachedToken">forgetCachedToken()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Remove the token from the cache</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -protected">
+    <a class="" href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_loadCachedToken">loadCachedToken()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+<dd>Take the token from the cache, when there is a valid one that has not expired</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_setToken">setToken()</a>
     <span>
                                 &nbsp;: <a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html"><abbr title="\Mariopereira\Fedex\Auth\FedexAuth">FedexAuth</abbr></a>    </span>
 </dt>
 <dd>Store token data.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -protected">
+    <a class="" href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_storeCachedToken">storeCachedToken()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Put the token that FedEx gave in the cache</dd>
 
     </dl>
 
@@ -400,7 +476,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">32</span>
+    <span class="phpdocumentor-element-found-in__line">38</span>
 
     </aside>
 
@@ -431,7 +507,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">38</span>
+    <span class="phpdocumentor-element-found-in__line">44</span>
 
     </aside>
 
@@ -443,6 +519,37 @@
         <span class="phpdocumentor-signature__type">string</span>
     <span class="phpdocumentor-signature__name">CHILD_KEY_FIELD_SCHEMA</span>
     = <span class="phpdocumentor-signature__default-value">&#039;child_Key&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -private ">
+    <h4 class="phpdocumentor-element__name" id="constant_CACHE_VERSION">
+        CACHE_VERSION
+        <a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#constant_CACHE_VERSION" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">32</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Version of the entry that is stored in the token cache</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type">int</span>
+    <span class="phpdocumentor-signature__name">CACHE_VERSION</span>
+    = <span class="phpdocumentor-signature__default-value">1</span>
 </code>
 
 
@@ -509,7 +616,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">86</span>
+    <span class="phpdocumentor-element-found-in__line">92</span>
 
     </aside>
 
@@ -547,7 +654,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">68</span>
+    <span class="phpdocumentor-element-found-in__line">74</span>
 
     </aside>
 
@@ -585,7 +692,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">80</span>
+    <span class="phpdocumentor-element-found-in__line">86</span>
 
     </aside>
 
@@ -623,7 +730,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">74</span>
+    <span class="phpdocumentor-element-found-in__line">80</span>
 
     </aside>
 
@@ -661,7 +768,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">56</span>
+    <span class="phpdocumentor-element-found-in__line">62</span>
 
     </aside>
 
@@ -699,7 +806,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">62</span>
+    <span class="phpdocumentor-element-found-in__line">68</span>
 
     </aside>
 
@@ -737,7 +844,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">122</span>
+    <span class="phpdocumentor-element-found-in__line">128</span>
 
     </aside>
 
@@ -775,7 +882,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">50</span>
+    <span class="phpdocumentor-element-found-in__line">56</span>
 
     </aside>
 
@@ -803,6 +910,45 @@
             -protected
                                                                     "
 >
+    <h4 class="phpdocumentor-element__name" id="property_lastCacheError">
+        $lastCacheError
+        <a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_lastCacheError" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">147</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">The latest problem that the token cache had (it never stops the authorization), null when there was none since
+the cache was set. It never contains the token</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">protected</span>
+            <span class="phpdocumentor-signature__type">string|null</span>
+    <span class="phpdocumentor-signature__name">$lastCacheError</span>
+     = <span class="phpdocumentor-signature__default-value">null</span></code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -protected
+                                                                    "
+>
     <h4 class="phpdocumentor-element__name" id="property_sandbox">
         $sandbox
         <a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_sandbox" class="headerlink"><i class="fas fa-link"></i></a>
@@ -813,7 +959,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">44</span>
+    <span class="phpdocumentor-element-found-in__line">50</span>
 
     </aside>
 
@@ -851,7 +997,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">116</span>
+    <span class="phpdocumentor-element-found-in__line">122</span>
 
     </aside>
 
@@ -879,6 +1025,44 @@
             -protected
                                                                     "
 >
+    <h4 class="phpdocumentor-element__name" id="property_tokenCache">
+        $tokenCache
+        <a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_tokenCache" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">140</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Where the access token is kept between PHP requests, null to keep it only in this object</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">protected</span>
+            <span class="phpdocumentor-signature__type"><a href="classes/Mariopereira-Fedex-Auth-FedexTokenCache.html"><abbr title="\Mariopereira\Fedex\Auth\FedexTokenCache">FedexTokenCache</abbr></a>|null</span>
+    <span class="phpdocumentor-signature__name">$tokenCache</span>
+     = <span class="phpdocumentor-signature__default-value">null</span></code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -protected
+                                                                    "
+>
     <h4 class="phpdocumentor-element__name" id="property_tokenDuration">
         $tokenDuration
         <a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_tokenDuration" class="headerlink"><i class="fas fa-link"></i></a>
@@ -889,7 +1073,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">98</span>
+    <span class="phpdocumentor-element-found-in__line">104</span>
 
     </aside>
 
@@ -927,7 +1111,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">104</span>
+    <span class="phpdocumentor-element-found-in__line">110</span>
 
     </aside>
 
@@ -965,7 +1149,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">110</span>
+    <span class="phpdocumentor-element-found-in__line">116</span>
 
     </aside>
 
@@ -1003,7 +1187,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">92</span>
+    <span class="phpdocumentor-element-found-in__line">98</span>
 
     </aside>
 
@@ -1041,7 +1225,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">128</span>
+    <span class="phpdocumentor-element-found-in__line">134</span>
 
     </aside>
 
@@ -1084,7 +1268,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">141</span>
+    <span class="phpdocumentor-element-found-in__line">160</span>
 
     </aside>
 
@@ -1199,7 +1383,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">259</span>
+    <span class="phpdocumentor-element-found-in__line">419</span>
 
     </aside>
 
@@ -1252,7 +1436,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">343</span>
+    <span class="phpdocumentor-element-found-in__line">504</span>
 
     </aside>
 
@@ -1283,6 +1467,50 @@
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_getLastCacheError">
+        getLastCacheError()
+        <a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_getLastCacheError" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">254</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">The latest problem that the token cache had since it was set: a failure of the store, or an entry that was not
+valid. The text never contains the token</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">getLastCacheError</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string|null</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string|null</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Null when there was no problem</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_getToken">
         getToken()
         <a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_getToken" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1291,7 +1519,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">475</span>
+    <span class="phpdocumentor-element-found-in__line">638</span>
 
     </aside>
 
@@ -1360,7 +1588,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">444</span>
+    <span class="phpdocumentor-element-found-in__line">606</span>
 
     </aside>
 
@@ -1390,7 +1618,8 @@
                 : <span class="phpdocumentor-argument-list__argument__type">bool</span>
                  = <span class="phpdocumentor-argument-list__argument__default-value">false</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Force token refresh, even if there is a current token</p>
+                    <section class="phpdocumentor-description"><p>Force token refresh, even if there is a current token. The token is removed from the
+token cache too, and it is never read from it</p>
 </section>
 
             </dd>
@@ -1438,11 +1667,11 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">430</span>
+    <span class="phpdocumentor-element-found-in__line">591</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Check if we have a token</p>
+        <p class="phpdocumentor-summary">Check if this object has a token that has not expired (the token cache is not looked at)</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -1477,7 +1706,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">190</span>
+    <span class="phpdocumentor-element-found-in__line">209</span>
 
     </aside>
 
@@ -1516,7 +1745,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">221</span>
+    <span class="phpdocumentor-element-found-in__line">381</span>
 
     </aside>
 
@@ -1583,7 +1812,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">202</span>
+    <span class="phpdocumentor-element-found-in__line">221</span>
 
     </aside>
 
@@ -1646,6 +1875,60 @@
                     <article
         class="phpdocumentor-element
             -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_setTokenCache">
+        setTokenCache()
+        <a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_setTokenCache" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">241</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Keep the access token in a cache, so that it is shared between PHP requests: a token that is still valid is read
+from it instead of being requested from FedEx, and a token that FedEx gives is stored in it. A problem of the
+cache never stops the authorization: the token is requested from FedEx, and the problem can be read with
+getLastCacheError(). Without a cache the token is kept only in this object</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">setTokenCache</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type"><a href="classes/Mariopereira-Fedex-Auth-FedexTokenCache.html"><abbr title="\Mariopereira\Fedex\Auth\FedexTokenCache">FedexTokenCache</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$cache</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html"><abbr title="\Mariopereira\Fedex\Auth\FedexAuth">FedexAuth</abbr></a></span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$cache</span>
+                : <span class="phpdocumentor-argument-list__argument__type"><a href="classes/Mariopereira-Fedex-Auth-FedexTokenCache.html"><abbr title="\Mariopereira\Fedex\Auth\FedexTokenCache">FedexTokenCache</abbr></a>|null</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The cache, null to stop using one</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type"><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html"><abbr title="\Mariopereira\Fedex\Auth\FedexAuth">FedexAuth</abbr></a></span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
             -protected
                                                         "
 >
@@ -1657,7 +1940,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">236</span>
+    <span class="phpdocumentor-element-found-in__line">396</span>
 
     </aside>
 
@@ -1688,6 +1971,106 @@
             -protected
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_cacheKey">
+        cacheKey()
+        <a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_cacheKey" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">264</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">The key of the token in the cache: a digest of the environment and the credentials, so that tokens of another
+environment or other credentials are never taken for this one, and no credential can be read from it</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+                    <span class="phpdocumentor-signature__name">cacheKey</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>64 hexadecimal characters</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -protected
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_cacheProblem">
+        cacheProblem()
+        <a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_cacheProblem" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">282</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Note a problem of the token cache</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+                    <span class="phpdocumentor-signature__name">cacheProblem</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$what</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type"><abbr title="\Throwable">Throwable</abbr>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$ex</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$what</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>What was being done</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$ex</span>
+                : <span class="phpdocumentor-argument-list__argument__type"><abbr title="\Throwable">Throwable</abbr>|null</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">null</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The exception of the cache, if there was one</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -protected
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_checkExpiration">
         checkExpiration()
         <a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_checkExpiration" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1696,7 +2079,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">413</span>
+    <span class="phpdocumentor-element-found-in__line">574</span>
 
     </aside>
 
@@ -1727,6 +2110,84 @@
             -protected
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_forgetCachedToken">
+        forgetCachedToken()
+        <a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_forgetCachedToken" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">361</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Remove the token from the cache</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+                    <span class="phpdocumentor-signature__name">forgetCachedToken</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -protected
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_loadCachedToken">
+        loadCachedToken()
+        <a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_loadCachedToken" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">291</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Take the token from the cache, when there is a valid one that has not expired</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+                    <span class="phpdocumentor-signature__name">loadCachedToken</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>True when the token was taken</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -protected
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_setToken">
         setToken()
         <a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_setToken" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1735,7 +2196,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">361</span>
+    <span class="phpdocumentor-element-found-in__line">522</span>
 
     </aside>
 
@@ -1788,6 +2249,41 @@
             </section>
 
 </article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -protected
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_storeCachedToken">
+        storeCachedToken()
+        <a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_storeCachedToken" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Auth/FedexAuth.php"><a href="files/src-auth-fedexauth.html"><abbr title="src/Auth/FedexAuth.php">FedexAuth.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">338</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Put the token that FedEx gave in the cache</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+                    <span class="phpdocumentor-signature__name">storeCachedToken</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+        
+    
+    
+</article>
             </section>
 
         
@@ -1812,6 +2308,7 @@
                     <ul class="phpdocumentor-list -clean">
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#constant_CHILD_KEY_FIELD_LOWER">CHILD_KEY_FIELD_LOWER</a></li>
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#constant_CHILD_KEY_FIELD_SCHEMA">CHILD_KEY_FIELD_SCHEMA</a></li>
+                                                    <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#constant_CACHE_VERSION">CACHE_VERSION</a></li>
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#constant_EXPIRY_MARGIN">EXPIRY_MARGIN</a></li>
                                             </ul>
                 </li>
@@ -1827,8 +2324,10 @@
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_clientSecret">$clientSecret</a></li>
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_connectTimeout">$connectTimeout</a></li>
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_grantType">$grantType</a></li>
+                                                    <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_lastCacheError">$lastCacheError</a></li>
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_sandbox">$sandbox</a></li>
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_timeout">$timeout</a></li>
+                                                    <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_tokenCache">$tokenCache</a></li>
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_tokenDuration">$tokenDuration</a></li>
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_tokenExpiration">$tokenExpiration</a></li>
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_tokenScope">$tokenScope</a></li>
@@ -1843,15 +2342,22 @@
                                             <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method___construct">__construct()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_authorize">authorize()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_clearToken">clearToken()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_getLastCacheError">getLastCacheError()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_getToken">getToken()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_getTokenData">getTokenData()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_hasToken">hasToken()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_inSandbox">inSandbox()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_setChildKeyField">setChildKeyField()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_setTimeouts">setTimeouts()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_setTokenCache">setTokenCache()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_body">body()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_cacheKey">cacheKey()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_cacheProblem">cacheProblem()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_checkExpiration">checkExpiration()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_forgetCachedToken">forgetCachedToken()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_loadCachedToken">loadCachedToken()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_setToken">setToken()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_storeCachedToken">storeCachedToken()</a></li>
                                     </ul>
             </li>
                     </ul>

@@ -318,6 +318,24 @@ $locations = new FedexLocationsSearch($auth, 'en_US', 30, 10, $client);
 * The `Retry-After` header of FedEx is not used.
 * To retry your own calls to `FedexClient::request()`, pass `true` as its last argument, and only for requests that are safe to repeat.
 
+### Token cache
+
+By default the access token lives only in the `FedexAuth` object, so every PHP request asks FedEx for a new one (it is valid for about an hour). To share it between requests, give the authorization a cache:
+
+```php
+use Mariopereira\Fedex\Auth\FileTokenCache;
+
+$auth->setTokenCache(new FileTokenCache('/var/lib/myapp/fedex-tokens')); // the folder is created if it does not exist
+```
+
+* A token that is still valid is read from the cache instead of being requested, and a token that FedEx gives is stored in it. When FedEx rejects a cached token (401), it is removed and replaced by a new one.
+* There is one entry for each environment (sandbox or production) and set of credentials. The key is a SHA-256 digest of them, and the client secret is never stored.
+* **The files hold the access token, which FedEx accepts until it expires.** Keep the folder outside the web root and readable only by the user that runs PHP. `FileTokenCache` creates the folder with mode 0700 and the files with 0600 where the system has file modes; on Windows, protect the folder with its permissions.
+* A problem of the cache never stops the authorization: an entry that cannot be read or is not valid is ignored, a token that cannot be stored is used anyway, and the token is requested from FedEx. The latest problem is available in `$auth->getLastCacheError()` (it never contains the token), so a folder that cannot be written does not go unnoticed.
+* To keep the token somewhere else (APCu, Redis, a database), implement `FedexTokenCache`, which has three methods, `get($key)`, `set($key, $data, $ttl)` and `delete($key)`, and pass it to `setTokenCache()`. `set()` receives an array of text, numbers and `null` that `get()` has to return as it is.
+* Two processes may request a token at the same time, because nothing is locked. Both tokens are valid, and the last one stored is kept.
+* `$auth->setTokenCache(null)` stops the use of the cache.
+
 ## HTTP transport
 
 Requests are sent with cURL by default (`CurlTransport`). To use another HTTP library, to log the requests, or to test your code without the network, implement `FedexTransport` and pass it to `FedexAuth` and `FedexClient`. Then pass that client to the API class.

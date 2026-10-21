@@ -431,6 +431,41 @@ Search.appendIndex(
             "summary": "Set\u0020the\u0020timeouts\u0020used\u0020when\u0020requesting\u0020a\u0020token",
             "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_setTimeouts"
         },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003AsetTokenCache\u0028\u0029",
+            "name": "setTokenCache",
+            "summary": "Keep\u0020the\u0020access\u0020token\u0020in\u0020a\u0020cache,\u0020so\u0020that\u0020it\u0020is\u0020shared\u0020between\u0020PHP\u0020requests\u003A\u0020a\u0020token\u0020that\u0020is\u0020still\u0020valid\u0020is\u0020read\nfrom\u0020it\u0020instead\u0020of\u0020being\u0020requested\u0020from\u0020FedEx,\u0020and\u0020a\u0020token\u0020that\u0020FedEx\u0020gives\u0020is\u0020stored\u0020in\u0020it.\u0020A\u0020problem\u0020of\u0020the\ncache\u0020never\u0020stops\u0020the\u0020authorization\u003A\u0020the\u0020token\u0020is\u0020requested\u0020from\u0020FedEx,\u0020and\u0020the\u0020problem\u0020can\u0020be\u0020read\u0020with\ngetLastCacheError\u0028\u0029.\u0020Without\u0020a\u0020cache\u0020the\u0020token\u0020is\u0020kept\u0020only\u0020in\u0020this\u0020object",
+            "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_setTokenCache"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003AgetLastCacheError\u0028\u0029",
+            "name": "getLastCacheError",
+            "summary": "The\u0020latest\u0020problem\u0020that\u0020the\u0020token\u0020cache\u0020had\u0020since\u0020it\u0020was\u0020set\u003A\u0020a\u0020failure\u0020of\u0020the\u0020store,\u0020or\u0020an\u0020entry\u0020that\u0020was\u0020not\nvalid.\u0020The\u0020text\u0020never\u0020contains\u0020the\u0020token",
+            "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_getLastCacheError"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003AcacheKey\u0028\u0029",
+            "name": "cacheKey",
+            "summary": "The\u0020key\u0020of\u0020the\u0020token\u0020in\u0020the\u0020cache\u003A\u0020a\u0020digest\u0020of\u0020the\u0020environment\u0020and\u0020the\u0020credentials,\u0020so\u0020that\u0020tokens\u0020of\u0020another\nenvironment\u0020or\u0020other\u0020credentials\u0020are\u0020never\u0020taken\u0020for\u0020this\u0020one,\u0020and\u0020no\u0020credential\u0020can\u0020be\u0020read\u0020from\u0020it",
+            "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_cacheKey"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003AcacheProblem\u0028\u0029",
+            "name": "cacheProblem",
+            "summary": "Note\u0020a\u0020problem\u0020of\u0020the\u0020token\u0020cache",
+            "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_cacheProblem"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003AloadCachedToken\u0028\u0029",
+            "name": "loadCachedToken",
+            "summary": "Take\u0020the\u0020token\u0020from\u0020the\u0020cache,\u0020when\u0020there\u0020is\u0020a\u0020valid\u0020one\u0020that\u0020has\u0020not\u0020expired",
+            "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_loadCachedToken"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003AstoreCachedToken\u0028\u0029",
+            "name": "storeCachedToken",
+            "summary": "Put\u0020the\u0020token\u0020that\u0020FedEx\u0020gave\u0020in\u0020the\u0020cache",
+            "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_storeCachedToken"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003AforgetCachedToken\u0028\u0029",
+            "name": "forgetCachedToken",
+            "summary": "Remove\u0020the\u0020token\u0020from\u0020the\u0020cache",
+            "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_forgetCachedToken"
+        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003AsetChildKeyField\u0028\u0029",
             "name": "setChildKeyField",
             "summary": "Set\u0020the\u0020name\u0020of\u0020the\u0020field\u0020used\u0020to\u0020send\u0020the\u0020child\u0020key.",
@@ -463,7 +498,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003AhasToken\u0028\u0029",
             "name": "hasToken",
-            "summary": "Check\u0020if\u0020we\u0020have\u0020a\u0020token",
+            "summary": "Check\u0020if\u0020this\u0020object\u0020has\u0020a\u0020token\u0020that\u0020has\u0020not\u0020expired\u0020\u0028the\u0020token\u0020cache\u0020is\u0020not\u0020looked\u0020at\u0029",
             "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_hasToken"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003AgetTokenData\u0028\u0029",
@@ -480,6 +515,11 @@ Search.appendIndex(
             "name": "EXPIRY_MARGIN",
             "summary": "Seconds\u0020subtracted\u0020from\u0020the\u0020token\u0020lifetime,\u0020so\u0020that\u0020the\u0020token\u0020is\u0020renewed\u0020before\u0020FedEx\u0020expires\u0020it",
             "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#constant_EXPIRY_MARGIN"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003ACACHE_VERSION",
+            "name": "CACHE_VERSION",
+            "summary": "Version\u0020of\u0020the\u0020entry\u0020that\u0020is\u0020stored\u0020in\u0020the\u0020token\u0020cache",
+            "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#constant_CACHE_VERSION"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003ACHILD_KEY_FIELD_LOWER",
             "name": "CHILD_KEY_FIELD_LOWER",
@@ -565,6 +605,81 @@ Search.appendIndex(
             "name": "transport",
             "summary": "Transport\u0020used\u0020to\u0020send\u0020the\u0020token\u0020request",
             "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_transport"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003A\u0024tokenCache",
+            "name": "tokenCache",
+            "summary": "Where\u0020the\u0020access\u0020token\u0020is\u0020kept\u0020between\u0020PHP\u0020requests,\u0020null\u0020to\u0020keep\u0020it\u0020only\u0020in\u0020this\u0020object",
+            "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_tokenCache"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003A\u0024lastCacheError",
+            "name": "lastCacheError",
+            "summary": "The\u0020latest\u0020problem\u0020that\u0020the\u0020token\u0020cache\u0020had\u0020\u0028it\u0020never\u0020stops\u0020the\u0020authorization\u0029,\u0020null\u0020when\u0020there\u0020was\u0020none\u0020since\nthe\u0020cache\u0020was\u0020set.\u0020It\u0020never\u0020contains\u0020the\u0020token",
+            "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_lastCacheError"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexTokenCache",
+            "name": "FedexTokenCache",
+            "summary": "Storage\u0020for\u0020the\u0020access\u0020token,\u0020so\u0020that\u0020it\u0020can\u0020be\u0020shared\u0020between\u0020PHP\u0020requests.\u0020Implement\u0020it\u0020on\u0020top\u0020of\u0020any\u0020store\u0020\u0028a\nfile,\u0020APCu,\u0020Redis,\u0020a\u0020database\u0029\u0020and\u0020give\u0020it\u0020to\u0020FedexAuth\u003A\u003AsetTokenCache\u0028\u0029.",
+            "url": "classes/Mariopereira-Fedex-Auth-FedexTokenCache.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexTokenCache\u003A\u003Aget\u0028\u0029",
+            "name": "get",
+            "summary": "Get\u0020the\u0020entry\u0020stored\u0020with\u0020a\u0020key",
+            "url": "classes/Mariopereira-Fedex-Auth-FedexTokenCache.html#method_get"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexTokenCache\u003A\u003Aset\u0028\u0029",
+            "name": "set",
+            "summary": "Store\u0020an\u0020entry\u0020with\u0020a\u0020key,\u0020replacing\u0020the\u0020one\u0020that\u0020exists",
+            "url": "classes/Mariopereira-Fedex-Auth-FedexTokenCache.html#method_set"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexTokenCache\u003A\u003Adelete\u0028\u0029",
+            "name": "delete",
+            "summary": "Remove\u0020the\u0020entry\u0020stored\u0020with\u0020a\u0020key.\u0020Nothing\u0020happens\u0020when\u0020there\u0020is\u0020none",
+            "url": "classes/Mariopereira-Fedex-Auth-FedexTokenCache.html#method_delete"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FileTokenCache",
+            "name": "FileTokenCache",
+            "summary": "Token\u0020cache\u0020that\u0020keeps\u0020each\u0020entry\u0020in\u0020a\u0020JSON\u0020file\u0020of\u0020a\u0020directory.\u0020The\u0020directory\u0020is\u0020created\u0020when\u0020it\u0020does\u0020not\u0020exist.",
+            "url": "classes/Mariopereira-Fedex-Auth-FileTokenCache.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FileTokenCache\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020object,\u0020creating\u0020the\u0020directory\u0020when\u0020it\u0020does\u0020not\u0020exist",
+            "url": "classes/Mariopereira-Fedex-Auth-FileTokenCache.html#method___construct"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FileTokenCache\u003A\u003Aget\u0028\u0029",
+            "name": "get",
+            "summary": "Get\u0020the\u0020entry\u0020stored\u0020with\u0020a\u0020key",
+            "url": "classes/Mariopereira-Fedex-Auth-FileTokenCache.html#method_get"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FileTokenCache\u003A\u003Aset\u0028\u0029",
+            "name": "set",
+            "summary": "Store\u0020an\u0020entry\u0020with\u0020a\u0020key,\u0020replacing\u0020the\u0020file\u0020that\u0020exists.\u0020The\u0020\u0024ttl\u0020is\u0020not\u0020used\u003A\u0020the\u0020entry\u0020carries\u0020its\u0020own\nexpiration",
+            "url": "classes/Mariopereira-Fedex-Auth-FileTokenCache.html#method_set"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FileTokenCache\u003A\u003Adelete\u0028\u0029",
+            "name": "delete",
+            "summary": "Remove\u0020the\u0020file\u0020stored\u0020with\u0020a\u0020key.\u0020Nothing\u0020happens\u0020when\u0020there\u0020is\u0020none",
+            "url": "classes/Mariopereira-Fedex-Auth-FileTokenCache.html#method_delete"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FileTokenCache\u003A\u003Apath\u0028\u0029",
+            "name": "path",
+            "summary": "The\u0020path\u0020of\u0020the\u0020file\u0020of\u0020a\u0020key",
+            "url": "classes/Mariopereira-Fedex-Auth-FileTokenCache.html#method_path"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FileTokenCache\u003A\u003Aquietly\u0028\u0029",
+            "name": "quietly",
+            "summary": "Run\u0020a\u0020file\u0020function\u0020that\u0020reports\u0020a\u0020failure\u0020with\u0020a\u0020return\u0020value\u0020and\u0020also\u0020with\u0020a\u0020warning,\u0020keeping\u0020the\u0020return\u0020value\nand\u0020discarding\u0020the\u0020warning\u0020\u0028the\u0020callers\u0020turn\u0020the\u0020failure\u0020into\u0020an\u0020exception\u0029",
+            "url": "classes/Mariopereira-Fedex-Auth-FileTokenCache.html#method_quietly"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FileTokenCache\u003A\u003AMAX_FILE_SIZE",
+            "name": "MAX_FILE_SIZE",
+            "summary": "Largest\u0020file\u0020that\u0020is\u0020read,\u0020in\u0020bytes.\u0020A\u0020token\u0020entry\u0020has\u0020less\u0020than\u0020a\u0020few\u0020kilobytes",
+            "url": "classes/Mariopereira-Fedex-Auth-FileTokenCache.html#constant_MAX_FILE_SIZE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FileTokenCache\u003A\u003A\u0024directory",
+            "name": "directory",
+            "summary": "The\u0020directory\u0020of\u0020the\u0020files",
+            "url": "classes/Mariopereira-Fedex-Auth-FileTokenCache.html#property_directory"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexAddressValidationException",
             "name": "FedexAddressValidationException",
