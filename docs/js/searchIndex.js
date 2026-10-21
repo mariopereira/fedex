@@ -431,6 +431,16 @@ Search.appendIndex(
             "summary": "Set\u0020the\u0020timeouts\u0020used\u0020when\u0020requesting\u0020a\u0020token",
             "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_setTimeouts"
         },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003AsetRetryPolicy\u0028\u0029",
+            "name": "setRetryPolicy",
+            "summary": "Enable\u0020the\u0020retry,\u0020with\u0020exponential\u0020backoff\u0020and\u0020full\u0020jitter,\u0020of\u0020the\u0020token\u0020request.\u0020It\u0020is\u0020retried\u0020when\u0020FedEx\nanswers\u0020429,\u0020503\u0020or\u0020504,\u0020or\u0020when\u0020the\u0020request\u0020could\u0020not\u0020be\u0020completed\u0020\u0028network\u0020failure,\u0020timeout,\u0020...\u0029.\u0020It\u0020is\u0020never\nretried\u0020when\u0020the\u0020credentials\u0020are\u0020refused\u0020\u0028401\u0029\u0020or\u0020for\u0020any\u0020other\u0020failure.\u0020The\u0020delay\u0020before\u0020the\u0020attempt\u0020n\u0020is\u0020a\nrandom\u0020value\u0020between\u00200\u0020and\u0020min\u0028\u0024maxDelayMs,\u0020\u0024baseDelayMs\u0020\u002A\u00202\u005E\u0028n\u002D1\u0029\u0029.\u0020When\u0020FedEx\u0020sends\u0020a\u0020valid\u0020Retry\u002DAfter\u0020header\nwith\u0020the\u0020failure,\u0020the\u0020wait\u0020is\u0020the\u0020longer\u0020of\u0020the\u0020header\u0020and\u0020the\u0020backoff\u0020delay\u003B\u0020if\u0020the\u0020header\u0020asks\u0020for\u0020more\u0020than\n\u0024maxRetryAfterMs\u0020the\u0020retries\u0020stop\u0020and\u0020the\u0020failure\u0020is\u0020thrown.\u0020Each\u0020attempt\u0020can\u0020take\u0020as\u0020long\u0020as\u0020the\u0020timeouts,\u0020so\nallow\u0020for\u0020them\u0020in\u0020max_execution_time.\u0020Without\u0020calling\u0020this\u0020method\u0020nothing\u0020is\u0020retried.\u0020It\u0020is\u0020separate\u0020from\u0020the\nretry\u0020of\u0020FedexClient,\u0020which\u0020does\u0020not\u0020retry\u0020a\u0020failure\u0020of\u0020the\u0020token\u0020request",
+            "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_setRetryPolicy"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003AsetRetryHooks\u0028\u0029",
+            "name": "setRetryHooks",
+            "summary": "Replace\u0020the\u0020functions\u0020that\u0020wait\u0020and\u0020that\u0020pick\u0020the\u0020random\u0020part\u0020of\u0020the\u0020delay\u0020between\u0020attempts,\u0020so\u0020that\u0020the\nbackoff\u0020can\u0020be\u0020tested\u0020without\u0020waiting",
+            "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_setRetryHooks"
+        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003AsetTokenCache\u0028\u0029",
             "name": "setTokenCache",
             "summary": "Keep\u0020the\u0020access\u0020token\u0020in\u0020a\u0020cache,\u0020so\u0020that\u0020it\u0020is\u0020shared\u0020between\u0020PHP\u0020requests\u003A\u0020a\u0020token\u0020that\u0020is\u0020still\u0020valid\u0020is\u0020read\nfrom\u0020it\u0020instead\u0020of\u0020being\u0020requested\u0020from\u0020FedEx,\u0020and\u0020a\u0020token\u0020that\u0020FedEx\u0020gives\u0020is\u0020stored\u0020in\u0020it.\u0020A\u0020problem\u0020of\u0020the\ncache\u0020never\u0020stops\u0020the\u0020authorization\u003A\u0020the\u0020token\u0020is\u0020requested\u0020from\u0020FedEx,\u0020and\u0020the\u0020problem\u0020can\u0020be\u0020read\u0020with\ngetLastCacheError\u0028\u0029.\u0020Without\u0020a\u0020cache\u0020the\u0020token\u0020is\u0020kept\u0020only\u0020in\u0020this\u0020object",
@@ -480,6 +490,11 @@ Search.appendIndex(
             "name": "authorize",
             "summary": "Get\u0020access\u0020token\u0020from\u0020FedEx",
             "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_authorize"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003ArequestToken\u0028\u0029",
+            "name": "requestToken",
+            "summary": "Send\u0020the\u0020token\u0020request\u0020once\u0020and\u0020check\u0020the\u0020answer",
+            "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#method_requestToken"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003AclearToken\u0028\u0029",
             "name": "clearToken",
@@ -606,6 +621,11 @@ Search.appendIndex(
             "summary": "Transport\u0020used\u0020to\u0020send\u0020the\u0020token\u0020request",
             "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_transport"
         },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003A\u0024retry",
+            "name": "retry",
+            "summary": "The\u0020retry\u0020with\u0020backoff\u0020of\u0020the\u0020token\u0020request",
+            "url": "classes/Mariopereira-Fedex-Auth-FedexAuth.html#property_retry"
+        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth\u003A\u003A\u0024tokenCache",
             "name": "tokenCache",
             "summary": "Where\u0020the\u0020access\u0020token\u0020is\u0020kept\u0020between\u0020PHP\u0020requests,\u0020null\u0020to\u0020keep\u0020it\u0020only\u0020in\u0020this\u0020object",
@@ -700,6 +720,16 @@ Search.appendIndex(
             "name": "__construct",
             "summary": "Initialize\u0020the\u0020exception",
             "url": "classes/Mariopereira-Fedex-Exception-FedexAuthException.html#method___construct"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexAuthException\u003A\u003AgetRetryAfter\u0028\u0029",
+            "name": "getRetryAfter",
+            "summary": "Get\u0020the\u0020seconds\u0020that\u0020FedEx\u0020asked\u0020to\u0020wait\u0020before\u0020trying\u0020again",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexAuthException.html#method_getRetryAfter"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexAuthException\u003A\u003A\u0024retryAfter",
+            "name": "retryAfter",
+            "summary": "Seconds\u0020that\u0020FedEx\u0020asked\u0020to\u0020wait\u0020before\u0020trying\u0020again\u0020\u0028the\u0020Retry\u002DAfter\u0020header\u0029,\u0020null\u0020if\u0020it\u0020did\u0020not\u0020ask",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexAuthException.html#property_retryAfter"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexClientException",
             "name": "FedexClientException",
@@ -886,16 +916,6 @@ Search.appendIndex(
             "summary": "Call\u0020the\u0020api,\u0020retrying\u0020once\u0020on\u0020auth\u0020failure",
             "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#method_retryOnAuth"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient\u003A\u003AisTransient\u0028\u0029",
-            "name": "isTransient",
-            "summary": "Check\u0020if\u0020a\u0020failure\u0020is\u0020transient\u003A\u0020HTTP\u0020429,\u0020503\u0020or\u0020504,\u0020or\u0020a\u0020request\u0020that\u0020could\u0020not\u0020be\u0020completed",
-            "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#method_isTransient"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient\u003A\u003AretryOnTransient\u0028\u0029",
-            "name": "retryOnTransient",
-            "summary": "Call\u0020the\u0020api,\u0020repeating\u0020the\u0020call\u0020with\u0020exponential\u0020backoff\u0020while\u0020the\u0020failure\u0020is\u0020transient",
-            "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#method_retryOnTransient"
-        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient\u003A\u003Arequest\u0028\u0029",
             "name": "request",
             "summary": "Send\u0020a\u0020JSON\u0020request\u0020to\u0020FedEx\u0027s\u0020API",
@@ -910,16 +930,6 @@ Search.appendIndex(
             "name": "parse",
             "summary": "Parse\u0020the\u0020data\u0020received\u0020from\u0020a\u0020JSON\u0020FedexApi\u0020response",
             "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#method_parse"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient\u003A\u003ARETRY_STATUSES",
-            "name": "RETRY_STATUSES",
-            "summary": "HTTP\u0020statuses\u0020that\u0020are\u0020worth\u0020retrying\u003A\u0020too\u0020many\u0020requests,\u0020service\u0020unavailable\u0020and\u0020gateway\u0020timeout",
-            "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#constant_RETRY_STATUSES"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient\u003A\u003AMAX_ATTEMPTS_LIMIT",
-            "name": "MAX_ATTEMPTS_LIMIT",
-            "summary": "Maximum\u0020number\u0020of\u0020attempts\u0020that\u0020setRetryPolicy\u0028\u0029\u0020accepts",
-            "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#constant_MAX_ATTEMPTS_LIMIT"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient\u003A\u003A\u0024timeout",
             "name": "timeout",
@@ -946,35 +956,100 @@ Search.appendIndex(
             "summary": "Transport\u0020used\u0020to\u0020send\u0020the\u0020requests",
             "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#property_transport"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient\u003A\u003A\u0024maxAttempts",
-            "name": "maxAttempts",
-            "summary": "Total\u0020number\u0020of\u0020attempts\u0020of\u0020a\u0020request\u0020that\u0020is\u0020safe\u0020to\u0020repeat\u0020\u00281\u0020means\u0020that\u0020it\u0020is\u0020never\u0020retried\u0029",
-            "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#property_maxAttempts"
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient\u003A\u003A\u0024retry",
+            "name": "retry",
+            "summary": "The\u0020retry\u0020with\u0020backoff\u0020of\u0020the\u0020requests\u0020that\u0020are\u0020marked\u0020as\u0020safe\u0020to\u0020repeat",
+            "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#property_retry"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient\u003A\u003A\u0024baseDelayMs",
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexRetry",
+            "name": "FedexRetry",
+            "summary": "Retry\u0020with\u0020exponential\u0020backoff,\u0020shared\u0020by\u0020FedexClient\u0020\u0028the\u0020API\u0020requests\u0029\u0020and\u0020FedexAuth\u0020\u0028the\u0020token\u0020request\u0029.\u0020Each\u0020of\u0020them\nretries\u0020only\u0020the\u0020failures\u0020of\u0020its\u0020own\u0020kind\u0020\u0028FedexClientException\u0020or\u0020FedexAuthException\u0029\u003A\u0020a\u0020failure\u0020of\u0020the\u0020token\u0020request\nthat\u0020happens\u0020inside\u0020an\u0020API\u0020request\u0020is\u0020left\u0020to\u0020the\u0020token\u0020request,\u0020so\u0020that\u0020the\u0020attempts\u0020of\u0020the\u0020two\u0020are\u0020not\u0020multiplied.",
+            "url": "classes/Mariopereira-Fedex-Http-FedexRetry.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexRetry\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020object",
+            "url": "classes/Mariopereira-Fedex-Http-FedexRetry.html#method___construct"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexRetry\u003A\u003Acheck\u0028\u0029",
+            "name": "check",
+            "summary": "Check\u0020the\u0020values\u0020of\u0020a\u0020retry\u0020policy",
+            "url": "classes/Mariopereira-Fedex-Http-FedexRetry.html#method_check"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexRetry\u003A\u003Aset\u0028\u0029",
+            "name": "set",
+            "summary": "Set\u0020the\u0020retry\u0020policy.\u0020The\u0020values\u0020have\u0020to\u0020be\u0020valid\u0020\u0028see\u0020check\u0028\u0029\u0029",
+            "url": "classes/Mariopereira-Fedex-Http-FedexRetry.html#method_set"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexRetry\u003A\u003AgetPolicy\u0028\u0029",
+            "name": "getPolicy",
+            "summary": "The\u0020retry\u0020policy",
+            "url": "classes/Mariopereira-Fedex-Http-FedexRetry.html#method_getPolicy"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexRetry\u003A\u003AsetHooks\u0028\u0029",
+            "name": "setHooks",
+            "summary": "Replace\u0020the\u0020functions\u0020that\u0020wait\u0020and\u0020that\u0020pick\u0020the\u0020random\u0020part\u0020of\u0020the\u0020delay\u0020between\u0020attempts,\u0020so\u0020that\u0020the\nbackoff\u0020can\u0020be\u0020tested\u0020without\u0020waiting",
+            "url": "classes/Mariopereira-Fedex-Http-FedexRetry.html#method_setHooks"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexRetry\u003A\u003AisEnabled\u0028\u0029",
+            "name": "isEnabled",
+            "summary": "Check\u0020if\u0020anything\u0020is\u0020retried",
+            "url": "classes/Mariopereira-Fedex-Http-FedexRetry.html#method_isEnabled"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexRetry\u003A\u003AisTransient\u0028\u0029",
+            "name": "isTransient",
+            "summary": "Check\u0020if\u0020a\u0020failure\u0020is\u0020transient\u003A\u0020HTTP\u0020429,\u0020503\u0020or\u0020504,\u0020or\u0020a\u0020request\u0020that\u0020could\u0020not\u0020be\u0020completed",
+            "url": "classes/Mariopereira-Fedex-Http-FedexRetry.html#method_isTransient"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexRetry\u003A\u003Arun\u0028\u0029",
+            "name": "run",
+            "summary": "Run\u0020an\u0020operation,\u0020repeating\u0020it\u0020with\u0020exponential\u0020backoff\u0020while\u0020it\u0020fails\u0020with\u0020something\u0020transient",
+            "url": "classes/Mariopereira-Fedex-Http-FedexRetry.html#method_run"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexRetry\u003A\u003ARETRY_STATUSES",
+            "name": "RETRY_STATUSES",
+            "summary": "HTTP\u0020statuses\u0020that\u0020are\u0020worth\u0020retrying\u003A\u0020too\u0020many\u0020requests,\u0020service\u0020unavailable\u0020and\u0020gateway\u0020timeout",
+            "url": "classes/Mariopereira-Fedex-Http-FedexRetry.html#constant_RETRY_STATUSES"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexRetry\u003A\u003AMAX_ATTEMPTS_LIMIT",
+            "name": "MAX_ATTEMPTS_LIMIT",
+            "summary": "Maximum\u0020number\u0020of\u0020attempts\u0020that\u0020is\u0020accepted",
+            "url": "classes/Mariopereira-Fedex-Http-FedexRetry.html#constant_MAX_ATTEMPTS_LIMIT"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexRetry\u003A\u003A\u0024failureClass",
+            "name": "failureClass",
+            "summary": "The\u0020class\u0020of\u0020the\u0020failures\u0020that\u0020are\u0020retried",
+            "url": "classes/Mariopereira-Fedex-Http-FedexRetry.html#property_failureClass"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexRetry\u003A\u003A\u0024maxAttempts",
+            "name": "maxAttempts",
+            "summary": "Total\u0020number\u0020of\u0020attempts\u0020\u00281\u0020means\u0020that\u0020nothing\u0020is\u0020retried\u0029",
+            "url": "classes/Mariopereira-Fedex-Http-FedexRetry.html#property_maxAttempts"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexRetry\u003A\u003A\u0024baseDelayMs",
             "name": "baseDelayMs",
             "summary": "Delay,\u0020in\u0020milliseconds,\u0020that\u0020the\u0020backoff\u0020starts\u0020from",
-            "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#property_baseDelayMs"
+            "url": "classes/Mariopereira-Fedex-Http-FedexRetry.html#property_baseDelayMs"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient\u003A\u003A\u0024maxDelayMs",
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexRetry\u003A\u003A\u0024maxDelayMs",
             "name": "maxDelayMs",
             "summary": "Longest\u0020delay,\u0020in\u0020milliseconds,\u0020between\u0020two\u0020attempts",
-            "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#property_maxDelayMs"
+            "url": "classes/Mariopereira-Fedex-Http-FedexRetry.html#property_maxDelayMs"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient\u003A\u003A\u0024maxRetryAfterMs",
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexRetry\u003A\u003A\u0024maxRetryAfterMs",
             "name": "maxRetryAfterMs",
             "summary": "Longest\u0020Retry\u002DAfter,\u0020in\u0020milliseconds,\u0020that\u0020is\u0020waited\u0020for.\u0020A\u0020longer\u0020one\u0020stops\u0020the\u0020retries.\u0020Zero\u0020ignores\u0020the\u0020header",
-            "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#property_maxRetryAfterMs"
+            "url": "classes/Mariopereira-Fedex-Http-FedexRetry.html#property_maxRetryAfterMs"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient\u003A\u003A\u0024sleeper",
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexRetry\u003A\u003A\u0024sleeper",
             "name": "sleeper",
             "summary": "Function\u0020that\u0020waits\u0020for\u0020the\u0020given\u0020number\u0020of\u0020milliseconds,\u0020null\u0020for\u0020the\u0020default\u0020\u0028usleep\u0029",
-            "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#property_sleeper"
+            "url": "classes/Mariopereira-Fedex-Http-FedexRetry.html#property_sleeper"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient\u003A\u003A\u0024jitter",
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexRetry\u003A\u003A\u0024jitter",
             "name": "jitter",
             "summary": "Function\u0020that\u0020receives\u0020a\u0020minimum\u0020and\u0020a\u0020maximum\u0020and\u0020returns\u0020an\u0020integer\u0020between\u0020them,\u0020null\u0020for\u0020the\u0020default\n\u0028random_int\u0029",
-            "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#property_jitter"
+            "url": "classes/Mariopereira-Fedex-Http-FedexRetry.html#property_jitter"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexTransport",
             "name": "FedexTransport",

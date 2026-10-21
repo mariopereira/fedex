@@ -385,4 +385,75 @@ final class AuthClientLoopbackTest extends LoopbackTestCase
         $this->assertInstanceOf(FedexPostalCodeValidationException::class, $e);
         $this->assertSame([], self::$server->seen());
     }
+
+    // ---------------------------------------------------------------- retry of the token request
+
+    /**
+     * A 503 with a Retry-After on the token request is waited for and retried on the wire
+     * @return void
+     */
+    public function testA503WithARetryAfterOnTheTokenRequestIsWaitedForAndRetriedOnTheWire(): void
+    {
+        $transport = new RewriteTransport(self::$server->port());
+        $transport->tokenRoute = '/token-flaky';
+        $waits = [];
+        $auth = (new FedexAuth(true, 'client_credentials', 'id', 'secret', null, null, $transport))
+            ->setRetryPolicy(3, 0, 0)
+            ->setRetryHooks(function (int $ms) use (&$waits) {
+                $waits[] = $ms;
+            }, null);
+
+        $this->assertSame('TOK-2', $auth->getToken());
+        $this->assertSame([1000], $waits, 'the one second that the server asked for');
+        $this->assertSame(['POST /token-flaky', 'POST /token-flaky'], self::$server->seen());
+
+        $requests = self::$server->requests();
+
+        $this->assertSame($requests[0]['body'], $requests[1]['body'], 'the same request is sent again');
+        self::$server->get('/token-flaky-reset');
+    }
+
+    /**
+     * Credentials that are refused are asked once on the wire, whatever the policy
+     * @return void
+     */
+    public function testCredentialsThatAreRefusedAreAskedOnceOnTheWireWhateverThePolicy(): void
+    {
+        $transport = new RewriteTransport(self::$server->port());
+        $transport->tokenRoute = '/token-401';
+        $auth = (new FedexAuth(true, 'client_credentials', 'id', 'secret', null, null, $transport))
+            ->setRetryPolicy(5, 0, 0)
+            ->setRetryHooks(function (int $ms) {
+                throw new \RuntimeException('it must not wait');
+            }, null);
+
+        $e = self::thrown(function () use ($auth) {
+            $auth->getToken();
+        });
+
+        $this->assertInstanceOf(FedexAuthException::class, $e);
+        $this->assertSame(401, $e->getStatusCode());
+        $this->assertSame(FedexException::EC_UNABLE_TO_AUTHENTICATE, $e->getCode());
+        $this->assertSame(['POST /token-401'], self::$server->seen());
+    }
+
+    /**
+     * A refused connection on the token request is retried and the request is never sent
+     * @return void
+     */
+    public function testARefusedConnectionOnTheTokenRequestIsRetriedAndTheRequestIsNeverSent(): void
+    {
+        $transport = new RewriteTransport(self::$closedPort);
+        $auth = (new FedexAuth(true, 'client_credentials', 'id', 'secret', null, null, $transport))->setRetryPolicy(3, 0, 0);
+
+        $e = self::thrown(function () use ($auth) {
+            $auth->getToken();
+        });
+
+        $this->assertInstanceOf(FedexAuthException::class, $e);
+        $this->assertSame(FedexException::EC_TRANSPORT_ERROR, $e->getCode());
+        $this->assertSame(0, $e->getStatusCode());
+        $this->assertCount(3, $transport->calls);
+        $this->assertSame([], self::$server->seen());
+    }
 }

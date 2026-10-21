@@ -13,6 +13,12 @@ namespace Mariopereira\Fedex\Exception;
  */
 class FedexAuthException extends FedexException {
     /**
+     * Seconds that FedEx asked to wait before trying again (the Retry-After header), null if it did not ask
+     * @var int|null
+     */
+    protected ?int $retryAfter = null;
+
+    /**
      * Initialize the exception
      * @param string $message The Exception message to throw
      * @param int $code The Exception code
@@ -22,6 +28,7 @@ class FedexAuthException extends FedexException {
      * @param array $errors Array of errors returned
      * @param mixed $data Any other data to send with the exception
      * @param string|null $customerTransactionId Unique identifier supplied when calling the API
+     * @param int|null $retryAfter Seconds that FedEx asked to wait before trying again (the Retry-After header)
      */
     public function __construct(
         string $message = '',
@@ -31,9 +38,21 @@ class FedexAuthException extends FedexException {
         ?string $transactionId = null,
         array $errors = [],
         $data = null,
-        ?string $customerTransactionId = null
+        ?string $customerTransactionId = null,
+        ?int $retryAfter = null
     )
     {
         parent::__construct($message, $code, $previous, $httpStatus, $transactionId, $errors, $data, $customerTransactionId);
+
+        $this->retryAfter = $retryAfter;
+    }
+
+    /**
+     * Get the seconds that FedEx asked to wait before trying again
+     * @return int|null Null when FedEx did not send a valid Retry-After header
+     */
+    public function getRetryAfter() : ?int
+    {
+        return $this->retryAfter;
     }
 }

@@ -3,6 +3,8 @@
 /.gitattributes export-ignore
 /.gitignore export-ignore
 /.phpdoc/ export-ignore
+/composer.lock export-ignore
+/CONTRIBUTING.md export-ignore
 /docs/ export-ignore
 /fedex.code-workspace export-ignore
 /nbproject/ export-ignore

@@ -319,6 +319,16 @@ $locations = new FedexLocationsSearch($auth, 'en_US', 30, 10, $client);
 * The failure keeps the header, so that your code can use it too: `FedexClientException::getRetryAfter()` gives the seconds that FedEx asked to wait, or `null`.
 * To retry your own calls to `FedexClient::request()`, pass `true` as its last argument, and only for requests that are safe to repeat.
 
+The request for the access token has a retry of its own, set on `FedexAuth` with the same arguments and the same rules (the client's policy does not apply to it, and it does not retry the failures of the token request):
+
+```php
+$auth->setRetryPolicy(3, 500, 5000, 30000);
+```
+
+* It retries a token request that fails with 429, 503 or 504, or that could not be completed. It never retries a request that is refused with 401 (wrong credentials: asking again could lock the account) or any other failure, and it is not used when a valid token comes from the token cache.
+* A failure of the token request inside an API request is retried by `FedexAuth` only, so the attempts of the two are not multiplied. Each attempt can take as long as the timeouts, so allow for them in `max_execution_time`.
+* `FedexAuthException::getRetryAfter()` gives the `Retry-After` of the failure, like the exception of the client.
+
 ### Token cache
 
 By default the access token lives only in the `FedexAuth` object, so every PHP request asks FedEx for a new one (it is valid for about an hour). To share it between requests, give the authorization a cache:
@@ -403,10 +413,9 @@ They provide `getStatusCode()`, `getTransactionId()`, `getCustomerTransactionId(
 ## Development
 
 * `schemas/` holds the FedEx OpenAPI specifications that the code is checked against.
-* The API documentation is generated with PhpDocumentor: `vendor/bin/phpdoc -d src -t docs`.
-* The tests use PHPUnit 9.6, which is the last version that runs on PHP 7.4. Run them with the oldest PHP that the package supports: `composer install`, then `vendor/bin/phpunit` (or `composer test`). No test uses the network: the requests go to a fake transport. Any notice, warning or deprecation fails a test. Two slow tests that break generated requests thousands of times are in the `slow` group, and the loopback tests described next are in the `loopback` group: `vendor/bin/phpunit --exclude-group slow,loopback` leaves both out and takes a couple of seconds.
-* The loopback tests (`vendor/bin/phpunit --group loopback`, about half a minute) are left out of the normal run. They use the real cURL, `FedexAuth`, `FedexClient` and API classes against a throwaway PHP server that listens on `127.0.0.1` only, which they start and stop themselves: they check what really goes on the wire, the timeouts, the refused connections and the retry after a 401. They need the `curl` extension and `proc_open`, and nothing leaves the machine.
-* To check that the code also runs without deprecations on a newer PHP, run the same tests with it, enabling the extensions it needs, for example: `php -d extension=curl -d extension=mbstring vendor/bin/phpunit`.
+* Install with `composer install` and run the tests with `composer test`. They use PHPUnit 9.6, the last version that runs on PHP 7.4, so run them with the oldest PHP that the package supports. No test uses the network except the loopback tests, which talk to a throwaway server on `127.0.0.1` only, and no test calls FedEx.
+* The API documentation is generated with PhpDocumentor (PHP 8 or newer): `vendor/bin/phpdoc -d src -t docs`.
+* [CONTRIBUTING.md](CONTRIBUTING.md) has the rest: the conventions, the test groups (`slow` and `loopback`), the fast run, how to rebuild the documentation, and what a release contains.
 
 ## License
 

@@ -228,4 +228,20 @@ final class FedexExceptionTest extends TestCase
 
         $this->assertSame(['m', 7, 503, 'T', ['e'], ['d'], 'C'], [$e->getMessage(), $e->getCode(), $e->getStatusCode(), $e->getTransactionId(), $e->getErrors(), $e->getData(), $e->getCustomerTransactionId()], 'the other data are as they were');
     }
+
+    /**
+     * The auth exception keeps the seconds of the Retry-After
+     * @return void
+     */
+    public function testTheAuthExceptionKeepsTheSecondsOfTheRetryAfter(): void
+    {
+        $this->assertNull((new FedexAuthException('m'))->getRetryAfter());
+        $this->assertNull((new FedexAuthException('m', 1, null, 503, 'T', ['e'], null, 'C'))->getRetryAfter());
+        $this->assertSame(30, (new FedexAuthException('m', 1, null, 503, 'T', ['e'], null, 'C', 30))->getRetryAfter());
+        $this->assertSame(0, (new FedexAuthException('m', 1, null, 429, null, [], null, null, 0))->getRetryAfter());
+
+        $e = new FedexAuthException('m', 7, null, 503, 'T', ['e'], ['d'], 'C', 4);
+
+        $this->assertSame(['m', 7, 503, 'T', ['e'], ['d'], 'C'], [$e->getMessage(), $e->getCode(), $e->getStatusCode(), $e->getTransactionId(), $e->getErrors(), $e->getData(), $e->getCustomerTransactionId()]);
+    }
 }

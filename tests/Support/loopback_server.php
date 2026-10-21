@@ -5,7 +5,7 @@
  * It listens on 127.0.0.1 ONLY, and appends the raw head and body of every request it receives to <logfile>, as JSON
  * lines. It answers according to the path: /ok, /status/<code>, /nobody, /redirect, /slow (3 seconds), /bad-json,
  * /html502, /big, /token-ok, /token-401, /flaky, /flaky-reset, /always-401, /ra/<code>/<url encoded Retry-After value>, /ra-flaky,
- * /ra-flaky-reset, /quit and, for any other path, an echo of
+ * /ra-flaky-reset, /token-flaky, /token-flaky-reset, /quit and, for any other path, an echo of
  * the request. It handles one connection at a time.
  *
  * @author Mário Pereira <bin.to.hex@gmail.com>
@@ -133,6 +133,18 @@ while ($conn = @stream_socket_accept($server, 120)) {
         } else {
             respond($conn, 200, '{"ok":true,"attempt":' . $counters['ra'] . '}');
         }
+    } elseif ($path === '/token-flaky') {
+        // 503 with Retry-After: 1 on the first token request, a token afterwards (until /token-flaky-reset)
+        $counters['token'] = ($counters['token'] ?? 0) + 1;
+
+        if ($counters['token'] === 1) {
+            respond($conn, 503, '{"transactionId":"T","errors":[{"code":"SERVICE.UNAVAILABLE","message":"Try later."}]}', ['Retry-After: 1']);
+        } else {
+            respond($conn, 200, '{"access_token":"TOK-' . $counters['token'] . '","token_type":"bearer","expires_in":3600,"scope":"CXS"}');
+        }
+    } elseif ($path === '/token-flaky-reset') {
+        $counters['token'] = 0;
+        respond($conn, 200, '{"reset":true}');
     } elseif ($path === '/ra-flaky-reset') {
         $counters['ra'] = 0;
         respond($conn, 200, '{"reset":true}');

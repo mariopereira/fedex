@@ -53,53 +53,10 @@ class FedexClient
     protected FedexTransport $transport;
 
     /**
-     * HTTP statuses that are worth retrying: too many requests, service unavailable and gateway timeout
-     * @var int[]
+     * The retry with backoff of the requests that are marked as safe to repeat
+     * @var FedexRetry
      */
-    protected const RETRY_STATUSES = [429, 503, 504];
-
-    /**
-     * Maximum number of attempts that setRetryPolicy() accepts
-     * @var int
-     */
-    protected const MAX_ATTEMPTS_LIMIT = 10;
-
-    /**
-     * Total number of attempts of a request that is safe to repeat (1 means that it is never retried)
-     * @var int
-     */
-    protected int $maxAttempts = 1;
-
-    /**
-     * Delay, in milliseconds, that the backoff starts from
-     * @var int
-     */
-    protected int $baseDelayMs = 500;
-
-    /**
-     * Longest delay, in milliseconds, between two attempts
-     * @var int
-     */
-    protected int $maxDelayMs = 5000;
-
-    /**
-     * Longest Retry-After, in milliseconds, that is waited for. A longer one stops the retries. Zero ignores the header
-     * @var int
-     */
-    protected int $maxRetryAfterMs = 30000;
-
-    /**
-     * Function that waits for the given number of milliseconds, null for the default (usleep)
-     * @var callable|null
-     */
-    protected $sleeper = null;
-
-    /**
-     * Function that receives a minimum and a maximum and returns an integer between them, null for the default
-     * (random_int)
-     * @var callable|null
-     */
-    protected $jitter = null;
+    protected FedexRetry $retry;
 
     /**
      * Initialize the object
@@ -122,6 +79,7 @@ class FedexClient
         $this->timeout = min(30, $timeout);
         $this->connectTimeout = min(10, $connectTimeout);
         $this->transport = $transport ?? new CurlTransport();
+        $this->retry = new FedexRetry(FedexClientException::class);
 
         if (empty($this->locale)) {
             $this->locale = 'en_US';
@@ -146,24 +104,13 @@ class FedexClient
      */
     public function setRetryPolicy(int $maxAttempts = 3, int $baseDelayMs = 500, int $maxDelayMs = 5000, int $maxRetryAfterMs = 30000) : FedexClient
     {
-        if (($maxAttempts < 1) || ($maxAttempts > self::MAX_ATTEMPTS_LIMIT)) {
-            throw new FedexClientException(
-                'The number of attempts must be between 1 and ' . self::MAX_ATTEMPTS_LIMIT,
-                FedexException::EC_BAD_PARAMETER
-            );
+        $problem = FedexRetry::check($maxAttempts, $baseDelayMs, $maxDelayMs, $maxRetryAfterMs);
+
+        if (null !== $problem) {
+            throw new FedexClientException($problem, FedexException::EC_BAD_PARAMETER);
         }
 
-        if (($baseDelayMs < 0) || ($maxDelayMs < $baseDelayMs) || ($maxRetryAfterMs < 0)) {
-            throw new FedexClientException(
-                'The delays must not be negative and the maximum must not be less than the base delay',
-                FedexException::EC_BAD_PARAMETER
-            );
-        }
-
-        $this->maxAttempts = $maxAttempts;
-        $this->baseDelayMs = $baseDelayMs;
-        $this->maxDelayMs = $maxDelayMs;
-        $this->maxRetryAfterMs = $maxRetryAfterMs;
+        $this->retry->set($maxAttempts, $baseDelayMs, $maxDelayMs, $maxRetryAfterMs);
 
         return $this;
     }
@@ -178,8 +125,7 @@ class FedexClient
      */
     public function setRetryHooks(?callable $sleeper, ?callable $jitter) : FedexClient
     {
-        $this->sleeper = $sleeper;
-        $this->jitter = $jitter;
+        $this->retry->setHooks($sleeper, $jitter);
 
         return $this;
     }
@@ -219,57 +165,6 @@ class FedexClient
             }
 
             throw $ex;
-        }
-    }
-
-    /**
-     * Check if a failure is transient: HTTP 429, 503 or 504, or a request that could not be completed
-     * @param FedexClientException $ex The failure
-     * @return bool
-     */
-    protected function isTransient(FedexClientException $ex) : bool
-    {
-        $status = $ex->getStatusCode();
-
-        return in_array($status, self::RETRY_STATUSES, true)
-            || ((0 === $status) && (FedexException::EC_TRANSPORT_ERROR === $ex->getCode()));
-    }
-
-    /**
-     * Call the api, repeating the call with exponential backoff while the failure is transient
-     * @param callable $fn Callable without parameters that performs the request
-     * @return mixed
-     * @throws FedexException The last failure, when the attempts are over or the failure is not transient
-     */
-    protected function retryOnTransient(callable $fn)
-    {
-        for ($attempt = 1; ; $attempt++) {
-            try {
-                return $fn();
-            } catch (FedexClientException $ex) {
-                if (($attempt >= $this->maxAttempts) || !$this->isTransient($ex)) {
-                    throw $ex;
-                }
-            }
-
-            $cap = (int) min($this->maxDelayMs, $this->baseDelayMs * (2 ** ($attempt - 1)));
-            $delay = $this->jitter ? (int) ($this->jitter)(0, $cap) : random_int(0, $cap);
-            $retryAfter = $ex->getRetryAfter();
-
-            if ((null !== $retryAfter) && ($this->maxRetryAfterMs > 0)) {
-                // Never earlier than FedEx asked, and no wait that would hold the request for too long
-                if ($retryAfter * 1000 > $this->maxRetryAfterMs) {
-                    throw $ex;
-                }
-
-                $delay = max($delay, (int) ($retryAfter * 1000));
-            }
-
-            if ($this->sleeper) {
-                ($this->sleeper)($delay);
-            } else {
-                usleep($delay * 1000);
-            }
         }
     }
 
@@ -322,11 +217,11 @@ class FedexClient
             });
         };
 
-        if (!$safeToRetry || ($this->maxAttempts < 2)) {
+        if (!$safeToRetry || !$this->retry->isEnabled()) {
             return $call();
         }
 
-        return $this->retryOnTransient($call);
+        return $this->retry->run($call);
     }
 
     /**

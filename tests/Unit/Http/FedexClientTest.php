@@ -574,6 +574,16 @@ final class FedexClientTest extends TestCase
     }
 
     /**
+     * The retry policy of a client: the attempts, the base delay, the longest delay and the longest Retry-After
+     * @param FedexClient $client The client
+     * @return int[]
+     */
+    private static function policy(FedexClient $client): array
+    {
+        return Reflect::prop($client, FedexClient::class, 'retry')->getPolicy();
+    }
+
+    /**
      * Make a request that is safe to repeat
      * @param FedexClient $client The client
      * @return mixed
@@ -816,8 +826,7 @@ final class FedexClientTest extends TestCase
         }
 
         $this->assertSame([500, 1000], $this->sleeps);
-        $this->assertSame(500, Reflect::prop($client, FedexClient::class, 'baseDelayMs'));
-        $this->assertSame(5000, Reflect::prop($client, FedexClient::class, 'maxDelayMs'));
+        $this->assertSame([3, 500, 5000, 30000], self::policy($client));
     }
 
     /**
@@ -1236,11 +1245,11 @@ final class FedexClientTest extends TestCase
     {
         $client = $this->client(new FakeTransport());
 
-        $this->assertSame(30000, Reflect::prop($client, FedexClient::class, 'maxRetryAfterMs'));
+        $this->assertSame([1, 500, 5000, 30000], self::policy($client), 'nothing is retried until a policy is set');
 
         $client->setRetryPolicy(3, 500, 5000, 1234);
 
-        $this->assertSame(1234, Reflect::prop($client, FedexClient::class, 'maxRetryAfterMs'));
+        $this->assertSame([3, 500, 5000, 1234], self::policy($client));
 
         try {
             $client->setRetryPolicy(2, 0, 0, -1);
@@ -1249,11 +1258,10 @@ final class FedexClientTest extends TestCase
             $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
         }
 
-        $this->assertSame(3, Reflect::prop($client, FedexClient::class, 'maxAttempts'), 'the policy that was set is kept');
-        $this->assertSame(1234, Reflect::prop($client, FedexClient::class, 'maxRetryAfterMs'));
+        $this->assertSame([3, 500, 5000, 1234], self::policy($client), 'the policy that was set is kept');
 
         $client->setRetryPolicy();
 
-        $this->assertSame(30000, Reflect::prop($client, FedexClient::class, 'maxRetryAfterMs'), 'setRetryPolicy() without arguments restores the default');
+        $this->assertSame([3, 500, 5000, 30000], self::policy($client), 'setRetryPolicy() without arguments restores the defaults');
     }
 }

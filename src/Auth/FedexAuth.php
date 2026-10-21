@@ -11,6 +11,7 @@ namespace Mariopereira\Fedex\Auth;
 use Mariopereira\Fedex\Exception\FedexException as Fde;
 use Mariopereira\Fedex\Exception\FedexAuthException;
 use Mariopereira\Fedex\Http\CurlTransport;
+use Mariopereira\Fedex\Http\FedexRetry;
 use Mariopereira\Fedex\Http\FedexTransport;
 use Mariopereira\Fedex\Misc\FedexUtils;
 
@@ -134,6 +135,12 @@ class FedexAuth
     protected FedexTransport $transport;
 
     /**
+     * The retry with backoff of the token request
+     * @var FedexRetry
+     */
+    protected FedexRetry $retry;
+
+    /**
      * Where the access token is kept between PHP requests, null to keep it only in this object
      * @var FedexTokenCache|null
      */
@@ -200,6 +207,7 @@ class FedexAuth
         $this->childKey = $needsChild ? $childKey : null;
         $this->childSecret = $needsChild ? $childSecret : null;
         $this->transport = $transport ?? new CurlTransport();
+        $this->retry = new FedexRetry(FedexAuthException::class);
     }
 
     /**
@@ -226,6 +234,51 @@ class FedexAuth
 
         $this->timeout = $timeout;
         $this->connectTimeout = $connectTimeout;
+
+        return $this;
+    }
+
+    /**
+     * Enable the retry, with exponential backoff and full jitter, of the token request. It is retried when FedEx
+     * answers 429, 503 or 504, or when the request could not be completed (network failure, timeout, ...). It is never
+     * retried when the credentials are refused (401) or for any other failure. The delay before the attempt n is a
+     * random value between 0 and min($maxDelayMs, $baseDelayMs * 2^(n-1)). When FedEx sends a valid Retry-After header
+     * with the failure, the wait is the longer of the header and the backoff delay; if the header asks for more than
+     * $maxRetryAfterMs the retries stop and the failure is thrown. Each attempt can take as long as the timeouts, so
+     * allow for them in max_execution_time. Without calling this method nothing is retried. It is separate from the
+     * retry of FedexClient, which does not retry a failure of the token request
+     * @param int $maxAttempts Total number of attempts, from 1 (no retry) to 10
+     * @param int $baseDelayMs Delay in milliseconds that the backoff starts from, 0 or more
+     * @param int $maxDelayMs Longest delay in milliseconds, not less than $baseDelayMs
+     * @param int $maxRetryAfterMs Longest Retry-After in milliseconds that is waited for, 0 or more. Zero ignores the
+     * header and uses only the backoff
+     * @return FedexAuth
+     * @throws FedexAuthException When a value is out of range
+     */
+    public function setRetryPolicy(int $maxAttempts = 3, int $baseDelayMs = 500, int $maxDelayMs = 5000, int $maxRetryAfterMs = 30000) : FedexAuth
+    {
+        $problem = FedexRetry::check($maxAttempts, $baseDelayMs, $maxDelayMs, $maxRetryAfterMs);
+
+        if (null !== $problem) {
+            throw new FedexAuthException($problem, Fde::EC_BAD_PARAMETER);
+        }
+
+        $this->retry->set($maxAttempts, $baseDelayMs, $maxDelayMs, $maxRetryAfterMs);
+
+        return $this;
+    }
+
+    /**
+     * Replace the functions that wait and that pick the random part of the delay between attempts, so that the
+     * backoff can be tested without waiting
+     * @param callable|null $sleeper Receives the number of milliseconds to wait. Null restores usleep
+     * @param callable|null $jitter Receives a minimum and a maximum and returns an integer between them. Null
+     * restores random_int
+     * @return FedexAuth
+     */
+    public function setRetryHooks(?callable $sleeper, ?callable $jitter) : FedexAuth
+    {
+        $this->retry->setHooks($sleeper, $jitter);
 
         return $this;
     }
@@ -420,6 +473,25 @@ class FedexAuth
     {
         $this->clearToken();
 
+        $data = $this->retry->isEnabled()
+            ? $this->retry->run(function () {
+                return $this->requestToken();
+            })
+            : $this->requestToken();
+
+        $this->setToken($data);
+        $this->storeCachedToken();
+
+        return $this;
+    }
+
+    /**
+     * Send the token request once and check the answer
+     * @return \stdClass The data of the token response
+     * @throws FedexAuthException
+     */
+    protected function requestToken() : \stdClass
+    {
         $url = FedexUtils::getUrl($this->sandbox) . 'oauth/token';
 
         $result = $this->transport->send(
@@ -461,13 +533,19 @@ class FedexAuth
 
         if (200 !== $httpCode) {
             $code = (401 === $httpCode) ? Fde::EC_UNABLE_TO_AUTHENTICATE : Fde::EC_TRANSPORT_ERROR;
+            $retryAfter = FedexUtils::parseRetryAfter($result->getHeader('Retry-After'));
 
             if (is_null($data)) {
                 throw new FedexAuthException(
                     FedexUtils::httpStatusText($httpCode, true),
                     $code,
                     null,
-                    $httpCode
+                    $httpCode,
+                    null,
+                    [],
+                    null,
+                    null,
+                    $retryAfter
                 );
             }
 
@@ -478,7 +556,9 @@ class FedexAuth
                 $httpCode,
                 FedexUtils::extractString($data, 'transactionId'),
                 FedexUtils::extractErrors($data),
-                null
+                null,
+                null,
+                $retryAfter
             );
         }
 
@@ -491,10 +571,7 @@ class FedexAuth
             );
         }
 
-        $this->setToken($data);
-        $this->storeCachedToken();
-
-        return $this;
+        return $data;
     }
 
     /**
