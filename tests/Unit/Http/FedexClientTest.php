@@ -529,4 +529,457 @@ final class FedexClientTest extends TestCase
     {
         $this->assertSame(1, (new ProbeClient(StubAuth::make()))->callParse('{"a":1}', 200)->a);
     }
+
+    // ---------------------------------------------------------------- retry with backoff
+
+    /**
+     * The delays that the sleeper received, in milliseconds
+     * @var int[]
+     */
+    private $sleeps = [];
+
+    /**
+     * The minimum and the maximum that the jitter received, one pair for each wait
+     * @var array
+     */
+    private $jitterCalls = [];
+
+    /**
+     * A client that retries, with a sleeper that records the delays instead of waiting and a jitter that always picks
+     * the maximum
+     * @param FakeTransport $transport The transport
+     * @param int $attempts Total number of attempts
+     * @param int $base Base delay in milliseconds
+     * @param int $max Longest delay in milliseconds
+     * @param StubAuth|null $auth The authorization
+     * @return FedexClient
+     */
+    private function retrying(FakeTransport $transport, int $attempts = 3, int $base = 500, int $max = 5000, ?StubAuth $auth = null): FedexClient
+    {
+        $this->sleeps = [];
+        $this->jitterCalls = [];
+
+        return $this->client($transport, $auth)
+            ->setRetryPolicy($attempts, $base, $max)
+            ->setRetryHooks(
+                function (int $ms) {
+                    $this->sleeps[] = $ms;
+                },
+                function (int $min, int $max) {
+                    $this->jitterCalls[] = [$min, $max];
+
+                    return $max;
+                }
+            );
+    }
+
+    /**
+     * Make a request that is safe to repeat
+     * @param FedexClient $client The client
+     * @return mixed
+     */
+    private function safeRequest(FedexClient $client)
+    {
+        return $client->request('POST', 'x', ['a' => 1], [], [], 'CT-1', true);
+    }
+
+    /**
+     * Nothing is retried until a policy is set
+     * @return void
+     */
+    public function testNothingIsRetriedUntilAPolicyIsSet(): void
+    {
+        $transport = new FakeTransport([Responses::make(503, '{"errors":[]}')], Responses::make(200, '{"ok":1}'));
+
+        try {
+            $this->safeRequest($this->client($transport));
+            $this->fail('The request had to throw');
+        } catch (FedexClientException $e) {
+            $this->assertSame(503, $e->getStatusCode());
+        }
+
+        $this->assertCount(1, $transport->calls);
+    }
+
+    /**
+     * A request that is not marked as safe is never retried, even with a policy
+     * @return void
+     */
+    public function testARequestThatIsNotMarkedAsSafeIsNeverRetried(): void
+    {
+        foreach ([Responses::make(503, '{"errors":[]}'), Responses::make(0, '', 'Operation timed out')] as $failure) {
+            $transport = new FakeTransport([$failure], Responses::make(200, '{"ok":1}'));
+            $client = $this->retrying($transport);
+
+            try {
+                $client->request('POST', 'x', ['a' => 1]);
+                $this->fail('The request had to throw');
+            } catch (FedexClientException $e) {
+                $this->assertCount(1, $transport->calls);
+            }
+
+            $this->assertSame([], $this->sleeps);
+        }
+    }
+
+    /**
+     * A policy of one attempt is no retry
+     * @return void
+     */
+    public function testAPolicyOfOneAttemptIsNoRetry(): void
+    {
+        $transport = new FakeTransport([Responses::make(503, '{"errors":[]}')], Responses::make(200, '{"ok":1}'));
+
+        try {
+            $this->safeRequest($this->retrying($transport, 1));
+            $this->fail('The request had to throw');
+        } catch (FedexClientException $e) {
+            $this->assertCount(1, $transport->calls);
+            $this->assertSame([], $this->sleeps);
+        }
+    }
+
+    /**
+     * The statuses 429, 503 and 504 are retried until the request works
+     * @return void
+     */
+    public function testTheStatuses429503And504AreRetriedUntilTheRequestWorks(): void
+    {
+        foreach ([429, 503, 504] as $status) {
+            $transport = new FakeTransport([Responses::make($status, '{"errors":[]}'), Responses::make($status, '{"errors":[]}'), Responses::make(200, '{"ok":"third"}')]);
+
+            $result = $this->safeRequest($this->retrying($transport));
+
+            $this->assertSame('third', $result->ok, "HTTP $status");
+            $this->assertCount(3, $transport->calls, "HTTP $status");
+            $this->assertCount(2, $this->sleeps, "HTTP $status");
+        }
+    }
+
+    /**
+     * A failure of the transport is retried
+     * @return void
+     */
+    public function testAFailureOfTheTransportIsRetried(): void
+    {
+        $transport = new FakeTransport([Responses::make(0, '', 'Operation timed out'), Responses::make(0, '', 'Could not resolve host'), Responses::make(200, '{"ok":"third"}')]);
+
+        $result = $this->safeRequest($this->retrying($transport));
+
+        $this->assertSame('third', $result->ok);
+        $this->assertCount(3, $transport->calls);
+    }
+
+    /**
+     * A 503 whose body is not JSON is retried by its status
+     * @return void
+     */
+    public function testA503WhoseBodyIsNotJsonIsRetriedByItsStatus(): void
+    {
+        $transport = new FakeTransport([Responses::make(503, '<html>Service Unavailable</html>'), Responses::make(200, '{"ok":1}')]);
+
+        $this->assertSame(1, $this->safeRequest($this->retrying($transport))->ok);
+        $this->assertCount(2, $transport->calls);
+    }
+
+    /**
+     * Any other failure is not retried
+     * @return void
+     */
+    public function testAnyOtherFailureIsNotRetried(): void
+    {
+        $cases = [
+            '400' => Responses::make(400, '{"errors":[]}'),
+            '403' => Responses::make(403, '{"errors":[]}'),
+            '404' => Responses::make(404, '{"errors":[]}'),
+            '500' => Responses::make(500, '{"errors":[]}'),
+            '502' => Responses::make(502, '{"errors":[]}'),
+            '200 with a body that is not JSON' => Responses::make(200, 'not json'),
+        ];
+
+        foreach ($cases as $label => $failure) {
+            $transport = new FakeTransport([$failure], Responses::make(200, '{"ok":1}'));
+
+            try {
+                $this->safeRequest($this->retrying($transport));
+                $this->fail("$label had to throw");
+            } catch (FedexClientException $e) {
+                $this->assertCount(1, $transport->calls, $label);
+                $this->assertSame([], $this->sleeps, $label);
+            }
+        }
+    }
+
+    /**
+     * When the attempts are over the last failure is thrown
+     * @return void
+     */
+    public function testWhenTheAttemptsAreOverTheLastFailureIsThrown(): void
+    {
+        $transport = new FakeTransport([Responses::make(503, '{"errors":[]}'), Responses::make(429, '{"errors":[]}'), Responses::make(504, '{"transactionId":"LAST","errors":[]}')], Responses::make(200, '{"ok":1}'));
+
+        try {
+            $this->safeRequest($this->retrying($transport));
+            $this->fail('The request had to throw');
+        } catch (FedexClientException $e) {
+            $this->assertSame(504, $e->getStatusCode());
+            $this->assertSame('LAST', $e->getTransactionId());
+        }
+
+        $this->assertCount(3, $transport->calls, 'three attempts and not a fourth');
+        $this->assertCount(2, $this->sleeps, 'no wait after the last attempt');
+    }
+
+    /**
+     * A failure that is not transient stops the retries
+     * @return void
+     */
+    public function testAFailureThatIsNotTransientStopsTheRetries(): void
+    {
+        $transport = new FakeTransport([Responses::make(503, '{"errors":[]}'), Responses::make(400, '{"errors":[]}'), Responses::make(200, '{"ok":1}')]);
+
+        try {
+            $this->safeRequest($this->retrying($transport, 5));
+            $this->fail('The request had to throw');
+        } catch (FedexClientException $e) {
+            $this->assertSame(400, $e->getStatusCode());
+        }
+
+        $this->assertCount(2, $transport->calls);
+        $this->assertCount(1, $this->sleeps);
+    }
+
+    /**
+     * The delay doubles up to the longest delay
+     * @return void
+     */
+    public function testTheDelayDoublesUpToTheLongestDelay(): void
+    {
+        $transport = new FakeTransport([], Responses::make(503, '{"errors":[]}'));
+
+        try {
+            $this->safeRequest($this->retrying($transport, 10, 500, 5000));
+            $this->fail('The request had to throw');
+        } catch (FedexClientException $e) {
+            $this->assertCount(10, $transport->calls);
+        }
+
+        $this->assertSame([500, 1000, 2000, 4000, 5000, 5000, 5000, 5000, 5000], $this->sleeps);
+        $this->assertSame(array_fill(0, 9, 0), array_column($this->jitterCalls, 0), 'the jitter starts at zero');
+        $this->assertSame($this->sleeps, array_column($this->jitterCalls, 1), 'the jitter is given the cap and its answer is the delay');
+    }
+
+    /**
+     * The jitter picks the delay
+     * @return void
+     */
+    public function testTheJitterPicksTheDelay(): void
+    {
+        $transport = new FakeTransport([Responses::make(503, '{"errors":[]}'), Responses::make(200, '{"ok":1}')]);
+        $slept = [];
+        $client = $this->client($transport)->setRetryPolicy(3, 800, 5000)->setRetryHooks(
+            function (int $ms) use (&$slept) {
+                $slept[] = $ms;
+            },
+            function (int $min, int $max) {
+                return 123;
+            }
+        );
+
+        $this->safeRequest($client);
+
+        $this->assertSame([123], $slept);
+    }
+
+    /**
+     * The defaults of the policy are three attempts, half a second and five seconds
+     * @return void
+     */
+    public function testTheDefaultsOfThePolicyAreThreeAttemptsHalfASecondAndFiveSeconds(): void
+    {
+        $transport = new FakeTransport([], Responses::make(503, '{"errors":[]}'));
+        $this->sleeps = [];
+        $client = $this->client($transport)->setRetryPolicy()->setRetryHooks(
+            function (int $ms) {
+                $this->sleeps[] = $ms;
+            },
+            function (int $min, int $max) {
+                return $max;
+            }
+        );
+
+        try {
+            $this->safeRequest($client);
+            $this->fail('The request had to throw');
+        } catch (FedexClientException $e) {
+            $this->assertCount(3, $transport->calls);
+        }
+
+        $this->assertSame([500, 1000], $this->sleeps);
+        $this->assertSame(500, Reflect::prop($client, FedexClient::class, 'baseDelayMs'));
+        $this->assertSame(5000, Reflect::prop($client, FedexClient::class, 'maxDelayMs'));
+    }
+
+    /**
+     * Without hooks the real sleep and random are used
+     * @return void
+     */
+    public function testWithoutHooksTheRealSleepAndRandomAreUsed(): void
+    {
+        $transport = new FakeTransport([Responses::make(503, '{"errors":[]}'), Responses::make(200, '{"ok":1}')]);
+        $client = $this->client($transport)->setRetryPolicy(2, 0, 0)->setRetryHooks(null, null);
+
+        $this->assertSame(1, $this->safeRequest($client)->ok);
+        $this->assertCount(2, $transport->calls);
+
+        $transport = new FakeTransport([], Responses::make(503, '{"errors":[]}'));
+        $client = $this->client($transport)->setRetryPolicy(4, 20, 20)->setRetryHooks(null, null);
+        $start = microtime(true);
+
+        try {
+            $this->safeRequest($client);
+            $this->fail('The request had to throw');
+        } catch (FedexClientException $e) {
+            $this->assertCount(4, $transport->calls);
+        }
+
+        $this->assertLessThan(1.0, microtime(true) - $start, 'the delays are in milliseconds');
+    }
+
+    /**
+     * The default jitter is random and null restores it after a jitter was set
+     * @return void
+     */
+    public function testTheDefaultJitterIsRandomAndNullRestoresItAfterAJitterWasSet(): void
+    {
+        $transport = new FakeTransport([], Responses::make(503, '{"errors":[]}'));
+        $slept = [];
+        $client = $this->client($transport)->setRetryPolicy(10, 1000, 1000);
+        $client->setRetryHooks(null, function (int $min, int $max) {
+            return -1;
+        });
+        $client->setRetryHooks(function (int $ms) use (&$slept) {
+            $slept[] = $ms;
+        }, null);
+
+        try {
+            $this->safeRequest($client);
+            $this->fail('The request had to throw');
+        } catch (FedexClientException $e) {
+            $this->assertCount(10, $transport->calls);
+        }
+
+        $this->assertCount(9, $slept);
+
+        foreach ($slept as $ms) {
+            $this->assertGreaterThanOrEqual(0, $ms);
+            $this->assertLessThanOrEqual(1000, $ms);
+        }
+
+        $this->assertNotSame(array_fill(0, 9, 1000), $slept, 'the delay is a random part of the cap, not the cap');
+        $this->assertGreaterThan(1, count(array_unique($slept)), 'the delays are not all the same');
+    }
+
+    /**
+     * Every attempt sends the same request
+     * @return void
+     */
+    public function testEveryAttemptSendsTheSameRequest(): void
+    {
+        $transport = new FakeTransport([Responses::make(503, '{"errors":[]}'), Responses::make(0, '', 'timeout'), Responses::make(200, '{"ok":1}')]);
+
+        $this->safeRequest($this->retrying($transport));
+        $calls = $transport->calls;
+
+        $this->assertCount(3, $calls);
+        $this->assertSame($calls[0], $calls[1]);
+        $this->assertSame($calls[0], $calls[2]);
+        $this->assertContains('X-customer-transaction-id: CT-1', $calls[2]['headers']);
+    }
+
+    /**
+     * The refresh of a rejected token does not count as an attempt
+     * @return void
+     */
+    public function testTheRefreshOfARejectedTokenDoesNotCountAsAnAttempt(): void
+    {
+        $auth = StubAuth::make();
+        $transport = new FakeTransport([Responses::make(401, '{"errors":[]}'), Responses::make(503, '{"errors":[]}'), Responses::make(200, '{"ok":"third"}')]);
+
+        $result = $this->safeRequest($this->retrying($transport, 2, 500, 5000, $auth));
+
+        $this->assertSame('third', $result->ok);
+        $this->assertSame([false, true, false], $auth->forceSeen);
+        $this->assertCount(3, $transport->calls);
+        $this->assertCount(1, $this->sleeps);
+
+        $auth = StubAuth::make();
+        $transport = new FakeTransport([Responses::make(503, '{"errors":[]}'), Responses::make(401, '{"errors":[]}'), Responses::make(200, '{"ok":"third"}')]);
+
+        $result = $this->safeRequest($this->retrying($transport, 2, 500, 5000, $auth));
+
+        $this->assertSame('third', $result->ok);
+        $this->assertSame([false, false, true], $auth->forceSeen);
+    }
+
+    /**
+     * A failure to get a token is not retried
+     * @return void
+     */
+    public function testAFailureToGetATokenIsNotRetried(): void
+    {
+        $auth = StubAuth::make();
+        $auth->throwOnToken = new FedexAuthException('token failed', FedexException::EC_UNABLE_TO_AUTHENTICATE, null, 401);
+        $transport = new FakeTransport([], Responses::make(200, '{"ok":1}'));
+
+        try {
+            $this->safeRequest($this->retrying($transport, 3, 500, 5000, $auth));
+            $this->fail('The request had to throw');
+        } catch (FedexAuthException $e) {
+            $this->assertSame([false], $auth->forceSeen);
+            $this->assertCount(0, $transport->calls);
+        }
+    }
+
+    /**
+     * A policy out of range is refused and keeps the previous one
+     * @return void
+     */
+    public function testAPolicyOutOfRangeIsRefusedAndKeepsThePreviousOne(): void
+    {
+        $transport = new FakeTransport([], Responses::make(503, '{"errors":[]}'));
+        $client = $this->retrying($transport, 2, 0, 0);
+
+        foreach ([[0, 0, 0], [11, 0, 0], [-1, 0, 0], [3, -1, 5], [3, 100, 99]] as $arguments) {
+            try {
+                $client->setRetryPolicy(...$arguments);
+                $this->fail('setRetryPolicy(' . implode(', ', $arguments) . ') had to throw');
+            } catch (FedexClientException $e) {
+                $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
+            }
+        }
+
+        try {
+            $this->safeRequest($client);
+            $this->fail('The request had to throw');
+        } catch (FedexClientException $e) {
+            $this->assertCount(2, $transport->calls, 'the policy of two attempts is still the one in use');
+        }
+
+        $this->assertSame($client, $client->setRetryPolicy(10, 0, 0));
+        $this->assertSame($client, $client->setRetryPolicy(1, 0, 0));
+        $this->assertSame($client, $client->setRetryPolicy(2, 7, 7), 'the limits themselves, and a maximum equal to the base, are accepted');
+    }
+
+    /**
+     * The setters return the client
+     * @return void
+     */
+    public function testTheSettersReturnTheClient(): void
+    {
+        $client = $this->client(new FakeTransport());
+
+        $this->assertSame($client, $client->setRetryPolicy(2, 1, 2));
+        $this->assertSame($client, $client->setRetryHooks(null, null));
+    }
 }

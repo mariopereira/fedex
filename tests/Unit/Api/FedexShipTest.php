@@ -1241,4 +1241,36 @@ final class FedexShipTest extends TestCase
         }, $constructor->getParameters()));
         $this->assertSame(\Mariopereira\Fedex\Api\FedexShipSchemas::definitions(), \Mariopereira\Fedex\Api\FedexShipSchemas::definitions());
     }
+
+    /**
+     * Only the operations that do not change data are retried, and only when the client has a retry policy
+     * @dataProvider operationsProvider
+     * @param string $method Name of the method
+     * @param string $label Label of the request
+     * @param string $responseLabel Label of the response
+     * @param string|null $id The id of the shipment, for cancelTag()
+     * @param bool $changes True when the operation changes data in FedEx
+     */
+    public function testOnlyTheOperationsThatDoNotChangeDataAreRetriedWhenTheClientHasARetryPolicy(string $method, string $label, string $responseLabel, ?string $id, bool $changes): void
+    {
+        foreach ([[503, '{"errors":[]}', null], [429, '{"errors":[]}', null], [504, '{"errors":[]}', null], [0, '', 'Operation timed out']] as [$status, $body, $error]) {
+            $transport = new FakeTransport([Responses::make($status, $body, $error)], Responses::make(200, '{"transactionId":"T2"}'));
+            $auth = StubAuth::make();
+            $client = (new FedexClient($auth, 'en_US', 30, 10, $transport))->setRetryPolicy(3, 0, 0);
+            $api = new FedexShip($auth, 'en_US', 30, 10, $client);
+
+            $e = self::thrown(function () use ($api, $method, $id, $label) {
+                self::call($api, $method, $id, self::request($label));
+            });
+
+            if ($changes) {
+                $this->assertInstanceOf(FedexClientException::class, $e, "$method, HTTP $status: it changes data, so it must fail at the first failure");
+                $this->assertCount(1, $transport->calls, "$method, HTTP $status is never repeated");
+            } else {
+                $this->assertNull($e, "$method, HTTP $status: " . self::describe($e));
+                $this->assertCount(2, $transport->calls, "$method, HTTP $status is repeated once");
+                $this->assertSame($transport->calls[0]['body'], $transport->calls[1]['body']);
+            }
+        }
+    }
 }

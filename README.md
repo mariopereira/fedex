@@ -277,6 +277,25 @@ The API classes and `FedexClient` take a timeout and a connect timeout, in secon
 $auth->setTimeouts(20, 5);
 ```
 
+### Retries
+
+Nothing is retried by default, apart from a rejected token (401), which is refreshed once. To retry the transient failures, set a retry policy on the `FedexClient` and pass that client to the API class:
+
+```php
+$client = new FedexClient($auth, 'en_US', 30, 10);
+$client->setRetryPolicy(3, 500, 5000); // total attempts, base delay and longest delay, in milliseconds
+
+$locations = new FedexLocationsSearch($auth, 'en_US', 30, 10, $client);
+```
+
+`setRetryPolicy()` without arguments uses those same values (3 attempts, 500 ms, 5000 ms). The attempts go from 1 (no retry) to 10.
+
+* A request is retried when FedEx answers 429, 503 or 504, or when it could not be completed (network failure, timeout, ...). Any other failure is thrown at once.
+* The wait before the attempt *n* is a random number of milliseconds between 0 and `min(longest delay, base delay * 2^(n-1))`. When the attempts are over, the last failure is thrown as usual.
+* Only the operations that do not change data in FedEx are retried: postal code validation, locations search, address validation, `FedexShip::validate()` and the async results of `FedexShip`. `create()`, `cancel()`, `createTag()` and `cancelTag()` are never retried, because repeating them could create or cancel a shipment twice.
+* The `Retry-After` header of FedEx is not used.
+* To retry your own calls to `FedexClient::request()`, pass `true` as its last argument, and only for requests that are safe to repeat.
+
 ## HTTP transport
 
 Requests are sent with cURL by default (`CurlTransport`). To use another HTTP library, to log the requests, or to test your code without the network, implement `FedexTransport` and pass it to `FedexAuth` and `FedexClient`. Then pass that client to the API class.

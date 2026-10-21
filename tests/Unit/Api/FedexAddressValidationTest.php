@@ -1477,4 +1477,39 @@ final class FedexAddressValidationTest extends TestCase
         $spec = json_decode(file_get_contents(__DIR__ . '/../../../schemas/address-validation.json'), true);
         $this->assertArrayHasKey('/' . FedexAddressValidation::ENDPOINT, $spec['paths']);
     }
+
+    /**
+     * A transient failure is retried when the client has a retry policy, and not otherwise
+     * @return void
+     */
+    public function testATransientFailureIsRetriedOnlyWhenTheClientHasARetryPolicy(): void
+    {
+        foreach ([true, false] as $retries) {
+            $transport = new FakeTransport([Responses::make(503, '{"errors":[]}'), Responses::make(0, '', 'Operation timed out')], Responses::make(200, self::OK_RESPONSE));
+            $auth = StubAuth::make();
+            $client = new FedexClient($auth, 'en_US', 30, 10, $transport);
+
+            if ($retries) {
+                $client->setRetryPolicy(3, 0, 0);
+            }
+
+            $api = new ExposedAddress($auth, 'en_US', 30, 10, $client);
+            $error = null;
+
+            try {
+                $api->validate(self::okAddress());
+            } catch (FedexClientException $e) {
+                $error = $e;
+            }
+
+            if ($retries) {
+                $this->assertNull($error);
+                $this->assertCount(3, $transport->calls);
+            } else {
+                $this->assertInstanceOf(FedexClientException::class, $error);
+                $this->assertSame(503, $error->getStatusCode());
+                $this->assertCount(1, $transport->calls);
+            }
+        }
+    }
 }

@@ -122,13 +122,16 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">20</span>
+    <span class="phpdocumentor-element-found-in__line">22</span>
 
     </aside>
 
-            <p class="phpdocumentor-summary">JSON HTTP client for the FedEx APIs: adds the authorization headers and retries once when the token is rejected</p>
+            <p class="phpdocumentor-summary">JSON HTTP client for the FedEx APIs: adds the authorization headers and retries once when the token is rejected.</p>
 
 
+    <section class="phpdocumentor-description"><p>Optionally (see setRetryPolicy()) it also retries, with exponential backoff, the requests that are marked as safe to
+repeat when FedEx answers 429, 503 or 504 or when the request could not be completed</p>
+</section>
 
 
 
@@ -146,6 +149,27 @@
 
 
 
+<h4 id="toc-constants">
+    Constants
+    <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#toc-constants" class="headerlink"><i class="fas fa-link"></i></a>
+
+</h4>
+<dl class="phpdocumentor-table-of-contents">
+            <dt class="phpdocumentor-table-of-contents__entry -constant -protected">
+    <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#constant_MAX_ATTEMPTS_LIMIT">MAX_ATTEMPTS_LIMIT</a>
+    <span>
+        &nbsp;: int&nbsp;= 10                            </span>
+</dt>
+<dd>Maximum number of attempts that setRetryPolicy() accepts</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -protected">
+    <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#constant_RETRY_STATUSES">RETRY_STATUSES</a>
+    <span>
+        &nbsp;: array&lt;string|int, int&gt;&nbsp;= [429, 503, 504]                            </span>
+</dt>
+<dd>HTTP statuses that are worth retrying: too many requests, service unavailable and gateway timeout</dd>
+
+    </dl>
 
 
 <h4 id="toc-properties">
@@ -162,6 +186,13 @@
 <dd>Authorization object</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
+    <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_baseDelayMs">$baseDelayMs</a>
+    <span>
+                        &nbsp;: int            </span>
+</dt>
+<dd>Delay, in milliseconds, that the backoff starts from</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
     <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_connectTimeout">$connectTimeout</a>
     <span>
                         &nbsp;: int            </span>
@@ -169,11 +200,40 @@
 <dd>Connect timeout, in seconds</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
+    <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_jitter">$jitter</a>
+    <span>
+                        &nbsp;: callable|null            </span>
+</dt>
+<dd>Function that receives a minimum and a maximum and returns an integer between them, null for the default
+(random_int)</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
     <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_locale">$locale</a>
     <span>
                         &nbsp;: string            </span>
 </dt>
 <dd>Locale to use in calls</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
+    <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_maxAttempts">$maxAttempts</a>
+    <span>
+                        &nbsp;: int            </span>
+</dt>
+<dd>Total number of attempts of a request that is safe to repeat (1 means that it is never retried)</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
+    <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_maxDelayMs">$maxDelayMs</a>
+    <span>
+                        &nbsp;: int            </span>
+</dt>
+<dd>Longest delay, in milliseconds, between two attempts</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
+    <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_sleeper">$sleeper</a>
+    <span>
+                        &nbsp;: callable|null            </span>
+</dt>
+<dd>Function that waits for the given number of milliseconds, null for the default (usleep)</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
     <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_timeout">$timeout</a>
@@ -211,12 +271,34 @@
 </dt>
 <dd>Send a JSON request to FedEx&#039;s API</dd>
 
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_setRetryHooks">setRetryHooks()</a>
+    <span>
+                                &nbsp;: <a href="classes/Mariopereira-Fedex-Http-FedexClient.html"><abbr title="\Mariopereira\Fedex\Http\FedexClient">FedexClient</abbr></a>    </span>
+</dt>
+<dd>Replace the functions that wait and that pick the random part of the delay between attempts, so that the
+backoff can be tested without waiting</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_setRetryPolicy">setRetryPolicy()</a>
+    <span>
+                                &nbsp;: <a href="classes/Mariopereira-Fedex-Http-FedexClient.html"><abbr title="\Mariopereira\Fedex\Http\FedexClient">FedexClient</abbr></a>    </span>
+</dt>
+<dd>Enable the retry, with exponential backoff and full jitter, of the requests that are marked as safe to repeat.</dd>
+
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_buildUrl">buildUrl()</a>
     <span>
                                 &nbsp;: string    </span>
 </dt>
 <dd>Generate the url to call</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -protected">
+    <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_isTransient">isTransient()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+<dd>Check if a failure is transient: HTTP 429, 503 or 504, or a request that could not be completed</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_parse">parse()</a>
@@ -239,11 +321,87 @@
 </dt>
 <dd>Call the api, retrying once on auth failure</dd>
 
+            <dt class="phpdocumentor-table-of-contents__entry -method -protected">
+    <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_retryOnTransient">retryOnTransient()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Call the api, repeating the call with exponential backoff while the failure is transient</dd>
+
     </dl>
 
 
 
         
+    <section class="phpdocumentor-constants">
+        <h3 class="phpdocumentor-elements__header" id="constants">
+            Constants
+            <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#constants" class="headerlink"><i class="fas fa-link"></i></a>
+
+        </h3>
+                    <article class="phpdocumentor-element -constant -protected ">
+    <h4 class="phpdocumentor-element__name" id="constant_MAX_ATTEMPTS_LIMIT">
+        MAX_ATTEMPTS_LIMIT
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#constant_MAX_ATTEMPTS_LIMIT" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">64</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Maximum number of attempts that setRetryPolicy() accepts</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type">int</span>
+    <span class="phpdocumentor-signature__name">MAX_ATTEMPTS_LIMIT</span>
+    = <span class="phpdocumentor-signature__default-value">10</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -protected ">
+    <h4 class="phpdocumentor-element__name" id="constant_RETRY_STATUSES">
+        RETRY_STATUSES
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#constant_RETRY_STATUSES" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">58</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">HTTP statuses that are worth retrying: too many requests, service unavailable and gateway timeout</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type">array&lt;string|int, int&gt;</span>
+    <span class="phpdocumentor-signature__name">RETRY_STATUSES</span>
+    = <span class="phpdocumentor-signature__default-value">[429, 503, 504]</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+            </section>
 
         
     <section class="phpdocumentor-properties">
@@ -269,7 +427,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">38</span>
+    <span class="phpdocumentor-element-found-in__line">40</span>
 
     </aside>
 
@@ -297,6 +455,44 @@
             -protected
                                                                     "
 >
+    <h4 class="phpdocumentor-element__name" id="property_baseDelayMs">
+        $baseDelayMs
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_baseDelayMs" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">76</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Delay, in milliseconds, that the backoff starts from</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">protected</span>
+            <span class="phpdocumentor-signature__type">int</span>
+    <span class="phpdocumentor-signature__name">$baseDelayMs</span>
+     = <span class="phpdocumentor-signature__default-value">500</span></code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -protected
+                                                                    "
+>
     <h4 class="phpdocumentor-element__name" id="property_connectTimeout">
         $connectTimeout
         <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_connectTimeout" class="headerlink"><i class="fas fa-link"></i></a>
@@ -307,7 +503,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">32</span>
+    <span class="phpdocumentor-element-found-in__line">34</span>
 
     </aside>
 
@@ -335,6 +531,45 @@
             -protected
                                                                     "
 >
+    <h4 class="phpdocumentor-element__name" id="property_jitter">
+        $jitter
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_jitter" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">95</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Function that receives a minimum and a maximum and returns an integer between them, null for the default
+(random_int)</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">protected</span>
+            <span class="phpdocumentor-signature__type">callable|null</span>
+    <span class="phpdocumentor-signature__name">$jitter</span>
+     = <span class="phpdocumentor-signature__default-value">null</span></code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -protected
+                                                                    "
+>
     <h4 class="phpdocumentor-element__name" id="property_locale">
         $locale
         <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_locale" class="headerlink"><i class="fas fa-link"></i></a>
@@ -345,7 +580,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">44</span>
+    <span class="phpdocumentor-element-found-in__line">46</span>
 
     </aside>
 
@@ -373,6 +608,120 @@
             -protected
                                                                     "
 >
+    <h4 class="phpdocumentor-element__name" id="property_maxAttempts">
+        $maxAttempts
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_maxAttempts" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">70</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Total number of attempts of a request that is safe to repeat (1 means that it is never retried)</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">protected</span>
+            <span class="phpdocumentor-signature__type">int</span>
+    <span class="phpdocumentor-signature__name">$maxAttempts</span>
+     = <span class="phpdocumentor-signature__default-value">1</span></code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -protected
+                                                                    "
+>
+    <h4 class="phpdocumentor-element__name" id="property_maxDelayMs">
+        $maxDelayMs
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_maxDelayMs" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">82</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Longest delay, in milliseconds, between two attempts</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">protected</span>
+            <span class="phpdocumentor-signature__type">int</span>
+    <span class="phpdocumentor-signature__name">$maxDelayMs</span>
+     = <span class="phpdocumentor-signature__default-value">5000</span></code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -protected
+                                                                    "
+>
+    <h4 class="phpdocumentor-element__name" id="property_sleeper">
+        $sleeper
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_sleeper" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">88</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Function that waits for the given number of milliseconds, null for the default (usleep)</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">protected</span>
+            <span class="phpdocumentor-signature__type">callable|null</span>
+    <span class="phpdocumentor-signature__name">$sleeper</span>
+     = <span class="phpdocumentor-signature__default-value">null</span></code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -protected
+                                                                    "
+>
     <h4 class="phpdocumentor-element__name" id="property_timeout">
         $timeout
         <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_timeout" class="headerlink"><i class="fas fa-link"></i></a>
@@ -383,7 +732,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">26</span>
+    <span class="phpdocumentor-element-found-in__line">28</span>
 
     </aside>
 
@@ -421,7 +770,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">50</span>
+    <span class="phpdocumentor-element-found-in__line">52</span>
 
     </aside>
 
@@ -464,7 +813,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">60</span>
+    <span class="phpdocumentor-element-found-in__line">105</span>
 
     </aside>
 
@@ -547,7 +896,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">129</span>
+    <span class="phpdocumentor-element-found-in__line">268</span>
 
     </aside>
 
@@ -555,7 +904,7 @@
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">request</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$method</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$path</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$body</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$query</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">[]</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$headers</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">[]</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">string|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$customerTransactionId</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">request</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$method</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$path</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$body</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$query</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">[]</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$headers</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">[]</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">string|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$customerTransactionId</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">bool&nbsp;</span><span class="phpdocumentor-signature__argument__name">$safeToRetry</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">false</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -617,6 +966,16 @@
 </section>
 
             </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$safeToRetry</span>
+                : <span class="phpdocumentor-argument-list__argument__type">bool</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">false</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>True when repeating the request cannot do any harm (it does not change data in FedEx),
+so that it may be retried according to setRetryPolicy()</p>
+</section>
+
+            </dd>
             </dl>
 
     
@@ -646,6 +1005,158 @@
                     <article
         class="phpdocumentor-element
             -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_setRetryHooks">
+        setRetryHooks()
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_setRetryHooks" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">167</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Replace the functions that wait and that pick the random part of the delay between attempts, so that the
+backoff can be tested without waiting</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">setRetryHooks</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">callable|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$sleeper</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">callable|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$jitter</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/Mariopereira-Fedex-Http-FedexClient.html"><abbr title="\Mariopereira\Fedex\Http\FedexClient">FedexClient</abbr></a></span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$sleeper</span>
+                : <span class="phpdocumentor-argument-list__argument__type">callable|null</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Receives the number of milliseconds to wait. Null restores usleep</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$jitter</span>
+                : <span class="phpdocumentor-argument-list__argument__type">callable|null</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Receives a minimum and a maximum and returns an integer between them. Null
+restores random_int</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type"><a href="classes/Mariopereira-Fedex-Http-FedexClient.html"><abbr title="\Mariopereira\Fedex\Http\FedexClient">FedexClient</abbr></a></span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_setRetryPolicy">
+        setRetryPolicy()
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_setRetryPolicy" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">136</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Enable the retry, with exponential backoff and full jitter, of the requests that are marked as safe to repeat.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">setRetryPolicy</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$maxAttempts</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">3</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$baseDelayMs</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">500</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$maxDelayMs</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">5000</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/Mariopereira-Fedex-Http-FedexClient.html"><abbr title="\Mariopereira\Fedex\Http\FedexClient">FedexClient</abbr></a></span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>They are retried when FedEx answers 429, 503 or 504, or when the request could not be completed (network
+failure, timeout, ...). The delay before the attempt n is a random value between 0 and
+min($maxDelayMs, $baseDelayMs * 2^(n-1)). The refresh of a rejected token (401) is separate and does not count
+as an attempt. Without calling this method nothing is retried</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$maxAttempts</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">3</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Total number of attempts, from 1 (no retry) to 10</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$baseDelayMs</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">500</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Delay in milliseconds that the backoff starts from, 0 or more</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$maxDelayMs</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">5000</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Longest delay in milliseconds, not less than $baseDelayMs</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_setRetryPolicy_tags">
+        Tags
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_setRetryPolicy_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">throws</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><a href="classes/Mariopereira-Fedex-Exception-FedexClientException.html"><abbr title="\Mariopereira\Fedex\Exception\FedexClientException">FedexClientException</abbr></a></span>
+                                                                                        <section class="phpdocumentor-description"><p>When a value is out of range</p>
+</section>
+
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type"><a href="classes/Mariopereira-Fedex-Http-FedexClient.html"><abbr title="\Mariopereira\Fedex\Http\FedexClient">FedexClient</abbr></a></span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
             -protected
                                                         "
 >
@@ -657,7 +1168,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">85</span>
+    <span class="phpdocumentor-element-found-in__line">181</span>
 
     </aside>
 
@@ -709,6 +1220,57 @@
             -protected
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_isTransient">
+        isTransient()
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_isTransient" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">218</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Check if a failure is transient: HTTP 429, 503 or 504, or a request that could not be completed</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+                    <span class="phpdocumentor-signature__name">isTransient</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type"><a href="classes/Mariopereira-Fedex-Exception-FedexClientException.html"><abbr title="\Mariopereira\Fedex\Exception\FedexClientException">FedexClientException</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$ex</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$ex</span>
+                : <span class="phpdocumentor-argument-list__argument__type"><a href="classes/Mariopereira-Fedex-Exception-FedexClientException.html"><abbr title="\Mariopereira\Fedex\Exception\FedexClientException">FedexClientException</abbr></a></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The failure</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -protected
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_parse">
         parse()
         <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_parse" class="headerlink"><i class="fas fa-link"></i></a>
@@ -717,7 +1279,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">230</span>
+    <span class="phpdocumentor-element-found-in__line">378</span>
 
     </aside>
 
@@ -787,7 +1349,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">174</span>
+    <span class="phpdocumentor-element-found-in__line">322</span>
 
     </aside>
 
@@ -897,7 +1459,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">102</span>
+    <span class="phpdocumentor-element-found-in__line">198</span>
 
     </aside>
 
@@ -944,6 +1506,69 @@
     
     
 </article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -protected
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_retryOnTransient">
+        retryOnTransient()
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_retryOnTransient" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">232</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Call the api, repeating the call with exponential backoff while the failure is transient</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+                    <span class="phpdocumentor-signature__name">retryOnTransient</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">callable&nbsp;</span><span class="phpdocumentor-signature__argument__name">$fn</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$fn</span>
+                : <span class="phpdocumentor-argument-list__argument__type">callable</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Callable without parameters that performs the request</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_retryOnTransient_tags">
+        Tags
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_retryOnTransient_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">throws</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><a href="classes/Mariopereira-Fedex-Exception-FedexException.html"><abbr title="\Mariopereira\Fedex\Exception\FedexException">FedexException</abbr></a></span>
+                                                                                        <section class="phpdocumentor-description"><p>The last failure, when the attempts are over or the failure is not transient</p>
+</section>
+
+                                    </dd>
+                        </dl>
+
+        
+    
+    
+</article>
             </section>
 
         
@@ -958,17 +1583,30 @@
             <li class="phpdocumentor-on-this-page-section__title">Table Of Contents</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
+                                        <li><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#toc-constants">Constants</a></li>
                                                             <li><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#toc-properties">Properties</a></li>
                                                             <li><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#toc-methods">Methods</a></li>
                                     </ul>
             </li>
+                            <li class="phpdocumentor-on-this-page-section__title">Constants</li>
+                <li>
+                    <ul class="phpdocumentor-list -clean">
+                                                    <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#constant_MAX_ATTEMPTS_LIMIT">MAX_ATTEMPTS_LIMIT</a></li>
+                                                    <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#constant_RETRY_STATUSES">RETRY_STATUSES</a></li>
+                                            </ul>
+                </li>
             
                             <li class="phpdocumentor-on-this-page-section__title">Properties</li>
                 <li>
                     <ul class="phpdocumentor-list -clean">
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_auth">$auth</a></li>
+                                                    <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_baseDelayMs">$baseDelayMs</a></li>
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_connectTimeout">$connectTimeout</a></li>
+                                                    <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_jitter">$jitter</a></li>
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_locale">$locale</a></li>
+                                                    <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_maxAttempts">$maxAttempts</a></li>
+                                                    <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_maxDelayMs">$maxDelayMs</a></li>
+                                                    <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_sleeper">$sleeper</a></li>
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_timeout">$timeout</a></li>
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#property_transport">$transport</a></li>
                                             </ul>
@@ -979,10 +1617,14 @@
                 <ul class="phpdocumentor-list -clean">
                                             <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method___construct">__construct()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_request">request()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_setRetryHooks">setRetryHooks()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_setRetryPolicy">setRetryPolicy()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_buildUrl">buildUrl()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_isTransient">isTransient()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_parse">parse()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_perform">perform()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_retryOnAuth">retryOnAuth()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_retryOnTransient">retryOnTransient()</a></li>
                                     </ul>
             </li>
                     </ul>

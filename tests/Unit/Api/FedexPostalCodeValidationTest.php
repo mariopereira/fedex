@@ -9,6 +9,7 @@
 namespace Mariopereira\Fedex\Tests\Unit\Api;
 
 use Mariopereira\Fedex\Api\FedexPostalCodeValidation;
+use Mariopereira\Fedex\Exception\FedexClientException;
 use Mariopereira\Fedex\Exception\FedexException;
 use Mariopereira\Fedex\Exception\FedexPostalCodeValidationException;
 use Mariopereira\Fedex\Http\FedexClient;
@@ -827,6 +828,41 @@ final class FedexPostalCodeValidationTest extends TestCase
             $this->assertSame(FedexException::EC_BAD_RESULT_RETURNED, $e->getCode());
             $this->assertCount(1, $e->getErrors());
             $this->assertStringContainsString('alertType', $e->getErrorsAsString());
+        }
+    }
+
+    /**
+     * A transient failure is retried when the client has a retry policy, and not otherwise
+     * @return void
+     */
+    public function testATransientFailureIsRetriedOnlyWhenTheClientHasARetryPolicy(): void
+    {
+        foreach ([true, false] as $retries) {
+            $transport = new FakeTransport([Responses::make(503, '{"errors":[]}'), Responses::make(0, '', 'Operation timed out')], Responses::make(200, self::OK_RESPONSE));
+            $auth = StubAuth::make();
+            $client = new FedexClient($auth, 'en_US', 30, 10, $transport);
+
+            if ($retries) {
+                $client->setRetryPolicy(3, 0, 0);
+            }
+
+            $api = new FedexPostalCodeValidation($auth, 'en_US', 30, 10, 1, 1, 1, $client);
+            $error = null;
+
+            try {
+                $api->validate('FDXG', 'US', 'TN', '38017', self::DATE);
+            } catch (FedexClientException $e) {
+                $error = $e;
+            }
+
+            if ($retries) {
+                $this->assertNull($error);
+                $this->assertCount(3, $transport->calls);
+            } else {
+                $this->assertInstanceOf(FedexClientException::class, $error);
+                $this->assertSame(503, $error->getStatusCode());
+                $this->assertCount(1, $transport->calls);
+            }
         }
     }
 }

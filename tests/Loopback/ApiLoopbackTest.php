@@ -543,4 +543,55 @@ final class ApiLoopbackTest extends LoopbackTestCase
         $this->assertSame(['accountNumber' => ['value' => '000000000'], 'jobId' => '89sxxxxx233ae24ff31xxxxx'], json_decode(self::$server->requests()[1]['body'], true));
         $this->assertSame('/ship/v1/shipments/results', $result->target);
     }
+
+    // ---------------------------------------------------------------- retry with backoff
+
+    /**
+     * A 503 is retried on the wire only for a request that is safe to repeat
+     * @return void
+     */
+    public function testA503IsRetriedOnTheWireOnlyForARequestThatIsSafeToRepeat(): void
+    {
+        [, $client] = self::chain(self::$server->port(), self::$server->port());
+        $client->setRetryPolicy(3, 0, 0);
+
+        $e = self::thrown(function () use ($client) {
+            $client->request('POST', 'status/503', ['a' => 1], [], [], null, true);
+        });
+        $requests = self::$server->requests();
+
+        $this->assertInstanceOf(FedexClientException::class, $e);
+        $this->assertSame(503, $e->getStatusCode());
+        $this->assertSame(['POST /token-ok', 'POST /status/503', 'POST /status/503', 'POST /status/503'], self::$server->seen(), 'one token request and three attempts');
+        $this->assertSame($requests[1]['body'], $requests[3]['body']);
+
+        self::$server->forget();
+
+        $e = self::thrown(function () use ($client) {
+            $client->request('POST', 'status/503', ['a' => 1]);
+        });
+
+        $this->assertInstanceOf(FedexClientException::class, $e);
+        $this->assertSame(['POST /status/503'], self::$server->seen(), 'a request that is not marked as safe is sent once');
+    }
+
+    /**
+     * A refused connection is retried and the token is requested once
+     * @return void
+     */
+    public function testARefusedConnectionIsRetriedAndTheTokenIsRequestedOnce(): void
+    {
+        [, $client, , $apiTransport] = self::chain(self::$closedPort, self::$server->port());
+        $client->setRetryPolicy(3, 0, 0);
+
+        $e = self::thrown(function () use ($client) {
+            $client->request('POST', 'status/200', ['a' => 1], [], [], null, true);
+        });
+
+        $this->assertInstanceOf(FedexClientException::class, $e);
+        $this->assertSame(FedexException::EC_TRANSPORT_ERROR, $e->getCode());
+        $this->assertSame(0, $e->getStatusCode());
+        $this->assertCount(3, $apiTransport->calls);
+        $this->assertSame(['POST /token-ok'], self::$server->seen());
+    }
 }

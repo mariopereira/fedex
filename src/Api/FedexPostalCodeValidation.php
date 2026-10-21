@@ -153,7 +153,7 @@ class FedexPostalCodeValidation extends AbstractFedexApi
 
         $customerTransactionId = FedexUtils::uuidV4();
 
-        $response = $this->client->request('POST', self::ENDPOINT, $body, [], [], $customerTransactionId);
+        $response = $this->client->request('POST', self::ENDPOINT, $body, [], [], $customerTransactionId, true);
         $data = $this->validateAndParse($response);
 
         return $data;

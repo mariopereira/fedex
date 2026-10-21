@@ -449,7 +449,7 @@ class FedexShip extends AbstractFedexApi
             );
         }
 
-        $response = $this->client->request($method, $endpoint, $request, [], [], FedexUtils::uuidV4());
+        $response = $this->client->request($method, $endpoint, $request, [], [], FedexUtils::uuidV4(), !$changesData);
 
         return $this->validateAndParse($response, $responseSchema, $changesData);
     }

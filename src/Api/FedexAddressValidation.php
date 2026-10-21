@@ -123,7 +123,7 @@ class FedexAddressValidation extends AbstractFedexApi
 
         $customerTransactionId = FedexUtils::uuidV4();
 
-        $response = $this->client->request('POST', self::ENDPOINT, $request, [], [], $customerTransactionId);
+        $response = $this->client->request('POST', self::ENDPOINT, $request, [], [], $customerTransactionId, true);
 
         return $this->validateAndParse($response);
     }

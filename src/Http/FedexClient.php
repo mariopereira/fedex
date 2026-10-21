@@ -15,7 +15,9 @@ use Mariopereira\Fedex\Auth\FedexAuth;
 use Mariopereira\Fedex\Misc\FedexUtils;
 
 /**
- * JSON HTTP client for the FedEx APIs: adds the authorization headers and retries once when the token is rejected
+ * JSON HTTP client for the FedEx APIs: adds the authorization headers and retries once when the token is rejected.
+ * Optionally (see setRetryPolicy()) it also retries, with exponential backoff, the requests that are marked as safe to
+ * repeat when FedEx answers 429, 503 or 504 or when the request could not be completed
  */
 class FedexClient
 {
@@ -50,6 +52,49 @@ class FedexClient
     protected FedexTransport $transport;
 
     /**
+     * HTTP statuses that are worth retrying: too many requests, service unavailable and gateway timeout
+     * @var int[]
+     */
+    protected const RETRY_STATUSES = [429, 503, 504];
+
+    /**
+     * Maximum number of attempts that setRetryPolicy() accepts
+     * @var int
+     */
+    protected const MAX_ATTEMPTS_LIMIT = 10;
+
+    /**
+     * Total number of attempts of a request that is safe to repeat (1 means that it is never retried)
+     * @var int
+     */
+    protected int $maxAttempts = 1;
+
+    /**
+     * Delay, in milliseconds, that the backoff starts from
+     * @var int
+     */
+    protected int $baseDelayMs = 500;
+
+    /**
+     * Longest delay, in milliseconds, between two attempts
+     * @var int
+     */
+    protected int $maxDelayMs = 5000;
+
+    /**
+     * Function that waits for the given number of milliseconds, null for the default (usleep)
+     * @var callable|null
+     */
+    protected $sleeper = null;
+
+    /**
+     * Function that receives a minimum and a maximum and returns an integer between them, null for the default
+     * (random_int)
+     * @var callable|null
+     */
+    protected $jitter = null;
+
+    /**
      * Initialize the object
      * @param FedexAuth $auth Fedex Authorization class, to fetch tokens
      * @param string $locale Locale to use (defaults to en_US)
@@ -74,6 +119,57 @@ class FedexClient
         if (empty($this->locale)) {
             $this->locale = 'en_US';
         }
+    }
+
+    /**
+     * Enable the retry, with exponential backoff and full jitter, of the requests that are marked as safe to repeat.
+     * They are retried when FedEx answers 429, 503 or 504, or when the request could not be completed (network
+     * failure, timeout, ...). The delay before the attempt n is a random value between 0 and
+     * min($maxDelayMs, $baseDelayMs * 2^(n-1)). The refresh of a rejected token (401) is separate and does not count
+     * as an attempt. Without calling this method nothing is retried
+     * @param int $maxAttempts Total number of attempts, from 1 (no retry) to 10
+     * @param int $baseDelayMs Delay in milliseconds that the backoff starts from, 0 or more
+     * @param int $maxDelayMs Longest delay in milliseconds, not less than $baseDelayMs
+     * @return FedexClient
+     * @throws FedexClientException When a value is out of range
+     */
+    public function setRetryPolicy(int $maxAttempts = 3, int $baseDelayMs = 500, int $maxDelayMs = 5000) : FedexClient
+    {
+        if (($maxAttempts < 1) || ($maxAttempts > self::MAX_ATTEMPTS_LIMIT)) {
+            throw new FedexClientException(
+                'The number of attempts must be between 1 and ' . self::MAX_ATTEMPTS_LIMIT,
+                FedexException::EC_BAD_PARAMETER
+            );
+        }
+
+        if (($baseDelayMs < 0) || ($maxDelayMs < $baseDelayMs)) {
+            throw new FedexClientException(
+                'The delays must not be negative and the maximum must not be less than the base delay',
+                FedexException::EC_BAD_PARAMETER
+            );
+        }
+
+        $this->maxAttempts = $maxAttempts;
+        $this->baseDelayMs = $baseDelayMs;
+        $this->maxDelayMs = $maxDelayMs;
+
+        return $this;
+    }
+
+    /**
+     * Replace the functions that wait and that pick the random part of the delay between attempts, so that the
+     * backoff can be tested without waiting
+     * @param callable|null $sleeper Receives the number of milliseconds to wait. Null restores usleep
+     * @param callable|null $jitter Receives a minimum and a maximum and returns an integer between them. Null
+     * restores random_int
+     * @return FedexClient
+     */
+    public function setRetryHooks(?callable $sleeper, ?callable $jitter) : FedexClient
+    {
+        $this->sleeper = $sleeper;
+        $this->jitter = $jitter;
+
+        return $this;
     }
 
     /**
@@ -115,6 +211,47 @@ class FedexClient
     }
 
     /**
+     * Check if a failure is transient: HTTP 429, 503 or 504, or a request that could not be completed
+     * @param FedexClientException $ex The failure
+     * @return bool
+     */
+    protected function isTransient(FedexClientException $ex) : bool
+    {
+        $status = $ex->getStatusCode();
+
+        return in_array($status, self::RETRY_STATUSES, true)
+            || ((0 === $status) && (FedexException::EC_TRANSPORT_ERROR === $ex->getCode()));
+    }
+
+    /**
+     * Call the api, repeating the call with exponential backoff while the failure is transient
+     * @param callable $fn Callable without parameters that performs the request
+     * @return mixed
+     * @throws FedexException The last failure, when the attempts are over or the failure is not transient
+     */
+    protected function retryOnTransient(callable $fn)
+    {
+        for ($attempt = 1; ; $attempt++) {
+            try {
+                return $fn();
+            } catch (FedexClientException $ex) {
+                if (($attempt >= $this->maxAttempts) || !$this->isTransient($ex)) {
+                    throw $ex;
+                }
+            }
+
+            $cap = (int) min($this->maxDelayMs, $this->baseDelayMs * (2 ** ($attempt - 1)));
+            $delay = $this->jitter ? (int) ($this->jitter)(0, $cap) : random_int(0, $cap);
+
+            if ($this->sleeper) {
+                ($this->sleeper)($delay);
+            } else {
+                usleep($delay * 1000);
+            }
+        }
+    }
+
+    /**
      * Send a JSON request to FedEx's API
      * @param string $method GET, POST, ...
      * @param string $path Endpoint to call
@@ -122,6 +259,8 @@ class FedexClient
      * @param array $query Request url parameters
      * @param array $headers Headers to send
      * @param string|null $customerTransactionId Customer transaction id to send
+     * @param bool $safeToRetry True when repeating the request cannot do any harm (it does not change data in FedEx),
+     * so that it may be retried according to setRetryPolicy()
      * @return mixed
      * @throws FedexClientException
      * @throws FedexAuthException
@@ -132,7 +271,8 @@ class FedexClient
         $body = null,
         array $query = [],
         array $headers = [],
-        ?string $customerTransactionId = null
+        ?string $customerTransactionId = null,
+        bool $safeToRetry = false
     )
     {
         $url = $this->buildUrl($path, $query);
@@ -154,9 +294,17 @@ class FedexClient
             $headers
         );
 
-        return $this->retryOnAuth(function (bool $refresh) use ($method, $url, $headers, $postFields, $customerTransactionId) {
-            return $this->perform($method, $url, $headers, $postFields, $refresh, $customerTransactionId);
-        });
+        $call = function () use ($method, $url, $headers, $postFields, $customerTransactionId) {
+            return $this->retryOnAuth(function (bool $refresh) use ($method, $url, $headers, $postFields, $customerTransactionId) {
+                return $this->perform($method, $url, $headers, $postFields, $refresh, $customerTransactionId);
+            });
+        };
+
+        if (!$safeToRetry || ($this->maxAttempts < 2)) {
+            return $call();
+        }
+
+        return $this->retryOnTransient($call);
     }
 
     /**
