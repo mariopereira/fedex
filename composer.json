@@ -20,11 +20,23 @@
         "ext-json": "*"
     },
     "require-dev": {
-        "phpdocumentor/shim": "^3.10"
+        "phpdocumentor/shim": "^3.10",
+        "phpunit/phpunit": "^9.6"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Mariopereira\\Fedex\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
     },
     "config": {
         "allow-plugins": {
             "phpdocumentor/shim": true
+        },
+        "platform": {
+            "php": "7.4.0"
         }
     }
 }

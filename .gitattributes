@@ -6,4 +6,6 @@
 /docs/ export-ignore
 /fedex.code-workspace export-ignore
 /nbproject/ export-ignore
+/phpunit.xml.dist export-ignore
 /schemas/ export-ignore
+/tests/ export-ignore

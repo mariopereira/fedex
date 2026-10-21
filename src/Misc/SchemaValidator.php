@@ -98,7 +98,7 @@ class SchemaValidator
      */
     public function define(string $name, $schema): self
     {
-        if (!preg_match('/^[A-Za-z_]\w*$/', $name)) {
+        if (!preg_match('/^[A-Za-z_]\w*$/D', $name)) {
             throw new \InvalidArgumentException("Invalid definition name '{$name}'");
         }
 

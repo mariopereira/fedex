@@ -1,0 +1,546 @@
+<?php
+/**
+ * PHP implementation of FedEx API's
+ * @author Mário Pereira <bin.to.hex@gmail.com>
+ * @package mariopereira/fedex
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.htmlURL GPL-3.0-or-later
+ */
+
+namespace Mariopereira\Fedex\Tests\Loopback;
+
+use Mariopereira\Fedex\Api\FedexAddressValidation;
+use Mariopereira\Fedex\Api\FedexLocationsSearch;
+use Mariopereira\Fedex\Api\FedexShip;
+use Mariopereira\Fedex\Exception\FedexAddressValidationException;
+use Mariopereira\Fedex\Exception\FedexAuthException;
+use Mariopereira\Fedex\Exception\FedexClientException;
+use Mariopereira\Fedex\Exception\FedexException;
+use Mariopereira\Fedex\Exception\FedexLocationsSearchException;
+use Mariopereira\Fedex\Exception\FedexShipException;
+use Mariopereira\Fedex\Tests\Support\LoopbackServer;
+use Mariopereira\Fedex\Tests\Support\LoopbackTestCase;
+use Mariopereira\Fedex\Tests\Support\ShipSpec;
+
+/**
+ * Tests of the Locations search, the Address validation and the Ship API with the real cURL, the real FedexAuth and the
+ * real FedexClient, against the throwaway server on 127.0.0.1. The server answers with an echo of the request, which the
+ * lenient response schemas accept
+ *
+ * @group loopback
+ */
+final class ApiLoopbackTest extends LoopbackTestCase
+{
+    private const UUID_HEADER = '/^X-customer-transaction-id: [0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/';
+
+    /**
+     * A valid address
+     * @return array
+     */
+    private static function address(): array
+    {
+        return ['streetLines' => ['7372 PARKRIDGE BLVD', 'APT 286'], 'city' => 'IRVING', 'stateOrProvinceCode' => 'TX', 'postalCode' => '75063-8659', 'countryCode' => 'US'];
+    }
+
+    /**
+     * Make an API class over the real transports
+     * @param string $class The class
+     * @param int $apiPort The port for the API calls
+     * @param string $tokenRoute The route that stands for the token url
+     * @return object
+     */
+    private static function api(string $class, int $apiPort, string $tokenRoute = '/token-ok')
+    {
+        [$auth, $client] = self::chain($apiPort, self::$server->port(), $tokenRoute);
+
+        return new $class($auth, 'pt_PT', 30, 10, $client);
+    }
+
+    // ---------------------------------------------------------------- locations search
+
+    /**
+     * Search by coordinates on the wire
+     * @return void
+     */
+    public function testSearchByCoordinatesOnTheWire(): void
+    {
+        $locations = self::api(FedexLocationsSearch::class, self::$server->port());
+
+        $result = $locations->searchByCoordinates(35.1495, -90.049, 'US', ['locationsSummaryRequestControlParameters' => ['maxResults' => 5], 'locationTypes' => ['FEDEX_OFFICE']]);
+        $requests = self::$server->requests();
+        $headers = LoopbackServer::headerLines($requests[1]);
+
+        $this->assertSame(['POST /token-ok', 'POST /location/v1/locations'], self::$server->seen());
+        $this->assertContains('Authorization: Bearer TOK', $headers);
+        $this->assertContains('X-locale: pt_PT', $headers);
+        $this->assertContains('Content-Type: application/json', $headers);
+        $this->assertContains('Accept: application/json', $headers);
+        $this->assertNotEmpty(preg_grep(self::UUID_HEADER, $headers));
+        $this->assertSame(
+            ['locationsSummaryRequestControlParameters' => ['maxResults' => 5], 'locationTypes' => ['FEDEX_OFFICE'], 'locationSearchCriterion' => 'GEOGRAPHIC_COORDINATES', 'location' => ['address' => ['countryCode' => 'US'], 'longLat' => ['latitude' => '35.1495', 'longitude' => '-90.049']]],
+            json_decode($requests[1]['body'], true),
+            'the criterion, the coordinates as strings, the country and the options'
+        );
+        $this->assertContains('Content-Length: ' . strlen($requests[1]['body']), $headers);
+        $this->assertInstanceOf(\stdClass::class, $result);
+        $this->assertSame('POST', $result->method);
+        $this->assertSame('/location/v1/locations', $result->target);
+    }
+
+    /**
+     * Two searches make one token request
+     * @return void
+     */
+    public function testTwoSearchesMakeOneTokenRequest(): void
+    {
+        $locations = self::api(FedexLocationsSearch::class, self::$server->port());
+
+        $locations->searchByAddress(['postalCode' => '38017', 'countryCode' => 'US']);
+        $locations->searchByPhoneNumber('9015551234', 'US');
+
+        $this->assertSame(['POST /token-ok', 'POST /location/v1/locations', 'POST /location/v1/locations'], self::$server->seen());
+    }
+
+    /**
+     * A request made with new request sends only what was filled in
+     * @return void
+     */
+    public function testARequestMadeWithNewRequestSendsOnlyWhatWasFilledIn(): void
+    {
+        $locations = self::api(FedexLocationsSearch::class, self::$server->port());
+        $request = FedexLocationsSearch::newRequest();
+        $request['location']['address']['city'] = 'Memphis';
+        $request['location']['address']['countryCode'] = 'US';
+        $request['sameState'] = false;
+        $request['locationCapabilities'][] = ['carrierCode' => 'FDXE', 'transferOfPossessionType' => 'DROPOFF'];
+
+        $locations->search($request);
+
+        $this->assertSame(
+            ['location' => ['address' => ['city' => 'Memphis', 'countryCode' => 'US']], 'sameState' => false, 'locationCapabilities' => [['carrierCode' => 'FDXE', 'transferOfPossessionType' => 'DROPOFF']]],
+            json_decode(self::$server->requests()[1]['body'], true)
+        );
+    }
+
+    /**
+     * An invalid search never reaches the network not even the token request
+     * @return void
+     */
+    public function testAnInvalidSearchNeverReachesTheNetworkNotEvenTheTokenRequest(): void
+    {
+        $locations = self::api(FedexLocationsSearch::class, self::$server->port());
+
+        $e = self::thrown(function () use ($locations) {
+            $locations->search(['location' => ['address' => ['countryCode' => 'US']]]);
+        });
+
+        $this->assertInstanceOf(FedexLocationsSearchException::class, $e);
+        $this->assertSame(FedexException::EC_MISSING_PARAMETER, $e->getCode());
+        $this->assertSame([], self::$server->seen());
+    }
+
+    /**
+     * A search with bad credentials makes one token request and no search
+     * @return void
+     */
+    public function testASearchWithBadCredentialsMakesOneTokenRequestAndNoSearch(): void
+    {
+        $locations = self::api(FedexLocationsSearch::class, self::$server->port(), '/token-401');
+
+        $e = self::thrown(function () use ($locations) {
+            $locations->searchByAddress(['postalCode' => '38017', 'countryCode' => 'US']);
+        });
+
+        $this->assertInstanceOf(FedexAuthException::class, $e);
+        $this->assertSame(FedexException::EC_UNABLE_TO_AUTHENTICATE, $e->getCode());
+        $this->assertSame(['POST /token-401'], self::$server->seen());
+    }
+
+    /**
+     * A search when the connection is refused
+     * @return void
+     */
+    public function testASearchWhenTheConnectionIsRefused(): void
+    {
+        $locations = self::api(FedexLocationsSearch::class, self::$closedPort);
+
+        $e = self::thrown(function () use ($locations) {
+            $locations->searchByAddress(['postalCode' => '38017', 'countryCode' => 'US']);
+        });
+
+        $this->assertInstanceOf(FedexClientException::class, $e);
+        $this->assertStringStartsWith('Transport error: ', $e->getMessage());
+        $this->assertSame(FedexException::EC_TRANSPORT_ERROR, $e->getCode());
+        $this->assertSame(0, $e->getStatusCode());
+    }
+
+    // ---------------------------------------------------------------- address validation
+
+    /**
+     * Validate an address on the wire
+     * @return void
+     */
+    public function testValidateAnAddressOnTheWire(): void
+    {
+        $validation = self::api(FedexAddressValidation::class, self::$server->port());
+
+        $result = $validation->validate(self::address(), ['validateAddressControlParameters' => ['includeResolutionTokens' => true]]);
+        $requests = self::$server->requests();
+        $headers = LoopbackServer::headerLines($requests[1]);
+
+        $this->assertSame(['POST /token-ok', 'POST /address/v1/addresses/resolve'], self::$server->seen());
+        $this->assertContains('Authorization: Bearer TOK', $headers);
+        $this->assertContains('X-locale: pt_PT', $headers);
+        $this->assertContains('Content-Type: application/json', $headers);
+        $this->assertContains('Accept: application/json', $headers);
+        $this->assertNotEmpty(preg_grep(self::UUID_HEADER, $headers));
+        $this->assertSame(['validateAddressControlParameters' => ['includeResolutionTokens' => true], 'addressesToValidate' => [['address' => self::address()]]], json_decode($requests[1]['body'], true));
+        $this->assertContains('Content-Length: ' . strlen($requests[1]['body']), $headers);
+        $this->assertSame('POST', $result->method);
+        $this->assertSame('/address/v1/addresses/resolve', $result->target);
+    }
+
+    /**
+     * Several addresses and another call make one token request
+     * @return void
+     */
+    public function testSeveralAddressesAndAnotherCallMakeOneTokenRequest(): void
+    {
+        $validation = self::api(FedexAddressValidation::class, self::$server->port());
+        $second = ['streetLines' => ['24 Grosvenor Square'], 'city' => 'London', 'postalCode' => 'W1A 2LQ', 'countryCode' => 'GB'];
+        $third = (object) ['streetLines' => ['Via Vittorio Veneto, 121'], 'city' => 'Roma', 'postalCode' => 187, 'countryCode' => 'IT'];
+
+        $validation->validateArray([self::address(), $second, $third]);
+        $validation->validate(self::address());
+        $body = json_decode(self::$server->requests()[1]['body'], true);
+
+        $this->assertSame(['POST /token-ok', 'POST /address/v1/addresses/resolve', 'POST /address/v1/addresses/resolve'], self::$server->seen());
+        $this->assertCount(3, $body['addressesToValidate']);
+        $this->assertSame('GB', $body['addressesToValidate'][1]['address']['countryCode']);
+        $this->assertSame(187, $body['addressesToValidate'][2]['address']['postalCode'], 'the Italian postal code as an integer');
+    }
+
+    /**
+     * A request made with new request and new address
+     * @return void
+     */
+    public function testARequestMadeWithNewRequestAndNewAddress(): void
+    {
+        $validation = self::api(FedexAddressValidation::class, self::$server->port());
+        $request = FedexAddressValidation::newRequest();
+        $item = FedexAddressValidation::newAddress();
+        $item['address']['streetLines'][] = '7372 PARKRIDGE BLVD';
+        $item['address']['city'] = 'IRVING';
+        $item['address']['postalCode'] = '75063-8659';
+        $item['clientReferenceId'] = 'order-123';
+        $request['addressesToValidate'][] = $item;
+        $request['inEffectAsOfTimestamp'] = '2019-09-06';
+
+        $validation->resolve($request);
+
+        $this->assertSame(
+            ['inEffectAsOfTimestamp' => '2019-09-06', 'addressesToValidate' => [['address' => ['streetLines' => ['7372 PARKRIDGE BLVD'], 'city' => 'IRVING', 'postalCode' => '75063-8659'], 'clientReferenceId' => 'order-123']]],
+            json_decode(self::$server->requests()[1]['body'], true)
+        );
+    }
+
+    /**
+     * An invalid address never reaches the network not even the token request
+     * @return void
+     */
+    public function testAnInvalidAddressNeverReachesTheNetworkNotEvenTheTokenRequest(): void
+    {
+        $validation = self::api(FedexAddressValidation::class, self::$server->port());
+
+        $e = self::thrown(function () use ($validation) {
+            $validation->validate(['streetLines' => ['a'], 'postalCode' => '1']);
+        });
+
+        $this->assertInstanceOf(FedexAddressValidationException::class, $e);
+        $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
+        $this->assertSame([], self::$server->seen());
+    }
+
+    /**
+     * One hundred and one addresses are refused and one hundred go in one request
+     * @return void
+     */
+    public function testOneHundredAndOneAddressesAreRefusedAndOneHundredGoInOneRequest(): void
+    {
+        $validation = self::api(FedexAddressValidation::class, self::$server->port());
+
+        $e = self::thrown(function () use ($validation) {
+            $validation->validateArray(array_fill(0, 101, self::address()));
+        });
+
+        $this->assertInstanceOf(FedexAddressValidationException::class, $e);
+        $this->assertSame([], self::$server->seen());
+
+        $validation->validateArray(array_fill(0, 100, self::address()));
+
+        $this->assertSame(['POST /token-ok', 'POST /address/v1/addresses/resolve'], self::$server->seen());
+        $this->assertCount(100, json_decode(self::$server->requests()[1]['body'], true)['addressesToValidate']);
+    }
+
+    /**
+     * Address validation with bad credentials and with a refused connection
+     * @return void
+     */
+    public function testAddressValidationWithBadCredentialsAndWithARefusedConnection(): void
+    {
+        $validation = self::api(FedexAddressValidation::class, self::$server->port(), '/token-401');
+
+        $e = self::thrown(function () use ($validation) {
+            $validation->validate(self::address());
+        });
+
+        $this->assertInstanceOf(FedexAuthException::class, $e);
+        $this->assertSame(FedexException::EC_UNABLE_TO_AUTHENTICATE, $e->getCode());
+        $this->assertSame(['POST /token-401'], self::$server->seen());
+
+        $validation = self::api(FedexAddressValidation::class, self::$closedPort);
+
+        $e = self::thrown(function () use ($validation) {
+            $validation->validate(self::address());
+        });
+
+        $this->assertInstanceOf(FedexClientException::class, $e);
+        $this->assertStringStartsWith('Transport error: ', $e->getMessage());
+        $this->assertSame(FedexException::EC_TRANSPORT_ERROR, $e->getCode());
+        $this->assertSame(0, $e->getStatusCode());
+    }
+
+    // ---------------------------------------------------------------- the Ship API
+
+    /**
+     * A request generated from the spec
+     * @param string $label A key of ShipSpec::ROOTS ending in .request
+     * @return array
+     */
+    private static function request(string $label): array
+    {
+        return ShipSpec::instance($label)[0];
+    }
+
+    /**
+     * Create a shipment on the wire
+     * @return void
+     */
+    public function testCreateAShipmentOnTheWire(): void
+    {
+        $ship = self::api(FedexShip::class, self::$server->port());
+        $request = self::request('create.request');
+
+        $result = $ship->create($request);
+        $requests = self::$server->requests();
+        $headers = LoopbackServer::headerLines($requests[1]);
+
+        $this->assertSame(['POST /token-ok', 'POST /ship/v1/shipments'], self::$server->seen());
+        $this->assertContains('Authorization: Bearer TOK', $headers);
+        $this->assertContains('X-locale: pt_PT', $headers);
+        $this->assertContains('Content-Type: application/json', $headers);
+        $this->assertContains('Accept: application/json', $headers);
+        $this->assertNotEmpty(preg_grep(self::UUID_HEADER, $headers));
+        $this->assertSame(json_decode(json_encode($request), true), json_decode($requests[1]['body'], true));
+        $this->assertContains('Content-Length: ' . strlen($requests[1]['body']), $headers);
+        $this->assertSame('POST', $result->method);
+        $this->assertSame('/ship/v1/shipments', $result->target);
+    }
+
+    /**
+     * Validate a shipment is a post to its own path
+     * @return void
+     */
+    public function testValidateAShipmentIsAPostToItsOwnPath(): void
+    {
+        $ship = self::api(FedexShip::class, self::$server->port());
+
+        $result = $ship->validate(self::request('validate.request'));
+
+        $this->assertSame(['POST /token-ok', 'POST /ship/v1/shipments/packages/validate'], self::$server->seen());
+        $this->assertSame('/ship/v1/shipments/packages/validate', $result->target);
+    }
+
+    /**
+     * Cancel by tracking number is a real put with its body and length
+     * @return void
+     */
+    public function testCancelByTrackingNumberIsARealPutWithItsBodyAndLength(): void
+    {
+        $ship = self::api(FedexShip::class, self::$server->port());
+
+        $result = $ship->cancelByTrackingNumber('000000000', '794953555571', ['deletionControl' => 'DELETE_ALL_PACKAGES']);
+        $requests = self::$server->requests();
+        $body = json_decode($requests[1]['body'], true);
+        ksort($body);
+
+        $this->assertSame(['POST /token-ok', 'PUT /ship/v1/shipments/cancel'], self::$server->seen(), 'the token request is a POST, the cancellation a PUT');
+        $this->assertSame(['accountNumber' => ['value' => '000000000'], 'deletionControl' => 'DELETE_ALL_PACKAGES', 'trackingNumber' => '794953555571'], $body);
+        $this->assertContains('Content-Length: ' . strlen($requests[1]['body']), LoopbackServer::headerLines($requests[1]));
+        $this->assertContains('Content-Type: application/json', LoopbackServer::headerLines($requests[1]));
+        $this->assertSame('PUT', $result->method);
+        $this->assertSame('/ship/v1/shipments/cancel', $result->target);
+    }
+
+    /**
+     * Two operations with one object make one token request
+     * @return void
+     */
+    public function testTwoOperationsWithOneObjectMakeOneTokenRequest(): void
+    {
+        $ship = self::api(FedexShip::class, self::$server->port());
+
+        $ship->validate(self::request('validate.request'));
+        $ship->cancelByTrackingNumber('000000000', '794953555571');
+
+        $this->assertSame(['POST /token-ok', 'POST /ship/v1/shipments/packages/validate', 'PUT /ship/v1/shipments/cancel'], self::$server->seen());
+    }
+
+    /**
+     * An invalid shipment request never reaches the network not even the token request
+     * @return void
+     */
+    public function testAnInvalidShipmentRequestNeverReachesTheNetworkNotEvenTheTokenRequest(): void
+    {
+        $ship = self::api(FedexShip::class, self::$server->port());
+        $request = self::request('create.request');
+        $request['requestedShipment']['serviceType'] = 'NOT_A_SERVICE_NEEDED_TO_FAIL';
+        $request['bogus'] = 1;
+
+        $e = self::thrown(function () use ($ship, $request) {
+            $ship->create($request);
+        });
+
+        $this->assertInstanceOf(FedexShipException::class, $e);
+        $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
+        $this->assertSame([], self::$server->seen());
+    }
+
+    /**
+     * A shipment with bad credentials and with a refused connection
+     * @return void
+     */
+    public function testAShipmentWithBadCredentialsAndWithARefusedConnection(): void
+    {
+        $ship = self::api(FedexShip::class, self::$server->port(), '/token-401');
+
+        $e = self::thrown(function () use ($ship) {
+            $ship->create(self::request('create.request'));
+        });
+
+        $this->assertInstanceOf(FedexAuthException::class, $e);
+        $this->assertSame(FedexException::EC_UNABLE_TO_AUTHENTICATE, $e->getCode());
+        $this->assertSame(['POST /token-401'], self::$server->seen(), 'one token request and no shipment request');
+
+        $ship = self::api(FedexShip::class, self::$closedPort);
+
+        $e = self::thrown(function () use ($ship) {
+            $ship->create(self::request('create.request'));
+        });
+
+        $this->assertInstanceOf(FedexClientException::class, $e);
+        $this->assertStringStartsWith('Transport error: ', $e->getMessage());
+        $this->assertSame(FedexException::EC_TRANSPORT_ERROR, $e->getCode());
+        $this->assertSame(0, $e->getStatusCode());
+    }
+
+    /**
+     * Create a tag is a post to the tag path
+     * @return void
+     */
+    public function testCreateATagIsAPostToTheTagPath(): void
+    {
+        $ship = self::api(FedexShip::class, self::$server->port());
+
+        $result = $ship->createTag(self::request('createtag.request'));
+
+        $this->assertSame(['POST /token-ok', 'POST /ship/v1/shipments/tag'], self::$server->seen());
+        $this->assertSame('/ship/v1/shipments/tag', $result->target);
+    }
+
+    /**
+     * Cancel a tag is a real put with the shipment ID in the path
+     * @return void
+     */
+    public function testCancelATagIsARealPutWithTheShipmentIdInThePath(): void
+    {
+        $ship = self::api(FedexShip::class, self::$server->port());
+        $request = self::request('canceltag.request');
+
+        $result = $ship->cancelTag('794953555571', $request);
+        $requests = self::$server->requests();
+
+        $this->assertSame(['POST /token-ok', 'PUT /ship/v1/shipments/tag/cancel/794953555571'], self::$server->seen());
+        $this->assertSame(json_decode(json_encode($request), true), json_decode($requests[1]['body'], true));
+        $this->assertContains('Content-Length: ' . strlen($requests[1]['body']), LoopbackServer::headerLines($requests[1]));
+        $this->assertSame('PUT', $result->method);
+    }
+
+    /**
+     * @dataProvider shipmentIdsProvider
+     * @param string $id The id of the shipment
+     * @param string $encoded How a real cURL sends it in the path
+     */
+    public function testTheIdOfTheShipmentReachesTheServerEncodedInThePath(string $id, string $encoded): void
+    {
+        $ship = self::api(FedexShip::class, self::$server->port());
+
+        $ship->cancelTag($id, self::request('canceltag.request'));
+
+        $this->assertSame(['POST /token-ok', 'PUT /ship/v1/shipments/tag/cancel/' . $encoded], self::$server->seen());
+    }
+
+    /**
+     * The cases of testTheIdOfTheShipmentReachesTheServerEncodedInThePath(): the ID of the shipment reaches the server encoded in the path
+     * @return array
+     */
+    public function shipmentIdsProvider(): array
+    {
+        return [
+            'a slash and a space' => ['a/b c', 'a%2Fb%20c'],
+            'accents' => ['ação', 'a%C3%A7%C3%A3o'],
+            'a query and a fragment' => ['x?y=1#z', 'x%3Fy%3D1%23z'],
+            'a percent sign' => ['100%', '100%25'],
+            'an encoded dot, encoded again' => ['%2E%2E', '%252E%252E'],
+        ];
+    }
+
+    /**
+     * @dataProvider dotIdsProvider
+     * @param string $id An id that cURL would remove from the path
+     */
+    public function testAnIdThatCurlWouldTurnIntoAnotherEndpointIsRefusedAndNothingReachesTheServer(string $id): void
+    {
+        $ship = self::api(FedexShip::class, self::$server->port());
+
+        $e = self::thrown(function () use ($ship, $id) {
+            $ship->cancelTag($id, self::request('canceltag.request'));
+        });
+
+        $this->assertInstanceOf(FedexShipException::class, $e);
+        $this->assertSame([], self::$server->seen());
+    }
+
+    /**
+     * The cases of testAnIdThatCurlWouldTurnIntoAnotherEndpointIsRefusedAndNothingReachesTheServer(): an ID that cURL would turn into another endpoint is refused and nothing reaches the server
+     * @return array
+     */
+    public function dotIdsProvider(): array
+    {
+        return [['..'], ['.']];
+    }
+
+    /**
+     * The async results are a post with the account and the job ID
+     * @return void
+     */
+    public function testTheAsyncResultsAreAPostWithTheAccountAndTheJobId(): void
+    {
+        $ship = self::api(FedexShip::class, self::$server->port());
+
+        $result = $ship->getAsyncResultsByJobId('000000000', '89sxxxxx233ae24ff31xxxxx');
+
+        $this->assertSame(['POST /token-ok', 'POST /ship/v1/shipments/results'], self::$server->seen());
+        $this->assertSame(['accountNumber' => ['value' => '000000000'], 'jobId' => '89sxxxxx233ae24ff31xxxxx'], json_decode(self::$server->requests()[1]['body'], true));
+        $this->assertSame('/ship/v1/shipments/results', $result->target);
+    }
+}

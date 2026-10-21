@@ -344,6 +344,9 @@ They provide `getStatusCode()`, `getTransactionId()`, `getCustomerTransactionId(
 
 * `schemas/` holds the FedEx OpenAPI specifications that the code is checked against.
 * The API documentation is generated with PhpDocumentor: `vendor/bin/phpdoc -d src -t docs`.
+* The tests use PHPUnit 9.6, which is the last version that runs on PHP 7.4. Run them with the oldest PHP that the package supports: `composer install`, then `vendor/bin/phpunit` (or `composer test`). No test uses the network: the requests go to a fake transport. Any notice, warning or deprecation fails a test. Two slow tests that break generated requests thousands of times are in the `slow` group, and the loopback tests described next are in the `loopback` group: `vendor/bin/phpunit --exclude-group slow,loopback` leaves both out and takes a couple of seconds.
+* The loopback tests (`vendor/bin/phpunit --group loopback`, about half a minute) are left out of the normal run. They use the real cURL, `FedexAuth`, `FedexClient` and API classes against a throwaway PHP server that listens on `127.0.0.1` only, which they start and stop themselves: they check what really goes on the wire, the timeouts, the refused connections and the retry after a 401. They need the `curl` extension and `proc_open`, and nothing leaves the machine.
+* To check that the code also runs without deprecations on a newer PHP, run the same tests with it, enabling the extensions it needs, for example: `php -d extension=curl -d extension=mbstring vendor/bin/phpunit`.
 
 ## License
 
