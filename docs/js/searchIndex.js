@@ -411,6 +411,46 @@ Search.appendIndex(
             "summary": "The\u0020definitions\u0020of\u0020the\u0020top\u0020level\u0020of\u0020the\u0020requests\u0020and\u0020responses,\u0020which\u0020are\u0020made\u0020once",
             "url": "classes/Mariopereira-Fedex-Api-FedexConsolidation.html#property_shallow"
         },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexDutyAndTax",
+            "name": "FedexDutyAndTax",
+            "summary": "Estimated\u0020Duty\u0020and\u0020Tax\u0020API\u003A\u0020estimates\u0020the\u0020duties,\u0020the\u0020taxes\u0020and\u0020the\u0020fees\u0020of\u0020a\u0020shipment,\u0020from\u0020its\u0020commodities,\u0020its\u0020origin\nand\u0020its\u0020destination\u0020\u0028dutytax\/v1\/estimate\u0029.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexDutyAndTax.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexDutyAndTax\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020object",
+            "url": "classes/Mariopereira-Fedex-Api-FedexDutyAndTax.html#method___construct"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexDutyAndTax\u003A\u003AnewRequest\u0028\u0029",
+            "name": "newRequest",
+            "summary": "Create\u0020an\u0020empty\u0020estimate\u0020request\u003A\u0020the\u0020fields\u0020that\u0020the\u0020API\u0020requires,\u0020named\u0020as\u0020in\u0020schemas\/dutiestaxes.json.\u0020The\u0020list\u0020of\ncommodities\u0020is\u0020empty\u0020and\u0020each\u0020entry\u0020of\u0020it\u0020is\u0020made\u0020like\u0020newCommodity\u0028\u0029.\u0020Any\u0020other\u0020field\u0020of\u0020the\u0020schema\u0020can\u0020be\u0020added\n\u0028shipmentPurpose,\u0020serviceType,\u0020shippingCost\u0020and\u0020preferredCurrency,\u0020and\u0020the\u0020postal\u0020code\u0020and\u0020the\u0020state\u0020or\u0020province\ncode\u0020of\u0020the\u0020shipper\u0020and\u0020of\u0020the\u0020recipient\u0029.\u0020Fields\u0020set\u0020to\u0020null\u0020and\u0020empty\u0020lists\u0020are\u0020left\u0020out\u0020when\u0020the\u0020request\u0020is\u0020sent",
+            "url": "classes/Mariopereira-Fedex-Api-FedexDutyAndTax.html#method_newRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexDutyAndTax\u003A\u003AnewCommodity\u0028\u0029",
+            "name": "newCommodity",
+            "summary": "Create\u0020an\u0020empty\u0020commodity,\u0020for\u0020the\u0020list\u0020of\u0020commodities\u0020of\u0020the\u0020request\u003A\u0020the\u0020fields\u0020that\u0020the\u0020API\u0020requires,\u0020named\u0020as\u0020in\nschemas\/dutiestaxes.json.\u0020Any\u0020other\u0020field\u0020of\u0020the\u0020schema\u0020can\u0020be\u0020added\u0020\u0028commodityName,\u0020countryOfManufacture\u0020and\nharmonizedCode\u0029.\u0020Fields\u0020set\u0020to\u0020null\u0020are\u0020left\u0020out\u0020when\u0020the\u0020request\u0020is\u0020sent",
+            "url": "classes/Mariopereira-Fedex-Api-FedexDutyAndTax.html#method_newCommodity"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexDutyAndTax\u003A\u003Aestimate\u0028\u0029",
+            "name": "estimate",
+            "summary": "Estimate\u0020the\u0020duties,\u0020the\u0020taxes\u0020and\u0020the\u0020fees\u0020of\u0020a\u0020shipment.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexDutyAndTax.html#method_estimate"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexDutyAndTax\u003A\u003AestimateForCommodities\u0028\u0029",
+            "name": "estimateForCommodities",
+            "summary": "Estimate\u0020the\u0020duties,\u0020the\u0020taxes\u0020and\u0020the\u0020fees\u0020of\u0020a\u0020shipment,\u0020from\u0020the\u0020countries\u0020and\u0020the\u0020commodities",
+            "url": "classes/Mariopereira-Fedex-Api-FedexDutyAndTax.html#method_estimateForCommodities"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexDutyAndTax\u003A\u003AvalidateAndParse\u0028\u0029",
+            "name": "validateAndParse",
+            "summary": "Validate\u0020the\u0020response\u0020received\u0020from\u0020FedEx.\u0020The\u0020response\u0020is\u0020given\u0020to\u0020the\u0020exception,\u0020so\u0020that\u0020nothing\u0020that\u0020FedEx\nanswered\u0020is\u0020lost",
+            "url": "classes/Mariopereira-Fedex-Api-FedexDutyAndTax.html#method_validateAndParse"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexDutyAndTax\u003A\u003AENDPOINT",
+            "name": "ENDPOINT",
+            "summary": "Duties\u0020Taxes\u0020Estimates\u0020endpoint\u0020\u0028POST\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexDutyAndTax.html#constant_ENDPOINT"
+        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexLocationsSearch",
             "name": "FedexLocationsSearch",
             "summary": "Locations\u0020Search\u0020API\u003A\u0020finds\u0020FedEx\u0020locations\u0020by\u0020address,\u0020geographic\u0020coordinates\u0020or\u0020phone\u0020number\u0020\u0028location\/v1\/locations\u0029",
@@ -876,6 +916,26 @@ Search.appendIndex(
             "summary": "The\u0020roots\u0020of\u0020the\u0020file\u0020that\u0020FedexConsolidation\u0020implements\u003A\u0020the\u0020request\u0020and\u0020the\u0020response\u0020of\u0020each\u0020operation",
             "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#constant_ROOTS"
         },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexDutyAndTaxSchemas",
+            "name": "FedexDutyAndTaxSchemas",
+            "summary": "Definitions\u0020of\u0020the\u0020request\u0020and\u0020the\u0020response\u0020of\u0020the\u0020Estimated\u0020Duty\u0020and\u0020Tax\u0020API\u0020operation\u0020that\u0020FedexDutyAndTax\u0020implements,\ngenerated\u0020from\u0020schemas\/dutiestaxes.json\u0020and\u0020written\u0020for\u0020SchemaValidator",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexDutyAndTaxSchemas.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexDutyAndTaxSchemas\u003A\u003Adefinitions\u0028\u0029",
+            "name": "definitions",
+            "summary": "Get\u0020the\u0020definitions\u0020of\u0020the\u0020request\u0020and\u0020the\u0020response.\u0020The\u0020names\u0020of\u0020the\u0020definitions,\u0020and\u0020of\u0020their\u0020fields,\u0020are\u0020the\u0020ones\nof\u0020schemas\/dutiestaxes.json,\u0020with\u0020one\u0020difference,\u0020decided\u0020with\u0020the\u0020owner\u003A\u0020the\u0020country\u0020code\u0020of\u0020the\u0020shipper\u0020and\u0020the\ncountry\u0020code\u0020of\u0020the\u0020recipient\u0020must\u0020be\u0020two\u0020letters\u0020\u0028the\u0020description\u0020of\u0020the\u0020file\u0020says\u0020\u0022the\u0020two\u002Dletter\u0020code\u0020used\u0020to\nidentify\u0020a\u0020country\u0022,\u0020and\u0020the\u0020schema\u0020has\u0020no\u0020length\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexDutyAndTaxSchemas.html#method_definitions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexDutyAndTaxSchemas\u003A\u003AREQUEST",
+            "name": "REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Duties\u0020Taxes\u0020Estimates\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexDutyAndTaxSchemas.html#constant_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexDutyAndTaxSchemas\u003A\u003ARESPONSE",
+            "name": "RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Duties\u0020Taxes\u0020Estimates\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexDutyAndTaxSchemas.html#constant_RESPONSE"
+        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexLocationsSearchSchemas",
             "name": "FedexLocationsSearchSchemas",
             "summary": "Definitions\u0020of\u0020the\u0020request\u0020and\u0020the\u0020response\u0020of\u0020the\u0020Locations\u0020Search\u0020API\u0020operation\u0020that\u0020FedexLocationsSearch\u0020implements,\u0020taken\nfrom\u0020schemas\/locations.json\u0020and\u0020written\u0020for\u0020SchemaValidator",
@@ -1340,6 +1400,16 @@ Search.appendIndex(
             "name": "__construct",
             "summary": "Initialize\u0020the\u0020exception",
             "url": "classes/Mariopereira-Fedex-Exception-FedexConsolidationException.html#method___construct"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexDutyAndTaxException",
+            "name": "FedexDutyAndTaxException",
+            "summary": "Exception\u0020thrown\u0020by\u0020the\u0020Estimated\u0020Duty\u0020and\u0020Tax\u0020API",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexDutyAndTaxException.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexDutyAndTaxException\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020exception",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexDutyAndTaxException.html#method___construct"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexException",
             "name": "FedexException",

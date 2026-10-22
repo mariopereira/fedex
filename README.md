@@ -13,6 +13,7 @@ A PHP interface to the FedEx APIs.
 | Ship: Create Shipment (`/ship/v1/shipments`), Validate Shipment (`/ship/v1/shipments/packages/validate`), Cancel Shipment (`/ship/v1/shipments/cancel`), Create Tag (`/ship/v1/shipments/tag`), Cancel Tag (`/ship/v1/shipments/tag/cancel/{shipmentid}`) and Retrieve Async Ship (`/ship/v1/shipments/results`) | `FedexShip` | Implemented. Checked against the FedEx schema in `schemas/`, never called against the live API |
 | Basic Integrated Visibility (tracking): Track by Tracking Number (`/track/v1/trackingnumbers`), Track Multiple Piece Shipment (`/track/v1/associatedshipments`), Track by References (`/track/v1/referencenumbers`), Track by Transportation Control Number (`/track/v1/tcn`), Track Document (`/track/v1/trackingdocuments`) and Send Notification (`/track/v1/notifications`) | `FedexBasicTracking` | Implemented. Checked against the FedEx schema in `schemas/`, never called against the live API |
 | Consolidation: Create (`/ship/v1/consolidations`), Modify (`PUT /ship/v1/consolidations`), Create Consolidation Shipment (`/ship/v1/consolidations/shipments`), Shipment Results (`/ship/v1/consolidations/results`), Confirm (`/ship/v1/consolidations/confirmations`), Confirm Results (`/ship/v1/consolidations/confirmationresults`), Retrieve (`/ship/v1/consolidations/retrieve`), Delete Shipments (`PUT /ship/v1/consolidations/shipments/delete`) and Delete (`PUT /ship/v1/consolidations/delete`) | `FedexConsolidation` | Implemented. Checked against the FedEx schema in `schemas/` (the top level of each request; the schema contradicts its own samples below that), never called against the live API |
+| Estimated Duty and Tax: Duties Taxes Estimates (`/dutytax/v1/estimate`) | `FedexDutyAndTax` | Implemented. Checked against the FedEx schema in `schemas/`, never called against the live API |
 
 ## Requirements
 
@@ -369,6 +370,43 @@ $result = $consolidation->createConsolidation($request);
 * **`FedexConsolidation::checkRequest()` and `checkResponse()` check the whole of the schema** and return the problems, each with the path of the field, without stopping anything (nothing is sent). The operation is one of `create`, `modify`, `createShipment`, `shipmentResults`, `confirm`, `confirmResults`, `retrieve`, `deleteShipments` and `delete`. A problem that they report is not necessarily one that FedEx refuses, given what the samples of the schema are.
 * The response is checked at its top level, and an invalid response throws a `FedexConsolidationException` with the response in `getData()`. A field that FedEx adds is accepted.
 * The schema has a few defects, handled like this in the whole check: `RequestedConsolidationShipment` requires a field `recipient` that is never defined (the field is `recipients`, and it is not required), so `recipient` is accepted with any value; and `Label.type` and `ShippingDocument.type` have an enum of one value, the whole list joined in a text, so they are checked as text.
+* Never called against the live FedEx API: the schema is the only reference.
+
+### Estimated duty and tax
+
+`FedexDutyAndTax` estimates the duties, the taxes and the fees of a shipment (Estimated Duty and Tax API, `schemas/dutiestaxes.json`). An estimate changes nothing in FedEx, so a request that failed with a timeout or a busy server can be retried (see [Retries](#retries)).
+
+```php
+use Mariopereira\Fedex\Api\FedexDutyAndTax;
+
+$duties = new FedexDutyAndTax($auth);
+
+$shoes = FedexDutyAndTax::newCommodity();
+$shoes['description'] = 'Athletic Shoes';
+$shoes['quantity'] = 1;
+$shoes['unitPrice'] = ['amount' => 10.39, 'currencyCode' => 'USD'];
+
+// from the countries and the commodities (the shipper and the recipient have a country code of two letters)
+$result = $duties->estimateForCommodities('IN', 'US', [$shoes], ['shipmentPurpose' => 'GIFT']);
+
+// or with the whole request, for example to give a postal code or a state
+$request = FedexDutyAndTax::newRequest();
+$request['shipper']['countryCode'] = 'IN';
+$request['recipient'] = ['countryCode' => 'CA', 'stateOrProvinceCode' => 'AB'];
+$request['commodities'][] = $shoes;
+
+$result = $duties->estimate($request);
+
+foreach ($result->output->edtDetails as $details) {
+    echo $details->summary->totalLandedCost, ' ', $details->summary->currency, "\n";
+}
+```
+
+* The request is checked before it is sent, as in the other APIs: the fields, their types, the lengths (the name of a commodity up to 256 characters, its description up to 512, the country of manufacture 2) and the values of `shipmentPurpose` (`DOCUMENTS`, `FOR_RESALE`, `NOT_FOR_RESALE`, `GIFT` or `RETURN`) are the ones of the schema, and the required fields must be present: the country of the shipper and of the recipient, and for each commodity its description, its quantity and its unit price with the amount and the currency code. Nothing is sent when the request is not valid. What the schema cannot express (the state or province code, which FedEx requires for Canada and Brazil) is checked by FedEx.
+* The country codes of the shipper and the recipient must be two letters: the schema has no length, but its description says "the two-letter code used to identify a country".
+* The schema asks for the header `x-content-type: application/json`, which is sent besides `Content-Type`.
+* The response is checked against the schema too, and an invalid response throws a `FedexDutyAndTaxException` with the response in `getData()`. A field that FedEx adds is accepted.
+* The examples of the schema (three requests and a response) are all accepted by these checks.
 * Never called against the live FedEx API: the schema is the only reference.
 
 ### Parent/child credentials

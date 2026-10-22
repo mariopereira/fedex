@@ -1,0 +1,853 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+		"title": "Estimated Duty and Tax API",
+		"version": "1.0.0"
+	},
+	"servers": [
+		{
+			"url": "https://apis-sandbox.fedex.com",
+			"description": "Sandbox Server"
+		},
+		{
+			"url": "https://apis.fedex.com",
+			"description": "Production Server"
+		}
+	],
+	"paths": {
+		"/dutytax/v1/estimate": {
+			"post": {
+				"summary": "Duties Taxes Estimates",
+				"description": "Retrieves estimated duties and taxes for a shipment based on commodity and destination details.",
+				"operationId": "DutiesTaxesEstimates",
+				"parameters": [
+					{
+						"name": "x-content-type",
+						"in": "header",
+						"description": "This is used to indicate the media type of the resource. The media type is a string sent along with the file indicating format of the file.",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"example": "application/json"
+						}
+					},
+					{
+						"name": "X-customer-transaction-id",
+						"in": "header",
+						"description": "This element allows you to assign a unique identifier to your transaction. This element is also returned in the reply and helps you match the request to the reply.",
+						"required": false,
+						"schema": {
+							"type": "string"
+						},
+						"example": "AnyCo_order123456789"
+					},
+					{
+						"name": "x-locale",
+						"in": "header",
+						"description": "These are locale details.<a onclick='loadDocReference(\"locales\")'>click here to see locales</a>",
+						"required": false,
+						"schema": {
+							"type": "string"
+						},
+						"example": "en_US"
+					},
+					{
+						"name": "authorization",
+						"in": "header",
+						"description": "This indicates the authorization token for the input request.",
+						"required": false,
+						"schema": {
+							"type": "string"
+						},
+						"example": "bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZSI6WyJD"
+					},
+					{
+						"in": "header",
+						"name": "content-type",
+						"description": "This is used to indicate the media type of the resource. The media type is a string sent along with the file indicating format of the file.",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"example": "application/json"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "Request object containing details for the EDT calculation.",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/EdtDetailsRequestVO"
+							},
+							"examples": {
+								"MinimumSchemaSample": {
+									"summary": "Duty & Tax Calculations - Mandatory Element",
+									"value": {
+										"shipper": {
+											"countryCode": "IN"
+										},
+										"recipient": {
+											"countryCode": "US"
+										},
+										"commodities": [
+											{
+												"description": "Athletic Shoes",
+												"quantity": 1,
+												"unitPrice": {
+													"amount": 10.39,
+													"currencyCode": "USD"
+												}
+											}
+										]
+									}
+								},
+								"MinimumSchemaSample2": {
+									"summary": "Duty & Tax Calculations - Canada - Mandatory Element",
+									"value": {
+										"shipper": {
+											"countryCode": "IN"
+										},
+										"recipient": {
+											"countryCode": "CA",
+											"stateOrProvinceCode": "AB"
+										},
+										"commodities": [
+											{
+												"description": "Athletic Shoes",
+												"quantity": 1,
+												"unitPrice": {
+													"amount": 10.39,
+													"currencyCode": "USD"
+												}
+											}
+										]
+									}
+								},
+								"FullSchemaSample2": {
+									"summary": "Duty & Tax Calculations - Full Schema",
+									"value": {
+										"shipper": {
+											"countryCode": "GB",
+											"postalCode": "SW1A 1AA",
+											"stateOrProvinceCode": "ENG"
+										},
+										"recipient": {
+											"countryCode": "US",
+											"postalCode": "388175",
+											"stateOrProvinceCode": "TN"
+										},
+										"commodities": [
+											{
+												"commodityName": "Running shoes",
+												"countryOfManufacture": "CN",
+												"description": "Athletic Shoes",
+												"harmonizedCode": "6404.11.2030",
+												"quantity": 1,
+												"unitPrice": {
+													"amount": 10.39,
+													"currencyCode": "USD"
+												}
+											}
+										],
+										"shipmentPurpose": "GIFT",
+										"serviceType": "INTERNATIONAL_PRIORITY",
+										"shippingCost": {
+											"amount": 15.46,
+											"currency": "USD"
+										}
+									}
+								}
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/EdtDetailsResponseVO"
+								},
+								"examples": {
+									"SampleOutput": {
+										"summary": "Duty & Tax Calculations - Output",
+										"value": {
+											"transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+											"customerTransactionId": "AnyCo_order123456789",
+											"output": {
+												"edtDetails": [
+													{
+														"duties": [
+															{
+																"amount": 4.44,
+																"currency": "USD",
+																"description": "Import Duty",
+																"formula": "0.003 usd  * quantity + 1.7 % cost",
+																"note": "General Import Duty"
+															}
+														],
+														"fees": [
+															{
+																"amount": 7.87,
+																"currency": "USD",
+																"description": "fee",
+																"formula": "0.056 usd  * quantity + 2.3 % cost",
+																"note": "Disbursement Fee"
+															},
+															{
+																"amount": 16.19,
+																"currency": "USD",
+																"description": "fee",
+																"formula": "0.006 usd  * quantity + 2.1 % cost",
+																"note": "Clearance  Fee"
+															}
+														],
+														"taxes": [
+															{
+																"amount": 6.81,
+																"currency": "USD",
+																"description": "GST Tax",
+																"formula": "0.004 usd  * quantity + 5.11 % cost",
+																"note": "GST Tax"
+															}
+														],
+														"summary": {
+															"totalDuties": 4.44,
+															"totalFees": 24.06,
+															"totalShippingCosts": 15.46,
+															"totalTaxes": 4.44,
+															"totalLandedCost": 28.78,
+															"currency": "USD"
+														}
+													}
+												]
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CXSError400"
+								},
+								"example": {
+									"transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+									"errors": [
+										{
+											"code": "INPUT.DATA.INVALID",
+											"message": "We are unable to process your request at the moment. Please try again later or contact FedEx Customer Service."
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CXSError401"
+								},
+								"example": {
+									"transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+									"errors": [
+										{
+											"code": "LOGIN.REAUTHENTICATE.ERROR",
+											"message": "Re-Login authentication error"
+										}
+									]
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CXSError403"
+								},
+								"example": {
+									"transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+									"errors": [
+										{
+											"code": "FORBIDDEN.ERROR",
+											"message": "We could not authorize your credentials. Please check your permissions and try again."
+										}
+									]
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CXSError404"
+								},
+								"example": {
+									"transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+									"errors": [
+										{
+											"code": "NOT.FOUND.ERROR",
+											"message": "The resource you requested is no longer available. Please modify your request and try again."
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CXSError500"
+								},
+								"example": {
+									"transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+									"errors": [
+										{
+											"code": "SYSTEM.UNEXPECTED.ERROR",
+											"message": "The system has experienced an unexpected problem and is unable to complete your request. Please try again later. We regret any inconvenience."
+										}
+									]
+								}
+							}
+						}
+					},
+					"503": {
+						"description": "Service Unavailable",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CXSError503"
+								},
+								"example": {
+									"transactionId": "08f37269-2fcf-4a52-8f02-01c8349d143f",
+									"errors": [
+										{
+											"code": "SERVICE.UNAVAILABLE.ERROR",
+											"message": "The service is currently unavailable and we are working to resolve the issue. We apologize for any inconvenience. Please check back at a later time."
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"x-code-samples": [
+					{
+						"lang": "C#",
+						"source": "var client = new RestClient(\"https://apis-sandbox.fedex.com/dutytax/v1/estimate\");\nvar request = new RestRequest(Method.POST);\nrequest.AddHeader(\"Authorization\", \"Bearer \");\nrequest.AddHeader(\"X-locale\", \"en_US\");\nrequest.AddHeader(\"Content-Type\", \"application/json\");\n// 'input' refers to JSON Payload\nrequest.AddParameter(\"application/x-www-form-urlencoded\", input, ParameterType.RequestBody);\nIRestResponse response = client.Execute(request);\n\n\n\n\n"
+					},
+					{
+						"lang": "JAVA",
+						"source": "OkHttpClient client = new OkHttpClient();\n\nMediaType mediaType = MediaType.parse(\"application/json\");\n// 'input' refers to JSON Payload\nRequestBody body = RequestBody.create(mediaType, input);\nRequest request = new Request.Builder()\n    .url(\"https://apis-sandbox.fedex.com/dutytax/v1/estimate\")\n    .post(body)\n    .addHeader(\"Content-Type\", \"application/json\")\n    .addHeader(\"X-locale\", \"en_US\")\n    .addHeader(\"Authorization\", \"Bearer \")\n    .build();\n            \nResponse response = client.newCall(request).execute();"
+					},
+					{
+						"lang": "JAVASCRIPT",
+						"source": "// 'input' refers to JSON Payload\nvar data = JSON.stringify(input);\n  \n  var xhr = new XMLHttpRequest();\n  xhr.withCredentials = true;\n  \n  xhr.addEventListener(\"readystatechange\", function () {\n    if (this.readyState === 4) {\n      console.log(this.responseText);\n    }\n  });\n  \n  xhr.open(\"POST\", \"https://apis-sandbox.fedex.com/dutytax/v1/estimate\");\n  xhr.setRequestHeader(\"Content-Type\", \"application/json\");\n  xhr.setRequestHeader(\"X-locale\", \"en_US\");\n  xhr.setRequestHeader(\"Authorization\", \"Bearer \");\n  \n  xhr.send(data);"
+					},
+					{
+						"lang": "PHP",
+						"source": "<?php\n\n$request = new HttpRequest();\n$request->setUrl('https://apis-sandbox.fedex.com/dutytax/v1/estimate');\n$request->setMethod(HTTP_METH_POST);\n\n$request->setHeaders(array(\n  'Authorization' => 'Bearer ',\n  'X-locale' => 'en_US',\n  'Content-Type' => 'application/json'\n));\n\n$request->setBody(input); // 'input' refers to JSON Payload\n\ntry {\n  $response = $request->send();\n\n  echo $response->getBody();\n} catch (HttpException $ex) {\n  echo $ex;\n}"
+					},
+					{
+						"lang": "PYTHON",
+						"source": "import requests\n\nurl = \"https://apis-sandbox.fedex.com/dutytax/v1/estimate\"\n\npayload = input # 'input' refers to JSON Payload\nheaders = {\n    'Content-Type': \"application/json\",\n    'X-locale': \"en_US\",\n    'Authorization': \"Bearer \"\n    }\n\nresponse = requests.post(url, data=payload, headers=headers)\n\nprint(response.text)"
+					},
+					{
+						"lang": "RUST",
+						"source": "extern crate reqwest;\n\nuse std::io::Read;\n\nfn construct_headers() -> HeaderMap {\n    let mut headers = HeaderMap::new();\n    headers.insert(\"Content-Type\", \"application/json\");\n    headers.insert(\"X-locale\", \"en_US\");\n    headers.insert(\"Authorization\", \"Bearer \");\n    headers\n}\n\nfn run() -> Result<()> {\n    let client = reqwest::Client::new();\n    let mut res = client.post(\"https://apis-sandbox.fedex.com/dutytax/v1/estimate\")\n        .body(input) // 'input' refers to JSON Payload\n        .headers(construct_headers())\n        .send()?;\n    let mut body = String::new();\n    res.read_to_string(&mut body)?;\n\n    println!(\"Status: {}\", res.status());\n    println!(\"Headers:\\n{:#?}\", res.headers());\n    println!(\"Body:\\n{}\", body);\n\n    Ok(())\n}"
+					},
+					{
+						"lang": "SWIFT",
+						"source": "import Foundation\n\nlet headers = [\n  \"Content-Type\": \"application/json\",\n  \"X-locale\": \"en_US\",\n  \"Authorization\": \"Bearer \"\n]\nlet parameters = [\n  input // 'input' refers to JSON Payload\n] as [String : Any]\n\nlet postData = JSONSerialization.data(withJSONObject: parameters, options: [])\n\nlet request = NSMutableURLRequest(url: NSURL(string: \"https://apis-sandbox.fedex.com/dutytax/v1/estimate\")! as URL,\n                                        cachePolicy: .useProtocolCachePolicy,\n                                    timeoutInterval: 10.0)\nrequest.httpMethod = \"POST\"\nrequest.allHTTPHeaderFields = headers\nrequest.httpBody = postData as Data\n\nlet session = URLSession.shared\nlet dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in\n  if (error != nil) {\n    print(error)\n  } else {\n    let httpResponse = response as? HTTPURLResponse\n    print(httpResponse)\n  }\n})\n\ndataTask.resume()"
+					}
+				]
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"EdtDetailsRequestVO": {
+				"required": [
+					"commodities",
+					"recipient",
+					"shipper"
+				],
+				"type": "object",
+				"properties": {
+					"shipper": {
+						"$ref": "#/components/schemas/Shipper"
+					},
+					"recipient": {
+						"$ref": "#/components/schemas/Recipient"
+					},
+					"commodities": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Commodities"
+						}
+					},
+					"shipmentPurpose": {
+						"type": "string",
+						"description": "The intended purpose of the shipment",
+						"example": "DOCUMENTS",
+						"enum": [
+							"DOCUMENTS",
+							"FOR_RESALE",
+							"NOT_FOR_RESALE",
+							"GIFT",
+							"RETURN"
+						]
+					},
+					"serviceType": {
+						"type": "string",
+						"description": "The FedEx shipping service type.",
+						"example": "INTERNATIONAL_PRIORITY"
+					},
+					"shippingCost": {
+						"$ref": "#/components/schemas/ShippingCost"
+					},
+					"preferredCurrency": {
+						"type": "string",
+						"description": "Preferred currency for estimated duties and taxes.",
+						"example": "USD"
+					}
+				}
+			},
+			"EdtDetailsResponseVO": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"description": "The transaction ID is a special set of numbers that defines each transaction.",
+						"example": "624deea6-b709-470c-8c39-4b5511281492"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"description": "This element allows you to assign a unique identifier to your transaction. This element is also returned in the reply and helps you match the request to the reply",
+						"example": "AnyCo_order123456789"
+					},
+					"output": {
+						"$ref": "#/components/schemas/Output"
+					}
+				}
+			},
+			"Commodities": {
+				"required": [
+					"description",
+					"quantity",
+					"unitPrice"
+				],
+				"type": "object",
+				"properties": {
+					"commodityName": {
+						"maxLength": 256,
+						"type": "string",
+						"description": "The name of the commodity requested for duty and tax estimation.",
+						"example": "Running shoes"
+					},
+					"countryOfManufacture": {
+						"maxLength": 2,
+						"type": "string",
+						"description": "The country where the commodity was manufactured.",
+						"example": "CN"
+					},
+					"description": {
+						"maxLength": 512,
+						"type": "string",
+						"description": "A description of the commodity.",
+						"example": "Athletic Shoes"
+					},
+					"harmonizedCode": {
+						"type": "string",
+						"description": "The Harmonized System code for the commodity.",
+						"example": "6404.11.2030"
+					},
+					"quantity": {
+						"type": "integer",
+						"description": "The number of units of this commodity.",
+						"format": "int32",
+						"example": 1
+					},
+					"unitPrice": {
+						"$ref": "#/components/schemas/UnitPrice"
+					}
+				},
+				"description": "List of items to estimate"
+			},
+			"Recipient": {
+				"required": [
+					"countryCode"
+				],
+				"type": "object",
+				"properties": {
+					"countryCode": {
+						"type": "string",
+						"description": "The two-letter code used to identify a country.",
+						"example": "US"
+					},
+					"postalCode": {
+						"type": "string",
+						"description": "The postal or ZIP code",
+						"example": "388175"
+					},
+					"stateOrProvinceCode": {
+						"type": "string",
+						"description": "The state or province code. stateOrProvinceCode is required for the countires Canada & Brazil.",
+						"example": "TN"
+					}
+				},
+				"description": "The destination address information"
+			},
+			"Shipper": {
+				"required": [
+					"countryCode"
+				],
+				"type": "object",
+				"properties": {
+					"countryCode": {
+						"type": "string",
+						"description": "The two-letter code used to identify a country.",
+						"example": "US"
+					},
+					"postalCode": {
+						"type": "string",
+						"description": "The postal or ZIP code",
+						"example": "388175"
+					},
+					"stateOrProvinceCode": {
+						"type": "string",
+						"description": "The state or province code. stateOrProvinceCode is required for the countires Canada & Brazil.",
+						"example": "TN"
+					}
+				},
+				"description": "The origin address information"
+			},
+			"ShippingCost": {
+				"type": "object",
+				"properties": {
+					"amount": {
+						"type": "number",
+						"description": "The numeric value of the unit price.",
+						"format": "double",
+						"example": 15.46
+					},
+					"currency": {
+						"type": "string",
+						"description": "The currency code associated with the price (e.g., USD).",
+						"example": "USD"
+					}
+				},
+				"description": "The cost to transport the shipment from origin to destination"
+			},
+			"UnitPrice": {
+				"required": [
+					"amount",
+					"currencyCode"
+				],
+				"type": "object",
+				"properties": {
+					"amount": {
+						"type": "number",
+						"description": "The numeric value of the unit price.",
+						"format": "double",
+						"example": 10.39
+					},
+					"currencyCode": {
+						"type": "string",
+						"description": "The currency code associated with the price (e.g., USD).",
+						"example": "USD"
+					}
+				},
+				"description": "The price per unit of the commodity."
+			},
+			"Output": {
+				"type": "object",
+				"properties": {
+					"edtDetails": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/EdtDetails"
+						}
+					}
+				}
+			},
+			"EdtDetails": {
+				"type": "object",
+				"properties": {
+					"duties": {
+						"type": "array",
+						"description": "A list of import duty charges.",
+						"items": {
+							"$ref": "#/components/schemas/CostDetail"
+						}
+					},
+					"fees": {
+						"type": "array",
+						"description": "A list of additionnal fees.",
+						"items": {
+							"$ref": "#/components/schemas/CostDetail"
+						}
+					},
+					"taxes": {
+						"type": "array",
+						"description": "A list of tax charges.",
+						"items": {
+							"$ref": "#/components/schemas/CostDetail"
+						}
+					},
+					"summary": {
+						"$ref": "#/components/schemas/Summary"
+					}
+				},
+				"description": "The estimated duties and taxes details for the shipment."
+			},
+			"CostDetail": {
+				"type": "object",
+				"properties": {
+					"amount": {
+						"type": "number",
+						"description": "The calculated cost amount.",
+						"format": "double",
+						"example": 4.44
+					},
+					"currency": {
+						"type": "string",
+						"description": "The currency code associated with the price (e.g., USD).",
+						"example": "USD"
+					},
+					"description": {
+						"type": "string",
+						"description": "A description of the cost type.",
+						"example": "duty"
+					},
+					"formula": {
+						"type": "string",
+						"description": "The formula used to calculate the cost.",
+						"example": "0.003 usd  * quantity + 4.9 % cost"
+					},
+					"note": {
+						"type": "string",
+						"description": "Additional notes about the cost.",
+						"example": "General Rate"
+					}
+				}
+			},
+			"Summary": {
+				"type": "object",
+				"properties": {
+					"totalDuty": {
+						"type": "number",
+						"description": "The total import duty amount.",
+						"format": "double",
+						"example": 4.44
+					},
+					"totalFees": {
+						"type": "number",
+						"description": "The total fee amount.",
+						"format": "double",
+						"example": 4.44
+					},
+					"totalShippingCosts": {
+						"type": "number",
+						"description": "The total shipping cost amount.",
+						"format": "double",
+						"example": 15.46
+					},
+					"totalTaxes": {
+						"type": "number",
+						"description": "The total tax amount.",
+						"format": "double",
+						"example": 4.44
+					},
+					"totalLandedCost": {
+						"type": "number",
+						"description": "The total landed cost including duties, taxes, fees, and shipping.",
+						"format": "double",
+						"example": 28.78
+					},
+					"currency": {
+						"type": "string",
+						"description": "The currency code associated with the price (e.g., USD).",
+						"example": "USD"
+					}
+				}
+			},
+			"CXSError400": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"description": "The transaction ID is a special set of numbers that defines each transaction.",
+						"example": "624deea6-b709-470c-8c39-4b5511281492"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"description": "This element allows you to assign a unique identifier to your transaction. This element is also returned in the reply and helps you match the request to the reply. Example: AnyCo_order123456789",
+						"example": "AnyCo_order123456789"
+					},
+					"errors": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/CXSError"
+						}
+					}
+				}
+			},
+			"CXSError401": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "624deea6-b709-470c-8c39-4b5511281492"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "0e671149-016f-1000-941f-ef4dbabadd2e"
+					},
+					"errors": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/CXSError"
+						}
+					}
+				}
+			},
+			"CXSError403": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "624deea6-b709-470c-8c39-4b5511281492"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "0e671149-016f-1000-941f-ef4dbabadd2e"
+					},
+					"errors": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/CXSError"
+						}
+					}
+				}
+			},
+			"CXSError404": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "624deea6-b709-470c-8c39-4b5511281492"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "0e671149-016f-1000-941f-ef4dbabadd2e"
+					},
+					"errors": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/CXSError"
+						}
+					}
+				}
+			},
+			"CXSError500": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "624deea6-b709-470c-8c39-4b5511281492"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "0e671149-016f-1000-941f-ef4dbabadd2e"
+					},
+					"errors": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/CXSError"
+						}
+					}
+				}
+			},
+			"CXSError503": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "624deea6-b709-470c-8c39-4b5511281492"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "0e671149-016f-1000-941f-ef4dbabadd2e"
+					},
+					"errors": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/CXSError"
+						}
+					}
+				}
+			},
+			"CXSError": {
+				"type": "object",
+				"properties": {
+					"code": {
+						"type": "string",
+						"description": "Indicates the error code.",
+						"example": "INPUT.DATA.INVALID"
+					},
+					"message": {
+						"type": "string",
+						"description": "Indicates the error message.",
+						"example": "We are unable to process your request at the moment. Please try again later or contact FedEx Customer Service."
+					},
+					"parameterList": {
+						"type": "array",
+						"description": "Specifies the message parameter list.",
+						"items": {
+							"$ref": "#/components/schemas/Parameter"
+						}
+					}
+				},
+				"description": "Indicates error alert when suspicious files, potential exploits and viruses found while scanning files, directories and user accounts. This includes code, message and parameter"
+			},
+			"Parameter": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "string",
+						"description": "Parameter value"
+					},
+					"key": {
+						"type": "string",
+						"description": "Parameter key"
+					}
+				}
+			}
+		}
+	}
+}

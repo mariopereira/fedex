@@ -11,12 +11,14 @@ namespace Mariopereira\Fedex\Tests\Loopback;
 use Mariopereira\Fedex\Api\FedexAddressValidation;
 use Mariopereira\Fedex\Api\FedexBasicTracking;
 use Mariopereira\Fedex\Api\FedexConsolidation;
+use Mariopereira\Fedex\Api\FedexDutyAndTax;
 use Mariopereira\Fedex\Api\FedexLocationsSearch;
 use Mariopereira\Fedex\Api\FedexShip;
 use Mariopereira\Fedex\Exception\FedexAddressValidationException;
 use Mariopereira\Fedex\Exception\FedexAuthException;
 use Mariopereira\Fedex\Exception\FedexBasicTrackingException;
 use Mariopereira\Fedex\Exception\FedexConsolidationException;
+use Mariopereira\Fedex\Exception\FedexDutyAndTaxException;
 use Mariopereira\Fedex\Exception\FedexClientException;
 use Mariopereira\Fedex\Exception\FedexException;
 use Mariopereira\Fedex\Exception\FedexLocationsSearchException;
@@ -774,6 +776,49 @@ final class ApiLoopbackTest extends LoopbackTestCase
         });
 
         $this->assertInstanceOf(FedexConsolidationException::class, $e);
+        $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
+        $this->assertSame([], self::$server->seen());
+    }
+
+    // ---------------------------------------------------------------- estimated duty and tax
+
+    /**
+     * An estimate on the wire has the body, the length and the two content types
+     * @return void
+     */
+    public function testAnEstimateOnTheWireHasTheBodyTheLengthAndTheTwoContentTypes(): void
+    {
+        $api = self::api(FedexDutyAndTax::class, self::$server->port());
+        $shoes = ['description' => 'Athletic Shoes', 'quantity' => 1, 'unitPrice' => ['amount' => 10.39, 'currencyCode' => 'USD']];
+
+        $result = $api->estimateForCommodities('IN', 'US', [$shoes]);
+        $requests = self::$server->requests();
+        $headers = LoopbackServer::headerLines($requests[1]);
+
+        $this->assertSame(['POST /token-ok', 'POST /dutytax/v1/estimate'], self::$server->seen());
+        $this->assertContains('Authorization: Bearer TOK', $headers);
+        $this->assertContains('X-locale: pt_PT', $headers);
+        $this->assertContains('Content-Type: application/json', $headers);
+        $this->assertContains('x-content-type: application/json', $headers);
+        $this->assertNotEmpty(preg_grep(self::UUID_HEADER, $headers));
+        $this->assertSame(['shipper' => ['countryCode' => 'IN'], 'recipient' => ['countryCode' => 'US'], 'commodities' => [$shoes]], json_decode($requests[1]['body'], true));
+        $this->assertContains('Content-Length: ' . strlen($requests[1]['body']), $headers);
+        $this->assertSame('/dutytax/v1/estimate', $result->target);
+    }
+
+    /**
+     * An invalid estimate never reaches the network, not even the token request
+     * @return void
+     */
+    public function testAnInvalidEstimateNeverReachesTheNetworkNotEvenTheTokenRequest(): void
+    {
+        $api = self::api(FedexDutyAndTax::class, self::$server->port());
+
+        $e = self::thrown(function () use ($api) {
+            $api->estimateForCommodities('IND', 'US', [['description' => 'x', 'quantity' => 1, 'unitPrice' => ['amount' => 1, 'currencyCode' => 'USD']]]);
+        });
+
+        $this->assertInstanceOf(FedexDutyAndTaxException::class, $e);
         $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
         $this->assertSame([], self::$server->seen());
     }
