@@ -9,10 +9,12 @@
 namespace Mariopereira\Fedex\Tests\Loopback;
 
 use Mariopereira\Fedex\Api\FedexAddressValidation;
+use Mariopereira\Fedex\Api\FedexBasicTracking;
 use Mariopereira\Fedex\Api\FedexLocationsSearch;
 use Mariopereira\Fedex\Api\FedexShip;
 use Mariopereira\Fedex\Exception\FedexAddressValidationException;
 use Mariopereira\Fedex\Exception\FedexAuthException;
+use Mariopereira\Fedex\Exception\FedexBasicTrackingException;
 use Mariopereira\Fedex\Exception\FedexClientException;
 use Mariopereira\Fedex\Exception\FedexException;
 use Mariopereira\Fedex\Exception\FedexLocationsSearchException;
@@ -20,6 +22,7 @@ use Mariopereira\Fedex\Exception\FedexShipException;
 use Mariopereira\Fedex\Tests\Support\LoopbackServer;
 use Mariopereira\Fedex\Tests\Support\LoopbackTestCase;
 use Mariopereira\Fedex\Tests\Support\ShipSpec;
+use Mariopereira\Fedex\Tests\Support\TrackSpec;
 
 /**
  * Tests of the Locations search, the Address validation and the Ship API with the real cURL, the real FedexAuth and the
@@ -636,5 +639,71 @@ final class ApiLoopbackTest extends LoopbackTestCase
         $this->assertSame(503, $e->getStatusCode());
         $this->assertSame(31, $e->getRetryAfter());
         $this->assertSame(['POST /token-ok', 'POST /ra/503/31'], self::$server->seen());
+    }
+
+    // ---------------------------------------------------------------- basic tracking
+
+    /**
+     * Track by one tracking number on the wire
+     * @return void
+     */
+    public function testTrackByOneTrackingNumberOnTheWire(): void
+    {
+        $tracking = self::api(FedexBasicTracking::class, self::$server->port());
+
+        $result = $tracking->trackByNumber('123456789012');
+        $requests = self::$server->requests();
+        $headers = LoopbackServer::headerLines($requests[1]);
+
+        $this->assertSame(['POST /token-ok', 'POST /track/v1/trackingnumbers'], self::$server->seen());
+        $this->assertContains('Authorization: Bearer TOK', $headers);
+        $this->assertContains('X-locale: pt_PT', $headers);
+        $this->assertContains('Content-Type: application/json', $headers);
+        $this->assertNotEmpty(preg_grep(self::UUID_HEADER, $headers));
+        $this->assertSame(
+            ['includeDetailedScans' => true, 'trackingInfo' => [['trackingNumberInfo' => ['trackingNumber' => '123456789012']]]],
+            json_decode($requests[1]['body'], true)
+        );
+        $this->assertContains('Content-Length: ' . strlen($requests[1]['body']), $headers);
+        $this->assertSame('POST', $result->method);
+        $this->assertSame('/track/v1/trackingnumbers', $result->target);
+    }
+
+    /**
+     * Every tracking operation is a post to its own path
+     * @return void
+     */
+    public function testEveryTrackingOperationIsAPostToItsOwnPath(): void
+    {
+        $tracking = self::api(FedexBasicTracking::class, self::$server->port());
+
+        $tracking->trackAssociatedShipments(TrackSpec::instance('associated.request')[0]);
+        $tracking->trackByReferences(TrackSpec::instance('references.request')[0]);
+        $tracking->trackByTcn(TrackSpec::instance('tcn.request')[0]);
+        $tracking->getTrackingDocuments(TrackSpec::instance('documents.request')[0]);
+        $tracking->sendNotification(TrackSpec::instance('notification.request')[0]);
+
+        $this->assertSame(
+            ['POST /token-ok', 'POST /track/v1/associatedshipments', 'POST /track/v1/referencenumbers', 'POST /track/v1/tcn', 'POST /track/v1/trackingdocuments', 'POST /track/v1/notifications'],
+            self::$server->seen(),
+            'one token request for the five operations'
+        );
+    }
+
+    /**
+     * An invalid tracking request never reaches the network, not even the token request
+     * @return void
+     */
+    public function testAnInvalidTrackingRequestNeverReachesTheNetworkNotEvenTheTokenRequest(): void
+    {
+        $tracking = self::api(FedexBasicTracking::class, self::$server->port());
+
+        $e = self::thrown(function () use ($tracking) {
+            $tracking->trackByNumbers(array_map('strval', range(100000000001, 100000000031)));
+        });
+
+        $this->assertInstanceOf(FedexBasicTrackingException::class, $e);
+        $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
+        $this->assertSame([], self::$server->seen());
     }
 }

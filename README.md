@@ -11,6 +11,7 @@ A PHP interface to the FedEx APIs.
 | Locations Search (`/location/v1/locations`) | `FedexLocationsSearch` | Implemented. Checked against the FedEx schema in `schemas/`, not yet against the live API |
 | Address Validation (`/address/v1/addresses/resolve`) | `FedexAddressValidation` | Implemented. Checked against the FedEx schema in `schemas/`, not yet against the live API |
 | Ship: Create Shipment (`/ship/v1/shipments`), Validate Shipment (`/ship/v1/shipments/packages/validate`), Cancel Shipment (`/ship/v1/shipments/cancel`), Create Tag (`/ship/v1/shipments/tag`), Cancel Tag (`/ship/v1/shipments/tag/cancel/{shipmentid}`) and Retrieve Async Ship (`/ship/v1/shipments/results`) | `FedexShip` | Implemented. Checked against the FedEx schema in `schemas/`, never called against the live API |
+| Basic Integrated Visibility (tracking): Track by Tracking Number (`/track/v1/trackingnumbers`), Track Multiple Piece Shipment (`/track/v1/associatedshipments`), Track by References (`/track/v1/referencenumbers`), Track by Transportation Control Number (`/track/v1/tcn`), Track Document (`/track/v1/trackingdocuments`) and Send Notification (`/track/v1/notifications`) | `FedexBasicTracking` | Implemented. Checked against the FedEx schema in `schemas/`, never called against the live API |
 
 ## Requirements
 
@@ -279,6 +280,55 @@ foreach (FedexLabels::documents($result) as $document) {
 * `decode()` returns the bytes of a document, from an element of the response or of `documents()`. `save()` writes them to a file and returns the number of bytes. `save()` refuses to replace a file unless its third argument is `true`, and writes nothing when the document cannot be decoded.
 * A document without `encodedLabel`, or with content that is not valid Base64, throws a `FedexShipException`. The schema does not say how `encodedLabel` is encoded: it is treated as standard Base64, and this has not been tried against FedEx.
 * The format check is optional. `decode()` and `save()` take `$verifyFormat` (and a `$format`, when it is not the `docType` of the document): the bytes must then look like PDF (`%PDF-` in the first 1024 bytes), PNG (the PNG signature) or ZPL (`^XA` in the content), or a `FedexShipException` is thrown. `FedexLabels::isFormat()` does the same check on any bytes. EPL2 cannot be checked and is refused when the check is asked for.
+
+### Basic tracking
+
+`FedexBasicTracking` tracks shipments (Basic Integrated Visibility API, `schemas/track.json`). Tracking changes nothing in FedEx, so a request that failed with a timeout or a busy server can be retried (see [Retries](#retries)).
+
+```php
+use Mariopereira\Fedex\Api\FedexBasicTracking;
+
+$tracking = new FedexBasicTracking($auth);
+
+$result = $tracking->trackByNumber('128667043726');
+
+// several numbers, up to 30 in a request; false asks for the latest status only, without the scans
+$result = $tracking->trackByNumbers(['128667043726', '149331877648230'], false);
+
+foreach ($result->output->completeTrackResults as $complete) {
+    foreach ($complete->trackResults as $track) {
+        echo $track->trackingNumberInfo->trackingNumber, ': ', $track->latestStatusDetail->description ?? '', "\n";
+    }
+}
+```
+
+The other operations take the request of the schema. Each one has a method that makes the empty request (the required fields, with nested objects already in place), which is filled in and sent:
+
+| Operation | Request | Method |
+| --- | --- | --- |
+| Track by tracking number | `newTrackingNumbersRequest()` | `trackByTrackingNumbers()` |
+| Track the other packages of a multiple piece shipment | `newAssociatedShipmentsRequest()` | `trackAssociatedShipments()` |
+| Track by reference | `newReferencesRequest()` | `trackByReferences()` |
+| Track by Transportation Control Number | `newTcnRequest()` | `trackByTcn()` |
+| Track documents (signature proof of delivery, bill of lading, ...) | `newDocumentsRequest()` | `getTrackingDocuments()` |
+| Send tracking notifications | `newNotificationRequest()` | `sendNotification()` |
+
+```php
+$request = FedexBasicTracking::newReferencesRequest();
+$request['referencesInformation']['value'] = '56754674567546754';
+$request['referencesInformation']['accountNumber'] = '123456789';
+$request['referencesInformation']['shipDateBegin'] = '2019-02-13';
+$request['referencesInformation']['shipDateEndDate'] = '2019-02-13';
+
+$result = $tracking->trackByReferences($request);
+```
+
+* The request is checked before it is sent, as in the other APIs: the fields, their types and the values of the enums (the carrier code and the associated type) are the ones of the schema, the required fields must be present, and a request by tracking number has from 1 to 30 numbers. Nothing is sent when the request is not valid. What the schema cannot express (for example that a reference needs the account number, or the destination country and postal code) is checked by FedEx.
+* The values that the schema only describes (the type of a reference, the type and the format of a document, the type of a notification, the role, the event types) are not checked: they are sent as given.
+* The response is checked against the schema too, and an invalid response throws a `FedexBasicTrackingException` with the response in `getData()`. A field that FedEx adds is accepted.
+* **`sendNotification()` sends emails.** It is never retried, because repeating it would send them twice, and an invalid response says that the notification may have been sent.
+* The schema has a few defects, handled like this: the references request requires `shipDateEndDate` but its example writes `shipDateEnd`, so both are accepted (and `shipDateEndDate` is still required); the address requires a field, `addressVerificationId`, that it never defines, so it is optional and of any type; and two enums of the responses are defective (`DelayDetail.subType` lists "EARTHQUAKE etc", and `ServiceCommitMessage.type` has a stray quote in `USPS_DELIVERING"`), so those two fields are checked as text.
+* Never called against the live FedEx API: the schema is the only reference.
 
 ### Parent/child credentials
 
