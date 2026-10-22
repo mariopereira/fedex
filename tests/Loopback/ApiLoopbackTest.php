@@ -10,15 +10,18 @@ namespace Mariopereira\Fedex\Tests\Loopback;
 
 use Mariopereira\Fedex\Api\FedexAddressValidation;
 use Mariopereira\Fedex\Api\FedexBasicTracking;
+use Mariopereira\Fedex\Api\FedexConsolidation;
 use Mariopereira\Fedex\Api\FedexLocationsSearch;
 use Mariopereira\Fedex\Api\FedexShip;
 use Mariopereira\Fedex\Exception\FedexAddressValidationException;
 use Mariopereira\Fedex\Exception\FedexAuthException;
 use Mariopereira\Fedex\Exception\FedexBasicTrackingException;
+use Mariopereira\Fedex\Exception\FedexConsolidationException;
 use Mariopereira\Fedex\Exception\FedexClientException;
 use Mariopereira\Fedex\Exception\FedexException;
 use Mariopereira\Fedex\Exception\FedexLocationsSearchException;
 use Mariopereira\Fedex\Exception\FedexShipException;
+use Mariopereira\Fedex\Tests\Support\ConsolidationSpec;
 use Mariopereira\Fedex\Tests\Support\LoopbackServer;
 use Mariopereira\Fedex\Tests\Support\LoopbackTestCase;
 use Mariopereira\Fedex\Tests\Support\ShipSpec;
@@ -703,6 +706,74 @@ final class ApiLoopbackTest extends LoopbackTestCase
         });
 
         $this->assertInstanceOf(FedexBasicTrackingException::class, $e);
+        $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
+        $this->assertSame([], self::$server->seen());
+    }
+
+    // ---------------------------------------------------------------- consolidation
+
+    /**
+     * Retrieve a consolidation by its key on the wire
+     * @return void
+     */
+    public function testRetrieveAConsolidationByItsKeyOnTheWire(): void
+    {
+        $consolidation = self::api(FedexConsolidation::class, self::$server->port());
+        $key = ['consolidationType' => 'INTERNATIONAL_ECONOMY_DISTRIBUTION', 'index' => '12345', 'shipDatestamp' => '2022-03-21'];
+
+        $result = $consolidation->retrieveByKey('123456789', $key);
+        $requests = self::$server->requests();
+        $headers = LoopbackServer::headerLines($requests[1]);
+
+        $this->assertSame(['POST /token-ok', 'POST /ship/v1/consolidations/retrieve'], self::$server->seen());
+        $this->assertContains('Authorization: Bearer TOK', $headers);
+        $this->assertContains('X-locale: pt_PT', $headers);
+        $this->assertContains('Content-Type: application/json', $headers);
+        $this->assertNotEmpty(preg_grep(self::UUID_HEADER, $headers));
+        $this->assertSame(['accountNumber' => ['value' => '123456789'], 'consolidationKey' => $key], json_decode($requests[1]['body'], true));
+        $this->assertContains('Content-Length: ' . strlen($requests[1]['body']), $headers);
+        $this->assertSame('/ship/v1/consolidations/retrieve', $result->target);
+    }
+
+    /**
+     * Modify and delete are real puts with their bodies and lengths, and create is a post
+     * @return void
+     */
+    public function testModifyAndDeleteAreRealPutsWithTheirBodiesAndLengthsAndCreateIsAPost(): void
+    {
+        $consolidation = self::api(FedexConsolidation::class, self::$server->port());
+        $modify = ConsolidationSpec::instance('modify.request')[0];
+        $delete = ConsolidationSpec::instance('delete.request')[0];
+        $create = ConsolidationSpec::instance('create.request')[0];
+
+        $consolidation->modifyConsolidation($modify);
+        $consolidation->deleteConsolidation($delete);
+        $consolidation->createConsolidation($create);
+        $requests = self::$server->requests();
+
+        $this->assertSame(['POST /token-ok', 'PUT /ship/v1/consolidations', 'PUT /ship/v1/consolidations/delete', 'POST /ship/v1/consolidations'], self::$server->seen());
+
+        foreach ([[1, $modify], [2, $delete], [3, $create]] as [$i, $sent]) {
+            $this->assertSame(json_decode(json_encode($sent), true), json_decode($requests[$i]['body'], true));
+            $this->assertContains('Content-Length: ' . strlen($requests[$i]['body']), LoopbackServer::headerLines($requests[$i]));
+        }
+    }
+
+    /**
+     * An invalid consolidation request never reaches the network, not even the token request
+     * @return void
+     */
+    public function testAnInvalidConsolidationRequestNeverReachesTheNetworkNotEvenTheTokenRequest(): void
+    {
+        $consolidation = self::api(FedexConsolidation::class, self::$server->port());
+        $request = ConsolidationSpec::instance('retrieve.request')[0];
+        $request['notInTheSchema'] = 1;
+
+        $e = self::thrown(function () use ($consolidation, $request) {
+            $consolidation->retrieveConsolidation($request);
+        });
+
+        $this->assertInstanceOf(FedexConsolidationException::class, $e);
         $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
         $this->assertSame([], self::$server->seen());
     }

@@ -12,6 +12,7 @@ A PHP interface to the FedEx APIs.
 | Address Validation (`/address/v1/addresses/resolve`) | `FedexAddressValidation` | Implemented. Checked against the FedEx schema in `schemas/`, not yet against the live API |
 | Ship: Create Shipment (`/ship/v1/shipments`), Validate Shipment (`/ship/v1/shipments/packages/validate`), Cancel Shipment (`/ship/v1/shipments/cancel`), Create Tag (`/ship/v1/shipments/tag`), Cancel Tag (`/ship/v1/shipments/tag/cancel/{shipmentid}`) and Retrieve Async Ship (`/ship/v1/shipments/results`) | `FedexShip` | Implemented. Checked against the FedEx schema in `schemas/`, never called against the live API |
 | Basic Integrated Visibility (tracking): Track by Tracking Number (`/track/v1/trackingnumbers`), Track Multiple Piece Shipment (`/track/v1/associatedshipments`), Track by References (`/track/v1/referencenumbers`), Track by Transportation Control Number (`/track/v1/tcn`), Track Document (`/track/v1/trackingdocuments`) and Send Notification (`/track/v1/notifications`) | `FedexBasicTracking` | Implemented. Checked against the FedEx schema in `schemas/`, never called against the live API |
+| Consolidation: Create (`/ship/v1/consolidations`), Modify (`PUT /ship/v1/consolidations`), Create Consolidation Shipment (`/ship/v1/consolidations/shipments`), Shipment Results (`/ship/v1/consolidations/results`), Confirm (`/ship/v1/consolidations/confirmations`), Confirm Results (`/ship/v1/consolidations/confirmationresults`), Retrieve (`/ship/v1/consolidations/retrieve`), Delete Shipments (`PUT /ship/v1/consolidations/shipments/delete`) and Delete (`PUT /ship/v1/consolidations/delete`) | `FedexConsolidation` | Implemented. Checked against the FedEx schema in `schemas/` (the top level of each request; the schema contradicts its own samples below that), never called against the live API |
 
 ## Requirements
 
@@ -328,6 +329,46 @@ $result = $tracking->trackByReferences($request);
 * The response is checked against the schema too, and an invalid response throws a `FedexBasicTrackingException` with the response in `getData()`. A field that FedEx adds is accepted.
 * **`sendNotification()` sends emails.** It is never retried, because repeating it would send them twice, and an invalid response says that the notification may have been sent.
 * The schema has a few defects, handled like this: the references request requires `shipDateEndDate` but its example writes `shipDateEnd`, so both are accepted (and `shipDateEndDate` is still required); the address requires a field, `addressVerificationId`, that it never defines, so it is optional and of any type; and two enums of the responses are defective (`DelayDetail.subType` lists "EARTHQUAKE etc", and `ServiceCommitMessage.type` has a stray quote in `USPS_DELIVERING"`), so those two fields are checked as text.
+* Never called against the live FedEx API: the schema is the only reference.
+
+### Consolidation
+
+`FedexConsolidation` implements the Consolidation API (`schemas/consolidation.json`): creating, modifying, confirming, retrieving and deleting consolidations, and creating and deleting their shipments.
+
+```php
+use Mariopereira\Fedex\Api\FedexConsolidation;
+
+$consolidation = new FedexConsolidation($auth);
+
+$key = ['consolidationType' => 'INTERNATIONAL_ECONOMY_DISTRIBUTION', 'index' => '12345', 'shipDatestamp' => '2022-03-21'];
+
+$result = $consolidation->retrieveByKey('123456789', $key);
+
+$request = FedexConsolidation::newCreateRequest();
+$request['accountNumber']['value'] = '123456789';
+$request['requestedConsolidation'] = ['shipper' => ['address' => ['countryCode' => 'US']]]; // see the schema and its samples
+
+$problems = FedexConsolidation::checkRequest('create', $request); // what does not match the schema, nothing is sent
+$result = $consolidation->createConsolidation($request);
+```
+
+| Operation | Request | Method |
+| --- | --- | --- |
+| Create Consolidation | `newCreateRequest()` | `createConsolidation()` |
+| Modify Consolidation | `newModifyRequest()` | `modifyConsolidation()` |
+| Create Consolidation Shipment | `newCreateShipmentRequest()` | `createConsolidationShipment()` |
+| Consolidation Shipment Results | `newShipmentResultsRequest()` | `getShipmentResults()` and `getShipmentResultsByJobId()` |
+| Confirm Consolidations | `newConfirmRequest()` | `confirmConsolidation()` |
+| Confirm Consolidation Results | `newConfirmResultsRequest()` | `getConfirmationResults()` and `getConfirmationResultsByJobId()` |
+| Retrieve Consolidation | `newRetrieveRequest()` | `retrieveConsolidation()` and `retrieveByKey()` |
+| Delete Consolidation Shipments | `newDeleteShipmentsRequest()` | `deleteConsolidationShipments()` |
+| Delete Consolidation | `newDeleteRequest()` | `deleteConsolidation()` and `deleteByKey()` |
+
+* **Creating, modifying, confirming and deleting change real data in FedEx, and creating a shipment of a consolidation buys its labels.** The package never repeats those requests, except when FedEx answers that the access token is not valid (nothing was processed then). If an exception is thrown after the request was sent (a timeout, a network failure, or a response that is not valid), the operation may have been done: check it in FedEx before trying again. Modify is treated like the others, although the same modification repeated would probably do no harm. Only the results of a shipment, the results of a confirmation and the retrieval change nothing, so only those can be retried (see [Retries](#retries)).
+* **A request is checked at its top level only.** The schema contradicts its own sample payloads in the nested objects: only 3 of its 19 samples pass the whole of it (for example it requires `consolidationKey.date` and `type`, and the samples send `consolidationType` and `shipDatestamp`). So the required fields, the names of the fields and their types are checked at the top level, and each nested object or list is sent as it comes: FedEx checks the rest and answers with its errors. Nothing is sent when the top level is not valid. The 19 samples of the schema all pass this check.
+* **`FedexConsolidation::checkRequest()` and `checkResponse()` check the whole of the schema** and return the problems, each with the path of the field, without stopping anything (nothing is sent). The operation is one of `create`, `modify`, `createShipment`, `shipmentResults`, `confirm`, `confirmResults`, `retrieve`, `deleteShipments` and `delete`. A problem that they report is not necessarily one that FedEx refuses, given what the samples of the schema are.
+* The response is checked at its top level, and an invalid response throws a `FedexConsolidationException` with the response in `getData()`. A field that FedEx adds is accepted.
+* The schema has a few defects, handled like this in the whole check: `RequestedConsolidationShipment` requires a field `recipient` that is never defined (the field is `recipients`, and it is not required), so `recipient` is accepted with any value; and `Label.type` and `ShippingDocument.type` have an enum of one value, the whole list joined in a text, so they are checked as text.
 * Never called against the live FedEx API: the schema is the only reference.
 
 ### Parent/child credentials
