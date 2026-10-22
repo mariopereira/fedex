@@ -864,7 +864,7 @@ final class FedexShipTest extends TestCase
      */
     public function testTheResponseDefinitionsOfTheCancelTagAndAsyncOperations(): void
     {
-        $defs = \Mariopereira\Fedex\Api\FedexShipSchemas::definitions();
+        $defs = \Mariopereira\Fedex\Api\Schemas\FedexShipSchemas::definitions();
 
         $this->assertSame('@BaseProcessOutputVO_GetOpenShipmentResults', $defs['SHPCResponseVO_GetOpenShipmentResults']['output?']);
         $this->assertSame('@BaseProcessOutputVO', $defs['SHPCResponseVO']['output?']);
@@ -1235,11 +1235,11 @@ final class FedexShipTest extends TestCase
 
         $this->assertTrue(is_subclass_of(FedexShip::class, AbstractFedexApi::class));
         $this->assertTrue(is_subclass_of(FedexShipException::class, FedexException::class));
-        $this->assertTrue((new \ReflectionClass(\Mariopereira\Fedex\Api\FedexShipSchemas::class))->isFinal());
+        $this->assertTrue((new \ReflectionClass(\Mariopereira\Fedex\Api\Schemas\FedexShipSchemas::class))->isFinal());
         $this->assertSame(['auth', 'locale', 'timeout', 'connectTimeout', 'client'], array_map(function (\ReflectionParameter $p) {
             return $p->getName();
         }, $constructor->getParameters()));
-        $this->assertSame(\Mariopereira\Fedex\Api\FedexShipSchemas::definitions(), \Mariopereira\Fedex\Api\FedexShipSchemas::definitions());
+        $this->assertSame(\Mariopereira\Fedex\Api\Schemas\FedexShipSchemas::definitions(), \Mariopereira\Fedex\Api\Schemas\FedexShipSchemas::definitions());
     }
 
     /**

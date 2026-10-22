@@ -125,7 +125,7 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Api/FedexAddressValidation.php"><a href="files/src-api-fedexaddressvalidation.html"><abbr title="src/Api/FedexAddressValidation.php">FedexAddressValidation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">21</span>
+    <span class="phpdocumentor-element-found-in__line">22</span>
 
     </aside>
 
@@ -194,13 +194,6 @@
 <dd>Initialize the object</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_inputSchemas">inputSchemas()</a>
-    <span>
-                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
-</dt>
-<dd>Get the schemas used to validate the request, taken from schemas/address-validation.json.</dd>
-
-            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_newAddress">newAddress()</a>
     <span>
                                 &nbsp;: array&lt;string|int, mixed&gt;    </span>
@@ -243,13 +236,6 @@
 <dd>Check what the schema cannot express: the street lines must not be empty.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
-    <a class="" href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_outputSchemas">outputSchemas()</a>
-    <span>
-                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
-</dt>
-<dd>Get the schemas used to validate the response, taken from schemas/address-validation.json.</dd>
-
-            <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_validateAndParse">validateAndParse()</a>
     <span>
                                 &nbsp;: <abbr title="\stdClass">stdClass</abbr>    </span>
@@ -277,7 +263,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Api/FedexAddressValidation.php"><a href="files/src-api-fedexaddressvalidation.html"><abbr title="src/Api/FedexAddressValidation.php">FedexAddressValidation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">27</span>
+    <span class="phpdocumentor-element-found-in__line">28</span>
 
     </aside>
 
@@ -367,7 +353,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Api/FedexAddressValidation.php"><a href="files/src-api-fedexaddressvalidation.html"><abbr title="src/Api/FedexAddressValidation.php">FedexAddressValidation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">38</span>
+    <span class="phpdocumentor-element-found-in__line">39</span>
 
     </aside>
 
@@ -441,50 +427,6 @@ used: they have to be configured on that client</p>
         class="phpdocumentor-element
             -method
             -public
-                                                        "
->
-    <h4 class="phpdocumentor-element__name" id="method_inputSchemas">
-        inputSchemas()
-        <a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_inputSchemas" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/Api/FedexAddressValidation.php"><a href="files/src-api-fedexaddressvalidation.html"><abbr title="src/Api/FedexAddressValidation.php">FedexAddressValidation.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">251</span>
-
-    </aside>
-
-        <p class="phpdocumentor-summary">Get the schemas used to validate the request, taken from schemas/address-validation.json.</p>
-
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">inputSchemas</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
-
-    <div class="phpdocumentor-label-line">
-        </div>
-    
-        <section class="phpdocumentor-description"><p>Full_Schema_Validate_Address describes the request. The names of the schemas, and of their fields, are the
-ones of the file. The differences from the file are the checks added to the postal code (a string or an
-integer, as in the examples of the file), to the state or province code (2 characters at most), to the
-country code (2 letters), to the date (YYYY-MM-DD) and to the number of addresses (1 to 100)</p>
-</section>
-
-    
-    
-
-        
-    
-            <section>
-        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
-            </section>
-
-</article>
-                    <article
-        class="phpdocumentor-element
-            -method
-            -public
                                     -static                    "
 >
     <h4 class="phpdocumentor-element__name" id="method_newAddress">
@@ -495,7 +437,7 @@ country code (2 letters), to the date (YYYY-MM-DD) and to the number of addresse
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Api/FedexAddressValidation.php"><a href="files/src-api-fedexaddressvalidation.html"><abbr title="src/Api/FedexAddressValidation.php">FedexAddressValidation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">71</span>
+    <span class="phpdocumentor-element-found-in__line">72</span>
 
     </aside>
 
@@ -536,7 +478,7 @@ country code (2 letters), to the date (YYYY-MM-DD) and to the number of addresse
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Api/FedexAddressValidation.php"><a href="files/src-api-fedexaddressvalidation.html"><abbr title="src/Api/FedexAddressValidation.php">FedexAddressValidation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">55</span>
+    <span class="phpdocumentor-element-found-in__line">56</span>
 
     </aside>
 
@@ -578,7 +520,7 @@ is sent. Add the addresses to addressesToValidate, each one as returned by newAd
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Api/FedexAddressValidation.php"><a href="files/src-api-fedexaddressvalidation.html"><abbr title="src/Api/FedexAddressValidation.php">FedexAddressValidation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">95</span>
+    <span class="phpdocumentor-element-found-in__line">96</span>
 
     </aside>
 
@@ -652,7 +594,7 @@ inEffectAsOfTimestamp must be a valid YYYY-MM-DD date. Fields set to null and em
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Api/FedexAddressValidation.php"><a href="files/src-api-fedexaddressvalidation.html"><abbr title="src/Api/FedexAddressValidation.php">FedexAddressValidation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">140</span>
+    <span class="phpdocumentor-element-found-in__line">141</span>
 
     </aside>
 
@@ -732,7 +674,7 @@ named as in the schema. addressesToValidate cannot be used: it is set by this me
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Api/FedexAddressValidation.php"><a href="files/src-api-fedexaddressvalidation.html"><abbr title="src/Api/FedexAddressValidation.php">FedexAddressValidation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">154</span>
+    <span class="phpdocumentor-element-found-in__line">155</span>
 
     </aside>
 
@@ -813,7 +755,7 @@ named as in the schema. addressesToValidate cannot be used: it is set by this me
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Api/FedexAddressValidation.php"><a href="files/src-api-fedexaddressvalidation.html"><abbr title="src/Api/FedexAddressValidation.php">FedexAddressValidation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">192</span>
+    <span class="phpdocumentor-element-found-in__line">193</span>
 
     </aside>
 
@@ -868,50 +810,6 @@ named as in the schema. addressesToValidate cannot be used: it is set by this me
             -protected
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="method_outputSchemas">
-        outputSchemas()
-        <a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_outputSchemas" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/Api/FedexAddressValidation.php"><a href="files/src-api-fedexaddressvalidation.html"><abbr title="src/Api/FedexAddressValidation.php">FedexAddressValidation.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">293</span>
-
-    </aside>
-
-        <p class="phpdocumentor-summary">Get the schemas used to validate the response, taken from schemas/address-validation.json.</p>
-
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">protected</span>
-                    <span class="phpdocumentor-signature__name">outputSchemas</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
-
-    <div class="phpdocumentor-label-line">
-        </div>
-    
-        <section class="phpdocumentor-description"><p>AdvcResponseVO describes the response. The names of the schemas, and of their fields, are the ones of the file.
-The differences from the file are that the city tokens may also be plain strings (the file declares objects but
-its own example shows strings), that attributes is only checked to be an object (a free list of key-value
-pairs) and that customerMessage, which has no schema in the file, accepts any value</p>
-</section>
-
-    
-    
-
-        
-    
-            <section>
-        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
-            </section>
-
-</article>
-                    <article
-        class="phpdocumentor-element
-            -method
-            -protected
-                                                        "
->
     <h4 class="phpdocumentor-element__name" id="method_validateAndParse">
         validateAndParse()
         <a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_validateAndParse" class="headerlink"><i class="fas fa-link"></i></a>
@@ -920,7 +818,7 @@ pairs) and that customerMessage, which has no schema in the file, accepts any va
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Api/FedexAddressValidation.php"><a href="files/src-api-fedexaddressvalidation.html"><abbr title="src/Api/FedexAddressValidation.php">FedexAddressValidation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">212</span>
+    <span class="phpdocumentor-element-found-in__line">213</span>
 
     </aside>
 
@@ -1006,14 +904,12 @@ pairs) and that customerMessage, which has no schema in the file, accepts any va
             <li>
                 <ul class="phpdocumentor-list -clean">
                                             <li class=""><a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method___construct">__construct()</a></li>
-                                            <li class=""><a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_inputSchemas">inputSchemas()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_newAddress">newAddress()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_newRequest">newRequest()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_resolve">resolve()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_validate">validate()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_validateArray">validateArray()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_checkRequest">checkRequest()</a></li>
-                                            <li class=""><a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_outputSchemas">outputSchemas()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_validateAndParse">validateAndParse()</a></li>
                                     </ul>
             </li>

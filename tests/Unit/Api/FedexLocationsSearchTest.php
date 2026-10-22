@@ -10,6 +10,7 @@ namespace Mariopereira\Fedex\Tests\Unit\Api;
 
 use Mariopereira\Fedex\Api\AbstractFedexApi;
 use Mariopereira\Fedex\Api\FedexLocationsSearch;
+use Mariopereira\Fedex\Api\Schemas\FedexLocationsSearchSchemas;
 use Mariopereira\Fedex\Auth\FedexAuth;
 use Mariopereira\Fedex\Exception\FedexClientException;
 use Mariopereira\Fedex\Exception\FedexException;
@@ -17,7 +18,6 @@ use Mariopereira\Fedex\Exception\FedexLocationsSearchException;
 use Mariopereira\Fedex\Http\FedexClient;
 use Mariopereira\Fedex\Misc\FedexUtils;
 use Mariopereira\Fedex\Tests\Support\BatchAssertions;
-use Mariopereira\Fedex\Tests\Support\ExposedLocations;
 use Mariopereira\Fedex\Tests\Support\FakeTransport;
 use Mariopereira\Fedex\Tests\Support\Reflect;
 use Mariopereira\Fedex\Tests\Support\Responses;
@@ -120,7 +120,7 @@ final class FedexLocationsSearchTest extends TestCase
         $this->transport = new FakeTransport([], Responses::make($status, $body));
         $auth = StubAuth::make();
 
-        return new ExposedLocations($auth, 'en_US', 30, 10, new FedexClient($auth, 'en_US', 30, 10, $this->transport));
+        return new FedexLocationsSearch($auth, 'en_US', 30, 10, new FedexClient($auth, 'en_US', 30, 10, $this->transport));
     }
 
     /**
@@ -211,7 +211,7 @@ final class FedexLocationsSearchTest extends TestCase
      */
     public function testTheDefinitionsAreTheOnesOfTheSpec(): void
     {
-        $defs = $this->api()->definitions();
+        $defs = FedexLocationsSearchSchemas::definitions();
         $skip = ['ErrorResponseVO', 'CXSError', 'Parameter', 'ErrorResponseVO401', 'CXSError401', 'ErrorResponseVO403', 'CXSError403', 'ErrorResponseVO404', 'CXSError404', 'ErrorResponseVO500', 'CXSError500', 'ErrorResponseVO503', 'CXSError503'];
         $res = [];
 
@@ -1476,7 +1476,7 @@ final class FedexLocationsSearchTest extends TestCase
                 $client->setRetryPolicy(3, 0, 0);
             }
 
-            $api = new ExposedLocations($auth, 'en_US', 30, 10, $client);
+            $api = new FedexLocationsSearch($auth, 'en_US', 30, 10, $client);
             $error = null;
 
             try {

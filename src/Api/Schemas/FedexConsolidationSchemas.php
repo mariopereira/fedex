@@ -6,7 +6,7 @@
  * @license https://www.gnu.org/licenses/gpl-3.0.en.htmlURL GPL-3.0-or-later
  */
 
-namespace Mariopereira\Fedex\Api;
+namespace Mariopereira\Fedex\Api\Schemas;
 
 /**
  * Definitions of the requests and responses of the Consolidation API operations that FedexConsolidation implements,

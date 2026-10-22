@@ -8,6 +8,7 @@
 
 namespace Mariopereira\Fedex\Api;
 
+use Mariopereira\Fedex\Api\Schemas\FedexPostalCodeValidationSchemas;
 use Mariopereira\Fedex\Misc\FedexUtils;
 use Mariopereira\Fedex\Auth\FedexAuth;
 use Mariopereira\Fedex\Exception\FedexException;
@@ -322,9 +323,9 @@ class FedexPostalCodeValidation extends AbstractFedexApi
             );
         }
 
-        $validator = new SchemaValidator(true, $this->responseSchemas());
+        $validator = new SchemaValidator(true, FedexPostalCodeValidationSchemas::definitions());
 
-        if (!$validator->validate($response, '@Body')) {
+        if (!$validator->validate($response, '@' . FedexPostalCodeValidationSchemas::RESPONSE)) {
             throw new FedexPostalCodeValidationException(
                 'Invalid response received',
                 FedexException::EC_BAD_RESULT_RETURNED,
@@ -337,53 +338,5 @@ class FedexPostalCodeValidation extends AbstractFedexApi
         }
 
         return $response;
-    }
-
-    /**
-     * Get the schemas used to validate a response
-     * @return array
-     */
-    protected function responseSchemas() : array
-    {
-        $schemas = [];
-
-        $schemas['Body'] = [
-            'transactionId?' => 'string',
-            'customerTransactionId?' => 'string',
-            'output?' => '@Output'
-        ];
-
-        $schemas['Output'] = [
-            'countryCode?' => 'string',
-            'cityFirstInitials?' => 'string',
-            'stateOrProvinceCode?' => 'string',
-            'alerts?' => ['@Alert'],
-            'locationDescriptions?' => ['@LocationDescription'],
-            'cleanedPostalCode?' => 'string'
-        ];
-
-        $schemas['Alert'] = [
-            'code?' => 'string',
-            'alertType?' => [
-                '@type' => 'string',
-                '@enum' => ['NOTE', 'WARNING']
-            ],
-            'parameterList?' => ['@Parameters'],
-            'message?' => 'string'
-        ];
-
-        $schemas['Parameters'] = [
-            'value?' => 'string',
-            'key?' => 'string'
-        ];
-
-        $schemas['LocationDescription'] = [
-            'locationId' => 'string',
-            'locationNumber' => 'string',
-            'serviceArea' => 'string',
-            'airportId' => 'string'
-        ];
-
-        return $schemas;
     }
 }

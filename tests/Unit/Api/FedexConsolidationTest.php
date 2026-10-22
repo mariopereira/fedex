@@ -10,7 +10,7 @@ namespace Mariopereira\Fedex\Tests\Unit\Api;
 
 use Mariopereira\Fedex\Api\AbstractFedexApi;
 use Mariopereira\Fedex\Api\FedexConsolidation;
-use Mariopereira\Fedex\Api\FedexConsolidationSchemas;
+use Mariopereira\Fedex\Api\Schemas\FedexConsolidationSchemas;
 use Mariopereira\Fedex\Exception\FedexAuthException;
 use Mariopereira\Fedex\Exception\FedexClientException;
 use Mariopereira\Fedex\Exception\FedexConsolidationException;

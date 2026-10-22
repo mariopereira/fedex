@@ -8,6 +8,7 @@
 
 namespace Mariopereira\Fedex\Api;
 
+use Mariopereira\Fedex\Api\Schemas\FedexAddressValidationSchemas;
 use Mariopereira\Fedex\Auth\FedexAuth;
 use Mariopereira\Fedex\Exception\FedexAddressValidationException;
 use Mariopereira\Fedex\Exception\FedexException;
@@ -106,9 +107,9 @@ class FedexAddressValidation extends AbstractFedexApi
         }
 
         $request = FedexUtils::pruneEmpty($request) ?? [];
-        $validator = new SchemaValidator(false, $this->inputSchemas());
+        $validator = new SchemaValidator(false, FedexAddressValidationSchemas::requestDefinitions());
 
-        if (!$validator->validate($request, '@Full_Schema_Validate_Address')) {
+        if (!$validator->validate($request, '@' . FedexAddressValidationSchemas::REQUEST)) {
             throw new FedexAddressValidationException(
                 'Invalid request',
                 FedexException::EC_BAD_PARAMETER,
@@ -223,9 +224,9 @@ class FedexAddressValidation extends AbstractFedexApi
             );
         }
 
-        $validator = new SchemaValidator(true, $this->outputSchemas());
+        $validator = new SchemaValidator(true, FedexAddressValidationSchemas::responseDefinitions());
 
-        if (!$validator->validate($response, '@AdvcResponseVO')) {
+        if (!$validator->validate($response, '@' . FedexAddressValidationSchemas::RESPONSE)) {
             throw new FedexAddressValidationException(
                 'Invalid response received',
                 FedexException::EC_BAD_RESULT_RETURNED,
@@ -238,113 +239,5 @@ class FedexAddressValidation extends AbstractFedexApi
         }
 
         return $response;
-    }
-
-    /**
-     * Get the schemas used to validate the request, taken from schemas/address-validation.json.
-     * Full_Schema_Validate_Address describes the request. The names of the schemas, and of their fields, are the
-     * ones of the file. The differences from the file are the checks added to the postal code (a string or an
-     * integer, as in the examples of the file), to the state or province code (2 characters at most), to the
-     * country code (2 letters), to the date (YYYY-MM-DD) and to the number of addresses (1 to 100)
-     * @return array
-     */
-    public function inputSchemas() : array
-    {
-        $schemas = [];
-
-        $schemas['Full_Schema_Validate_Address'] = [
-            'inEffectAsOfTimestamp?' => [
-                '@type' => 'string',
-                '@pattern' => '/^\\d{4}-\\d{2}-\\d{2}$/D',
-                '@check' => fn($s) => FedexUtils::isDateValid($s, 'Y-m-d') ?: 'not a valid date (expected Y-m-d)'
-            ],
-            'validateAddressControlParameters?' => '@AddressResolutionControlParameters',
-            'addressesToValidate' => ['@type' => ['@ResolveContactAndAddress'], '@min' => 1, '@max' => 100]
-        ];
-
-        $schemas['AddressResolutionControlParameters'] = [
-            'includeResolutionTokens?' => 'bool'
-        ];
-
-        $schemas['ResolveContactAndAddress'] = [
-            'address' => '@Address',
-            'clientReferenceId?' => 'string'
-        ];
-
-        $schemas['Address'] = [
-            'streetLines' => ['string'],
-            'city' => 'string',
-            'stateOrProvinceCode?' => ['@type' => 'string', '@max' => 2],
-            'postalCode' => 'string|int',
-            'countryCode?' => ['@type' => 'string', '@pattern' => '/^[A-Za-z]{2}$/D']
-        ];
-
-        return $schemas;
-    }
-
-    /**
-     * Get the schemas used to validate the response, taken from schemas/address-validation.json.
-     * AdvcResponseVO describes the response. The names of the schemas, and of their fields, are the ones of the file.
-     * The differences from the file are that the city tokens may also be plain strings (the file declares objects but
-     * its own example shows strings), that attributes is only checked to be an object (a free list of key-value
-     * pairs) and that customerMessage, which has no schema in the file, accepts any value
-     * @return array
-     */
-    protected function outputSchemas() : array
-    {
-        $schemas = [];
-
-        $schemas['AdvcResponseVO'] = [
-            'transactionId?' => 'string',
-            'customerTransactionId?' => 'string',
-            'output?' => '@BaseProcessOutputVO'
-        ];
-
-        $schemas['BaseProcessOutputVO'] = '@AddressResolutionOutputVOV3';
-
-        $schemas['AddressResolutionOutputVOV3'] = [
-            'resolvedAddresses?' => ['@ResolvedAddress'],
-            'alerts?' => ['@Alert']
-        ];
-
-        $schemas['ResolvedAddress'] = [
-            'streetLinesToken?' => ['string'],
-            'city?' => 'string',
-            'stateOrProvinceCode?' => 'string',
-            'countryCode?' => 'string',
-            'customerMessage?' => ['@CustomerMessage'],
-            'cityToken?' => ['string|@ResolutionToken'],
-            'postalCodeToken?' => '@ResolutionToken',
-            'parsedPostalCode?' => '@ParsedPostalCode',
-            'classification?' => ['@type' => 'string', '@enum' => ['MIXED', 'UNKNOWN', 'BUSINESS', 'RESIDENTIAL']],
-            'postOfficeBox?' => 'bool',
-            'normalizedStatusNameDPV?' => 'bool',
-            'standardizedStatusNameMatchSource?' => 'string',
-            'resolutionMethodName?' => 'string',
-            'ruralRouteHighwayContract?' => 'bool',
-            'generalDelivery?' => 'bool',
-            'attributes?' => 'object'
-        ];
-
-        $schemas['Alert'] = [
-            'code?' => 'string',
-            'message?' => 'string',
-            'alertType?' => ['@type' => 'string', '@enum' => ['NOTE', 'WARNING']]
-        ];
-
-        $schemas['CustomerMessage'] = 'mixed';
-
-        $schemas['ResolutionToken'] = [
-            'changed?' => 'bool',
-            'value?' => 'string'
-        ];
-
-        $schemas['ParsedPostalCode'] = [
-            'base?' => 'string',
-            'addOn?' => 'string',
-            'deliveryPoint?' => 'string'
-        ];
-
-        return $schemas;
     }
 }

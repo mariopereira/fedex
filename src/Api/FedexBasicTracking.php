@@ -8,6 +8,7 @@
 
 namespace Mariopereira\Fedex\Api;
 
+use Mariopereira\Fedex\Api\Schemas\FedexBasicTrackingSchemas;
 use Mariopereira\Fedex\Auth\FedexAuth;
 use Mariopereira\Fedex\Exception\FedexBasicTrackingException;
 use Mariopereira\Fedex\Exception\FedexException;

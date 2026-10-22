@@ -10,6 +10,7 @@ namespace Mariopereira\Fedex\Tests\Unit\Api;
 
 use Mariopereira\Fedex\Api\AbstractFedexApi;
 use Mariopereira\Fedex\Api\FedexAddressValidation;
+use Mariopereira\Fedex\Api\Schemas\FedexAddressValidationSchemas;
 use Mariopereira\Fedex\Auth\FedexAuth;
 use Mariopereira\Fedex\Exception\FedexAddressValidationException;
 use Mariopereira\Fedex\Exception\FedexClientException;
@@ -17,7 +18,6 @@ use Mariopereira\Fedex\Exception\FedexException;
 use Mariopereira\Fedex\Http\FedexClient;
 use Mariopereira\Fedex\Misc\FedexUtils;
 use Mariopereira\Fedex\Tests\Support\BatchAssertions;
-use Mariopereira\Fedex\Tests\Support\ExposedAddress;
 use Mariopereira\Fedex\Tests\Support\FakeTransport;
 use Mariopereira\Fedex\Tests\Support\Reflect;
 use Mariopereira\Fedex\Tests\Support\Responses;
@@ -120,7 +120,7 @@ final class FedexAddressValidationTest extends TestCase
         $this->transport = new FakeTransport([], Responses::make($status, $body));
         $auth = StubAuth::make();
 
-        return new ExposedAddress($auth, 'en_US', 30, 10, new FedexClient($auth, 'en_US', 30, 10, $this->transport));
+        return new FedexAddressValidation($auth, 'en_US', 30, 10, new FedexClient($auth, 'en_US', 30, 10, $this->transport));
     }
 
     /**
@@ -213,7 +213,7 @@ final class FedexAddressValidationTest extends TestCase
         ];
         $res = [];
 
-        foreach (['request' => [$request, $api->inputSchemas()], 'response' => [$response, $api->outputDefinitions()]] as $side => [$names, $defs]) {
+        foreach (['request' => [$request, FedexAddressValidationSchemas::requestDefinitions()], 'response' => [$response, FedexAddressValidationSchemas::responseDefinitions()]] as $side => [$names, $defs]) {
             $defined = array_keys($defs);
             $expected = $names;
             sort($defined);
@@ -312,7 +312,7 @@ final class FedexAddressValidationTest extends TestCase
         $res = [];
 
         foreach (['ParsedPersonName', 'EMailDetail', 'SocialMediaDetail', 'PhoneNumberDetail', 'PhoneNumber', 'CompanyName', 'ErrorResponseVO', 'CXSError', 'Parameter', 'Address_Validation_US', 'body'] as $name) {
-            $res["$name is not defined"] = (!isset($api->inputSchemas()[$name]) && !isset($api->outputDefinitions()[$name])) ? true : 'defined';
+            $res["$name is not defined"] = (!isset(FedexAddressValidationSchemas::requestDefinitions()[$name]) && !isset(FedexAddressValidationSchemas::responseDefinitions()[$name])) ? true : 'defined';
         }
 
         $this->assertAll('components of the file that the API does not use', $res);
@@ -1461,8 +1461,9 @@ final class FedexAddressValidationTest extends TestCase
         $this->assertSame('options', $validateArray->getParameters()[1]->getName());
         $this->assertSame(1, $validateArray->getNumberOfRequiredParameters());
 
-        $this->assertTrue((new \ReflectionMethod(FedexAddressValidation::class, 'inputSchemas'))->isPublic());
-        $this->assertSame(['Full_Schema_Validate_Address', 'AddressResolutionControlParameters', 'ResolveContactAndAddress', 'Address'], array_keys($this->api()->inputSchemas()));
+        $this->assertFalse(method_exists(FedexAddressValidation::class, 'inputSchemas'), 'the definitions are in FedexAddressValidationSchemas');
+        $this->assertFalse(method_exists(FedexAddressValidation::class, 'outputSchemas'));
+        $this->assertSame(['Full_Schema_Validate_Address', 'AddressResolutionControlParameters', 'ResolveContactAndAddress', 'Address'], array_keys(FedexAddressValidationSchemas::requestDefinitions()));
     }
 
     /**
@@ -1493,7 +1494,7 @@ final class FedexAddressValidationTest extends TestCase
                 $client->setRetryPolicy(3, 0, 0);
             }
 
-            $api = new ExposedAddress($auth, 'en_US', 30, 10, $client);
+            $api = new FedexAddressValidation($auth, 'en_US', 30, 10, $client);
             $error = null;
 
             try {

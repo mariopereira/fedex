@@ -61,16 +61,6 @@ Search.appendIndex(
             "summary": "Validate\u0020the\u0020response\u0020received\u0020from\u0020FedEx",
             "url": "classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_validateAndParse"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexAddressValidation\u003A\u003AinputSchemas\u0028\u0029",
-            "name": "inputSchemas",
-            "summary": "Get\u0020the\u0020schemas\u0020used\u0020to\u0020validate\u0020the\u0020request,\u0020taken\u0020from\u0020schemas\/address\u002Dvalidation.json.",
-            "url": "classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_inputSchemas"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexAddressValidation\u003A\u003AoutputSchemas\u0028\u0029",
-            "name": "outputSchemas",
-            "summary": "Get\u0020the\u0020schemas\u0020used\u0020to\u0020validate\u0020the\u0020response,\u0020taken\u0020from\u0020schemas\/address\u002Dvalidation.json.",
-            "url": "classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_outputSchemas"
-        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexAddressValidation\u003A\u003AENDPOINT",
             "name": "ENDPOINT",
             "summary": "Address\u0020Validation\u0020API\u0020endpoint",
@@ -205,76 +195,6 @@ Search.appendIndex(
             "name": "MAX_TRACKING_NUMBERS",
             "summary": "Most\u0020tracking\u0020numbers\u0020that\u0020a\u0020request\u0020can\u0020have\u0020\u0028the\u0020description\u0020of\u0020trackingInfo\u0020in\u0020the\u0020schema\u0029",
             "url": "classes/Mariopereira-Fedex-Api-FedexBasicTracking.html#constant_MAX_TRACKING_NUMBERS"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexBasicTrackingSchemas",
-            "name": "FedexBasicTrackingSchemas",
-            "summary": "Definitions\u0020of\u0020the\u0020requests\u0020and\u0020responses\u0020of\u0020the\u0020Basic\u0020Integrated\u0020Visibility\u0020\u0028tracking\u0029\u0020API\u0020operations\u0020that\nFedexBasicTracking\u0020implements,\u0020generated\u0020from\u0020schemas\/track.json\u0020and\u0020written\u0020for\u0020SchemaValidator",
-            "url": "classes/Mariopereira-Fedex-Api-FedexBasicTrackingSchemas.html"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexBasicTrackingSchemas\u003A\u003Adefinitions\u0028\u0029",
-            "name": "definitions",
-            "summary": "Get\u0020the\u0020definitions\u0020of\u0020all\u0020the\u0020requests\u0020and\u0020responses.\u0020The\u0020names\u0020of\u0020the\u0020definitions,\u0020and\u0020of\u0020their\u0020fields,\u0020are\u0020the\nones\u0020of\u0020schemas\/track.json,\u0020with\u0020these\u0020differences,\u0020all\u0020of\u0020them\u0020decided\u0020with\u0020the\u0020owner\u003A\n\u0020\u002D\u0020ReferenceInformation\u0020requires\u0020shipDateEndDate,\u0020and\u0020its\u0020example\u0020writes\u0020shipDateEnd,\u0020as\u0020every\u0020other\u0020schema\u0020does\u003A\n\u0020\u0020\u0020shipDateEnd\u0020is\u0020accepted\u0020too,\u0020as\u0020an\u0020optional\u0020field\n\u0020\u002D\u0020AddressVO\u0020requires\u0020the\u0020field\u0020addressVerificationId,\u0020which\u0020the\u0020file\u0020never\u0020defines,\u0020so\u0020FedEx\u0020can\u0020never\u0020send\u0020it\u003A\n\u0020\u0020\u0020it\u0020is\u0020accepted\u0020as\u0020an\u0020optional\u0020field\u0020of\u0020any\u0020type\n\u0020\u002D\u0020DelayDetail.subType\u0020\u0028an\u0020enum\u0020with\u0020the\u0020values\u0020SNOW,\u0020TORNADO\u0020and\u0020\u0022EARTHQUAKE\u0020etc\u0022\u0029\u0020and\u0020ServiceCommitMessage.type\n\u0020\u0020\u0020\u0028an\u0020enum\u0020with\u0020a\u0020stray\u0020quote\u0020in\u0020USPS_DELIVERING\u0022\u0029\u0020are\u0020defective\u0020in\u0020the\u0020file\u003A\u0020they\u0020are\u0020checked\u0020as\u0020text",
-            "url": "classes/Mariopereira-Fedex-Api-FedexBasicTrackingSchemas.html#method_definitions"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexBasicTrackingSchemas\u003A\u003ATRACKING_NUMBERS_REQUEST",
-            "name": "TRACKING_NUMBERS_REQUEST",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Track\u0020by\u0020Tracking\u0020Number\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexBasicTrackingSchemas.html#constant_TRACKING_NUMBERS_REQUEST"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexBasicTrackingSchemas\u003A\u003ATRACKING_NUMBERS_RESPONSE",
-            "name": "TRACKING_NUMBERS_RESPONSE",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Track\u0020by\u0020Tracking\u0020Number\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexBasicTrackingSchemas.html#constant_TRACKING_NUMBERS_RESPONSE"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexBasicTrackingSchemas\u003A\u003AASSOCIATED_REQUEST",
-            "name": "ASSOCIATED_REQUEST",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Track\u0020Multiple\u0020Piece\u0020Shipment\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexBasicTrackingSchemas.html#constant_ASSOCIATED_REQUEST"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexBasicTrackingSchemas\u003A\u003AASSOCIATED_RESPONSE",
-            "name": "ASSOCIATED_RESPONSE",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Track\u0020Multiple\u0020Piece\u0020Shipment\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexBasicTrackingSchemas.html#constant_ASSOCIATED_RESPONSE"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexBasicTrackingSchemas\u003A\u003AREFERENCES_REQUEST",
-            "name": "REFERENCES_REQUEST",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Track\u0020by\u0020References\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexBasicTrackingSchemas.html#constant_REFERENCES_REQUEST"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexBasicTrackingSchemas\u003A\u003AREFERENCES_RESPONSE",
-            "name": "REFERENCES_RESPONSE",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Track\u0020by\u0020References\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexBasicTrackingSchemas.html#constant_REFERENCES_RESPONSE"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexBasicTrackingSchemas\u003A\u003ATCN_REQUEST",
-            "name": "TCN_REQUEST",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Track\u0020by\u0020Transportation\u0020Control\u0020Number\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexBasicTrackingSchemas.html#constant_TCN_REQUEST"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexBasicTrackingSchemas\u003A\u003ATCN_RESPONSE",
-            "name": "TCN_RESPONSE",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Track\u0020by\u0020Transportation\u0020Control\u0020Number\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexBasicTrackingSchemas.html#constant_TCN_RESPONSE"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexBasicTrackingSchemas\u003A\u003ADOCUMENTS_REQUEST",
-            "name": "DOCUMENTS_REQUEST",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Track\u0020Document\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexBasicTrackingSchemas.html#constant_DOCUMENTS_REQUEST"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexBasicTrackingSchemas\u003A\u003ADOCUMENTS_RESPONSE",
-            "name": "DOCUMENTS_RESPONSE",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Track\u0020Document\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexBasicTrackingSchemas.html#constant_DOCUMENTS_RESPONSE"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexBasicTrackingSchemas\u003A\u003ANOTIFICATION_REQUEST",
-            "name": "NOTIFICATION_REQUEST",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Send\u0020Notification\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexBasicTrackingSchemas.html#constant_NOTIFICATION_REQUEST"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexBasicTrackingSchemas\u003A\u003ANOTIFICATION_RESPONSE",
-            "name": "NOTIFICATION_RESPONSE",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Send\u0020Notification\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexBasicTrackingSchemas.html#constant_NOTIFICATION_RESPONSE"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidation",
             "name": "FedexConsolidation",
@@ -491,121 +411,6 @@ Search.appendIndex(
             "summary": "The\u0020definitions\u0020of\u0020the\u0020top\u0020level\u0020of\u0020the\u0020requests\u0020and\u0020responses,\u0020which\u0020are\u0020made\u0020once",
             "url": "classes/Mariopereira-Fedex-Api-FedexConsolidation.html#property_shallow"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas",
-            "name": "FedexConsolidationSchemas",
-            "summary": "Definitions\u0020of\u0020the\u0020requests\u0020and\u0020responses\u0020of\u0020the\u0020Consolidation\u0020API\u0020operations\u0020that\u0020FedexConsolidation\u0020implements,\ngenerated\u0020from\u0020schemas\/consolidation.json\u0020and\u0020written\u0020for\u0020SchemaValidator.",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003Adefinitions\u0028\u0029",
-            "name": "definitions",
-            "summary": "Get\u0020the\u0020definitions\u0020of\u0020all\u0020the\u0020requests\u0020and\u0020responses,\u0020down\u0020to\u0020the\u0020last\u0020field.\u0020The\u0020names\u0020of\u0020the\u0020definitions,\u0020and\nof\u0020their\u0020fields,\u0020are\u0020the\u0020ones\u0020of\u0020schemas\/consolidation.json,\u0020with\u0020these\u0020differences\u003A\n\u0020\u002D\u0020FullSchema\u002DDeleteShipment\u0020is\u0020named\u0020FullSchema_DeleteShipment\u0020\u0028the\u0020validator\u0020does\u0020not\u0020accept\u0020a\u0020hyphen\u0020in\u0020a\u0020name\u0029\n\u0020\u002D\u0020what\u0020the\u0020file\u0020writes\u0020inline\u0020or\u0020as\u0020an\u0020overlay\u0020of\u0020another\u0020definition\u0020\u0028\u0022this\u0020definition,\u0020but\u0020these\u0020keys\u0020are\n\u0020\u0020\u0020required\u0022\u0029\u0020is\u0020a\u0020definition\u0020of\u0020its\u0020own,\u0020named\u0020after\u0020the\u0020definition\u0020and\u0020the\u0020field\u0020that\u0020contain\u0020it\n\u0020\u002D\u0020RequestedConsolidationShipment\u0020requires\u0020a\u0020field\u0020called\u0020recipient,\u0020which\u0020the\u0020file\u0020never\u0020defines\u0020\u0028the\u0020field\u0020is\n\u0020\u0020\u0020recipients,\u0020and\u0020it\u0020is\u0020not\u0020required\u0020there\u0029\u003A\u0020recipient\u0020is\u0020accepted\u0020as\u0020an\u0020optional\u0020field\u0020of\u0020any\u0020type\n\u0020\u002D\u0020Label.type\u0020and\u0020ShippingDocument.type\u0020have\u0020an\u0020enum\u0020of\u0020one\u0020value,\u0020the\u0020whole\u0020list\u0020of\u0020values\u0020joined\u0020in\u0020a\u0020text\u003A\u0020they\n\u0020\u0020\u0020are\u0020checked\u0020as\u0020text\n\u0020\u002D\u0020the\u0020items\u0020of\u0020DistributionLocations.inclusionSpecifications\u0020are\u0020the\u0020allOf\u0020of\u0020CarrierCode\u0020and\u0020ServiceCategory,\n\u0020\u0020\u0020which\u0020are\u0020both\u0020plain\u0020text\u003A\u0020they\u0020are\u0020text",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#method_definitions"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003AshallowDefinitions\u0028\u0029",
-            "name": "shallowDefinitions",
-            "summary": "Get\u0020the\u0020definitions\u0020of\u0020the\u0020top\u0020level\u0020of\u0020all\u0020the\u0020requests\u0020and\u0020responses\u003A\u0020the\u0020roots\u0020of\u0020ROOTS\u0020with\u0020the\u0020same\u0020fields\nand\u0020the\u0020same\u0020required\u0020fields,\u0020where\u0020a\u0020field\u0020that\u0020holds\u0020an\u0020object\u0020is\u0020only\u0020checked\u0020to\u0020be\u0020an\u0020object,\u0020and\u0020a\u0020field\u0020that\nholds\u0020a\u0020list\u0020is\u0020only\u0020checked\u0020to\u0020be\u0020a\u0020list.\u0020The\u0020values\u0020that\u0020are\u0020text,\u0020numbers\u0020or\u0020booleans,\u0020and\u0020the\u0020enums\u0020of\u0020the\u0020top\nlevel,\u0020are\u0020checked\u0020as\u0020in\u0020definitions\u0028\u0029",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#method_shallowDefinitions"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003Ashallow\u0028\u0029",
-            "name": "shallow",
-            "summary": "The\u0020shallow\u0020form\u0020of\u0020the\u0020definition\u0020of\u0020a\u0020field",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#method_shallow"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003ACREATE_REQUEST",
-            "name": "CREATE_REQUEST",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Create\u0020Consolidation\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#constant_CREATE_REQUEST"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003ACREATE_RESPONSE",
-            "name": "CREATE_RESPONSE",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Create\u0020Consolidation\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#constant_CREATE_RESPONSE"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003AMODIFY_REQUEST",
-            "name": "MODIFY_REQUEST",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Modify\u0020Consolidation\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#constant_MODIFY_REQUEST"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003AMODIFY_RESPONSE",
-            "name": "MODIFY_RESPONSE",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Modify\u0020Consolidation\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#constant_MODIFY_RESPONSE"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003ACREATE_SHIPMENT_REQUEST",
-            "name": "CREATE_SHIPMENT_REQUEST",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Create\u0020Consolidation\u0020Shipment\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#constant_CREATE_SHIPMENT_REQUEST"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003ACREATE_SHIPMENT_RESPONSE",
-            "name": "CREATE_SHIPMENT_RESPONSE",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Create\u0020Consolidation\u0020Shipment\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#constant_CREATE_SHIPMENT_RESPONSE"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003ASHIPMENT_RESULTS_REQUEST",
-            "name": "SHIPMENT_RESULTS_REQUEST",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Consolidation\u0020Shipment\u0020Results\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#constant_SHIPMENT_RESULTS_REQUEST"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003ASHIPMENT_RESULTS_RESPONSE",
-            "name": "SHIPMENT_RESULTS_RESPONSE",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Consolidation\u0020Shipment\u0020Results\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#constant_SHIPMENT_RESULTS_RESPONSE"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003ACONFIRM_REQUEST",
-            "name": "CONFIRM_REQUEST",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Confirm\u0020Consolidations\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#constant_CONFIRM_REQUEST"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003ACONFIRM_RESPONSE",
-            "name": "CONFIRM_RESPONSE",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Confirm\u0020Consolidations\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#constant_CONFIRM_RESPONSE"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003ACONFIRM_RESULTS_REQUEST",
-            "name": "CONFIRM_RESULTS_REQUEST",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Confirm\u0020Consolidation\u0020Results\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#constant_CONFIRM_RESULTS_REQUEST"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003ACONFIRM_RESULTS_RESPONSE",
-            "name": "CONFIRM_RESULTS_RESPONSE",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Confirm\u0020Consolidation\u0020Results\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#constant_CONFIRM_RESULTS_RESPONSE"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003ARETRIEVE_REQUEST",
-            "name": "RETRIEVE_REQUEST",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Retrieve\u0020Consolidation\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#constant_RETRIEVE_REQUEST"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003ARETRIEVE_RESPONSE",
-            "name": "RETRIEVE_RESPONSE",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Retrieve\u0020Consolidation\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#constant_RETRIEVE_RESPONSE"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003ADELETE_SHIPMENTS_REQUEST",
-            "name": "DELETE_SHIPMENTS_REQUEST",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Delete\u0020Consolidation\u0020Shipments\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#constant_DELETE_SHIPMENTS_REQUEST"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003ADELETE_SHIPMENTS_RESPONSE",
-            "name": "DELETE_SHIPMENTS_RESPONSE",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Delete\u0020Consolidation\u0020Shipments\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#constant_DELETE_SHIPMENTS_RESPONSE"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003ADELETE_REQUEST",
-            "name": "DELETE_REQUEST",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Delete\u0020Consolidation\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#constant_DELETE_REQUEST"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003ADELETE_RESPONSE",
-            "name": "DELETE_RESPONSE",
-            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Delete\u0020Consolidation\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#constant_DELETE_RESPONSE"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexConsolidationSchemas\u003A\u003AROOTS",
-            "name": "ROOTS",
-            "summary": "The\u0020roots\u0020of\u0020the\u0020file\u0020that\u0020FedexConsolidation\u0020implements\u003A\u0020the\u0020request\u0020and\u0020the\u0020response\u0020of\u0020each\u0020operation",
-            "url": "classes/Mariopereira-Fedex-Api-FedexConsolidationSchemas.html#constant_ROOTS"
-        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexLocationsSearch",
             "name": "FedexLocationsSearch",
             "summary": "Locations\u0020Search\u0020API\u003A\u0020finds\u0020FedEx\u0020locations\u0020by\u0020address,\u0020geographic\u0020coordinates\u0020or\u0020phone\u0020number\u0020\u0028location\/v1\/locations\u0029",
@@ -661,11 +466,6 @@ Search.appendIndex(
             "summary": "Validate\u0020the\u0020response\u0020received\u0020from\u0020FedEx",
             "url": "classes/Mariopereira-Fedex-Api-FedexLocationsSearch.html#method_validateAndParse"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexLocationsSearch\u003A\u003Aschemas\u0028\u0029",
-            "name": "schemas",
-            "summary": "Get\u0020the\u0020schemas\u0020used\u0020to\u0020validate\u0020the\u0020request\u0020and\u0020the\u0020response,\u0020taken\u0020from\u0020schemas\/locations.json.",
-            "url": "classes/Mariopereira-Fedex-Api-FedexLocationsSearch.html#method_schemas"
-        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexLocationsSearch\u003A\u003AENDPOINT",
             "name": "ENDPOINT",
             "summary": "Locations\u0020Search\u0020API\u0020endpoint",
@@ -720,11 +520,6 @@ Search.appendIndex(
             "name": "validateAndParse",
             "summary": "Validate\u0020the\u0020response\u0020received\u0020from\u0020FedEx",
             "url": "classes/Mariopereira-Fedex-Api-FedexPostalCodeValidation.html#method_validateAndParse"
-        },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexPostalCodeValidation\u003A\u003AresponseSchemas\u0028\u0029",
-            "name": "responseSchemas",
-            "summary": "Get\u0020the\u0020schemas\u0020used\u0020to\u0020validate\u0020a\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexPostalCodeValidation.html#method_responseSchemas"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexPostalCodeValidation\u003A\u003AENDPOINT",
             "name": "ENDPOINT",
@@ -871,75 +666,320 @@ Search.appendIndex(
             "summary": "Retrieve\u0020Async\u0020Ship\u0020endpoint\u0020\u0028POST\u0029",
             "url": "classes/Mariopereira-Fedex-Api-FedexShip.html#constant_ENDPOINT_RESULTS"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexShipSchemas",
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexAddressValidationSchemas",
+            "name": "FedexAddressValidationSchemas",
+            "summary": "Definitions\u0020of\u0020the\u0020request\u0020and\u0020the\u0020response\u0020of\u0020the\u0020Address\u0020Validation\u0020API\u0020operation\u0020that\u0020FedexAddressValidation\u0020implements,\ntaken\u0020from\u0020schemas\/address\u002Dvalidation.json\u0020and\u0020written\u0020for\u0020SchemaValidator.\u0020The\u0020request\u0020and\u0020the\u0020response\u0020have\u0020a\u0020set\u0020each\u003A\nthe\u0020request\u0020is\u0020checked\u0020strictly\u0020and\u0020the\u0020response\u0020leniently",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexAddressValidationSchemas.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexAddressValidationSchemas\u003A\u003ArequestDefinitions\u0028\u0029",
+            "name": "requestDefinitions",
+            "summary": "Get\u0020the\u0020definitions\u0020used\u0020to\u0020validate\u0020the\u0020request,\u0020taken\u0020from\u0020schemas\/address\u002Dvalidation.json.",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexAddressValidationSchemas.html#method_requestDefinitions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexAddressValidationSchemas\u003A\u003AresponseDefinitions\u0028\u0029",
+            "name": "responseDefinitions",
+            "summary": "Get\u0020the\u0020definitions\u0020used\u0020to\u0020validate\u0020the\u0020response,\u0020taken\u0020from\u0020schemas\/address\u002Dvalidation.json.",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexAddressValidationSchemas.html#method_responseDefinitions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexAddressValidationSchemas\u003A\u003AREQUEST",
+            "name": "REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexAddressValidationSchemas.html#constant_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexAddressValidationSchemas\u003A\u003ARESPONSE",
+            "name": "RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexAddressValidationSchemas.html#constant_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexBasicTrackingSchemas",
+            "name": "FedexBasicTrackingSchemas",
+            "summary": "Definitions\u0020of\u0020the\u0020requests\u0020and\u0020responses\u0020of\u0020the\u0020Basic\u0020Integrated\u0020Visibility\u0020\u0028tracking\u0029\u0020API\u0020operations\u0020that\nFedexBasicTracking\u0020implements,\u0020generated\u0020from\u0020schemas\/track.json\u0020and\u0020written\u0020for\u0020SchemaValidator",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexBasicTrackingSchemas.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexBasicTrackingSchemas\u003A\u003Adefinitions\u0028\u0029",
+            "name": "definitions",
+            "summary": "Get\u0020the\u0020definitions\u0020of\u0020all\u0020the\u0020requests\u0020and\u0020responses.\u0020The\u0020names\u0020of\u0020the\u0020definitions,\u0020and\u0020of\u0020their\u0020fields,\u0020are\u0020the\nones\u0020of\u0020schemas\/track.json,\u0020with\u0020these\u0020differences,\u0020all\u0020of\u0020them\u0020decided\u0020with\u0020the\u0020owner\u003A\n\u0020\u002D\u0020ReferenceInformation\u0020requires\u0020shipDateEndDate,\u0020and\u0020its\u0020example\u0020writes\u0020shipDateEnd,\u0020as\u0020every\u0020other\u0020schema\u0020does\u003A\n\u0020\u0020\u0020shipDateEnd\u0020is\u0020accepted\u0020too,\u0020as\u0020an\u0020optional\u0020field\n\u0020\u002D\u0020AddressVO\u0020requires\u0020the\u0020field\u0020addressVerificationId,\u0020which\u0020the\u0020file\u0020never\u0020defines,\u0020so\u0020FedEx\u0020can\u0020never\u0020send\u0020it\u003A\n\u0020\u0020\u0020it\u0020is\u0020accepted\u0020as\u0020an\u0020optional\u0020field\u0020of\u0020any\u0020type\n\u0020\u002D\u0020DelayDetail.subType\u0020\u0028an\u0020enum\u0020with\u0020the\u0020values\u0020SNOW,\u0020TORNADO\u0020and\u0020\u0022EARTHQUAKE\u0020etc\u0022\u0029\u0020and\u0020ServiceCommitMessage.type\n\u0020\u0020\u0020\u0028an\u0020enum\u0020with\u0020a\u0020stray\u0020quote\u0020in\u0020USPS_DELIVERING\u0022\u0029\u0020are\u0020defective\u0020in\u0020the\u0020file\u003A\u0020they\u0020are\u0020checked\u0020as\u0020text",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexBasicTrackingSchemas.html#method_definitions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexBasicTrackingSchemas\u003A\u003ATRACKING_NUMBERS_REQUEST",
+            "name": "TRACKING_NUMBERS_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Track\u0020by\u0020Tracking\u0020Number\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexBasicTrackingSchemas.html#constant_TRACKING_NUMBERS_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexBasicTrackingSchemas\u003A\u003ATRACKING_NUMBERS_RESPONSE",
+            "name": "TRACKING_NUMBERS_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Track\u0020by\u0020Tracking\u0020Number\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexBasicTrackingSchemas.html#constant_TRACKING_NUMBERS_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexBasicTrackingSchemas\u003A\u003AASSOCIATED_REQUEST",
+            "name": "ASSOCIATED_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Track\u0020Multiple\u0020Piece\u0020Shipment\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexBasicTrackingSchemas.html#constant_ASSOCIATED_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexBasicTrackingSchemas\u003A\u003AASSOCIATED_RESPONSE",
+            "name": "ASSOCIATED_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Track\u0020Multiple\u0020Piece\u0020Shipment\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexBasicTrackingSchemas.html#constant_ASSOCIATED_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexBasicTrackingSchemas\u003A\u003AREFERENCES_REQUEST",
+            "name": "REFERENCES_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Track\u0020by\u0020References\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexBasicTrackingSchemas.html#constant_REFERENCES_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexBasicTrackingSchemas\u003A\u003AREFERENCES_RESPONSE",
+            "name": "REFERENCES_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Track\u0020by\u0020References\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexBasicTrackingSchemas.html#constant_REFERENCES_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexBasicTrackingSchemas\u003A\u003ATCN_REQUEST",
+            "name": "TCN_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Track\u0020by\u0020Transportation\u0020Control\u0020Number\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexBasicTrackingSchemas.html#constant_TCN_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexBasicTrackingSchemas\u003A\u003ATCN_RESPONSE",
+            "name": "TCN_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Track\u0020by\u0020Transportation\u0020Control\u0020Number\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexBasicTrackingSchemas.html#constant_TCN_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexBasicTrackingSchemas\u003A\u003ADOCUMENTS_REQUEST",
+            "name": "DOCUMENTS_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Track\u0020Document\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexBasicTrackingSchemas.html#constant_DOCUMENTS_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexBasicTrackingSchemas\u003A\u003ADOCUMENTS_RESPONSE",
+            "name": "DOCUMENTS_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Track\u0020Document\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexBasicTrackingSchemas.html#constant_DOCUMENTS_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexBasicTrackingSchemas\u003A\u003ANOTIFICATION_REQUEST",
+            "name": "NOTIFICATION_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Send\u0020Notification\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexBasicTrackingSchemas.html#constant_NOTIFICATION_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexBasicTrackingSchemas\u003A\u003ANOTIFICATION_RESPONSE",
+            "name": "NOTIFICATION_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Send\u0020Notification\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexBasicTrackingSchemas.html#constant_NOTIFICATION_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas",
+            "name": "FedexConsolidationSchemas",
+            "summary": "Definitions\u0020of\u0020the\u0020requests\u0020and\u0020responses\u0020of\u0020the\u0020Consolidation\u0020API\u0020operations\u0020that\u0020FedexConsolidation\u0020implements,\ngenerated\u0020from\u0020schemas\/consolidation.json\u0020and\u0020written\u0020for\u0020SchemaValidator.",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003Adefinitions\u0028\u0029",
+            "name": "definitions",
+            "summary": "Get\u0020the\u0020definitions\u0020of\u0020all\u0020the\u0020requests\u0020and\u0020responses,\u0020down\u0020to\u0020the\u0020last\u0020field.\u0020The\u0020names\u0020of\u0020the\u0020definitions,\u0020and\nof\u0020their\u0020fields,\u0020are\u0020the\u0020ones\u0020of\u0020schemas\/consolidation.json,\u0020with\u0020these\u0020differences\u003A\n\u0020\u002D\u0020FullSchema\u002DDeleteShipment\u0020is\u0020named\u0020FullSchema_DeleteShipment\u0020\u0028the\u0020validator\u0020does\u0020not\u0020accept\u0020a\u0020hyphen\u0020in\u0020a\u0020name\u0029\n\u0020\u002D\u0020what\u0020the\u0020file\u0020writes\u0020inline\u0020or\u0020as\u0020an\u0020overlay\u0020of\u0020another\u0020definition\u0020\u0028\u0022this\u0020definition,\u0020but\u0020these\u0020keys\u0020are\n\u0020\u0020\u0020required\u0022\u0029\u0020is\u0020a\u0020definition\u0020of\u0020its\u0020own,\u0020named\u0020after\u0020the\u0020definition\u0020and\u0020the\u0020field\u0020that\u0020contain\u0020it\n\u0020\u002D\u0020RequestedConsolidationShipment\u0020requires\u0020a\u0020field\u0020called\u0020recipient,\u0020which\u0020the\u0020file\u0020never\u0020defines\u0020\u0028the\u0020field\u0020is\n\u0020\u0020\u0020recipients,\u0020and\u0020it\u0020is\u0020not\u0020required\u0020there\u0029\u003A\u0020recipient\u0020is\u0020accepted\u0020as\u0020an\u0020optional\u0020field\u0020of\u0020any\u0020type\n\u0020\u002D\u0020Label.type\u0020and\u0020ShippingDocument.type\u0020have\u0020an\u0020enum\u0020of\u0020one\u0020value,\u0020the\u0020whole\u0020list\u0020of\u0020values\u0020joined\u0020in\u0020a\u0020text\u003A\u0020they\n\u0020\u0020\u0020are\u0020checked\u0020as\u0020text\n\u0020\u002D\u0020the\u0020items\u0020of\u0020DistributionLocations.inclusionSpecifications\u0020are\u0020the\u0020allOf\u0020of\u0020CarrierCode\u0020and\u0020ServiceCategory,\n\u0020\u0020\u0020which\u0020are\u0020both\u0020plain\u0020text\u003A\u0020they\u0020are\u0020text",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#method_definitions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003AshallowDefinitions\u0028\u0029",
+            "name": "shallowDefinitions",
+            "summary": "Get\u0020the\u0020definitions\u0020of\u0020the\u0020top\u0020level\u0020of\u0020all\u0020the\u0020requests\u0020and\u0020responses\u003A\u0020the\u0020roots\u0020of\u0020ROOTS\u0020with\u0020the\u0020same\u0020fields\nand\u0020the\u0020same\u0020required\u0020fields,\u0020where\u0020a\u0020field\u0020that\u0020holds\u0020an\u0020object\u0020is\u0020only\u0020checked\u0020to\u0020be\u0020an\u0020object,\u0020and\u0020a\u0020field\u0020that\nholds\u0020a\u0020list\u0020is\u0020only\u0020checked\u0020to\u0020be\u0020a\u0020list.\u0020The\u0020values\u0020that\u0020are\u0020text,\u0020numbers\u0020or\u0020booleans,\u0020and\u0020the\u0020enums\u0020of\u0020the\u0020top\nlevel,\u0020are\u0020checked\u0020as\u0020in\u0020definitions\u0028\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#method_shallowDefinitions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003Ashallow\u0028\u0029",
+            "name": "shallow",
+            "summary": "The\u0020shallow\u0020form\u0020of\u0020the\u0020definition\u0020of\u0020a\u0020field",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#method_shallow"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003ACREATE_REQUEST",
+            "name": "CREATE_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Create\u0020Consolidation\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#constant_CREATE_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003ACREATE_RESPONSE",
+            "name": "CREATE_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Create\u0020Consolidation\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#constant_CREATE_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003AMODIFY_REQUEST",
+            "name": "MODIFY_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Modify\u0020Consolidation\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#constant_MODIFY_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003AMODIFY_RESPONSE",
+            "name": "MODIFY_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Modify\u0020Consolidation\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#constant_MODIFY_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003ACREATE_SHIPMENT_REQUEST",
+            "name": "CREATE_SHIPMENT_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Create\u0020Consolidation\u0020Shipment\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#constant_CREATE_SHIPMENT_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003ACREATE_SHIPMENT_RESPONSE",
+            "name": "CREATE_SHIPMENT_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Create\u0020Consolidation\u0020Shipment\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#constant_CREATE_SHIPMENT_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003ASHIPMENT_RESULTS_REQUEST",
+            "name": "SHIPMENT_RESULTS_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Consolidation\u0020Shipment\u0020Results\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#constant_SHIPMENT_RESULTS_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003ASHIPMENT_RESULTS_RESPONSE",
+            "name": "SHIPMENT_RESULTS_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Consolidation\u0020Shipment\u0020Results\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#constant_SHIPMENT_RESULTS_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003ACONFIRM_REQUEST",
+            "name": "CONFIRM_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Confirm\u0020Consolidations\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#constant_CONFIRM_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003ACONFIRM_RESPONSE",
+            "name": "CONFIRM_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Confirm\u0020Consolidations\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#constant_CONFIRM_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003ACONFIRM_RESULTS_REQUEST",
+            "name": "CONFIRM_RESULTS_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Confirm\u0020Consolidation\u0020Results\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#constant_CONFIRM_RESULTS_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003ACONFIRM_RESULTS_RESPONSE",
+            "name": "CONFIRM_RESULTS_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Confirm\u0020Consolidation\u0020Results\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#constant_CONFIRM_RESULTS_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003ARETRIEVE_REQUEST",
+            "name": "RETRIEVE_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Retrieve\u0020Consolidation\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#constant_RETRIEVE_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003ARETRIEVE_RESPONSE",
+            "name": "RETRIEVE_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Retrieve\u0020Consolidation\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#constant_RETRIEVE_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003ADELETE_SHIPMENTS_REQUEST",
+            "name": "DELETE_SHIPMENTS_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Delete\u0020Consolidation\u0020Shipments\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#constant_DELETE_SHIPMENTS_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003ADELETE_SHIPMENTS_RESPONSE",
+            "name": "DELETE_SHIPMENTS_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Delete\u0020Consolidation\u0020Shipments\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#constant_DELETE_SHIPMENTS_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003ADELETE_REQUEST",
+            "name": "DELETE_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Delete\u0020Consolidation\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#constant_DELETE_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003ADELETE_RESPONSE",
+            "name": "DELETE_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Delete\u0020Consolidation\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#constant_DELETE_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexConsolidationSchemas\u003A\u003AROOTS",
+            "name": "ROOTS",
+            "summary": "The\u0020roots\u0020of\u0020the\u0020file\u0020that\u0020FedexConsolidation\u0020implements\u003A\u0020the\u0020request\u0020and\u0020the\u0020response\u0020of\u0020each\u0020operation",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexConsolidationSchemas.html#constant_ROOTS"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexLocationsSearchSchemas",
+            "name": "FedexLocationsSearchSchemas",
+            "summary": "Definitions\u0020of\u0020the\u0020request\u0020and\u0020the\u0020response\u0020of\u0020the\u0020Locations\u0020Search\u0020API\u0020operation\u0020that\u0020FedexLocationsSearch\u0020implements,\u0020taken\nfrom\u0020schemas\/locations.json\u0020and\u0020written\u0020for\u0020SchemaValidator",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexLocationsSearchSchemas.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexLocationsSearchSchemas\u003A\u003Adefinitions\u0028\u0029",
+            "name": "definitions",
+            "summary": "Get\u0020the\u0020definitions\u0020used\u0020to\u0020validate\u0020the\u0020request\u0020and\u0020the\u0020response,\u0020taken\u0020from\u0020schemas\/locations.json.",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexLocationsSearchSchemas.html#method_definitions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexLocationsSearchSchemas\u003A\u003AREQUEST",
+            "name": "REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexLocationsSearchSchemas.html#constant_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexLocationsSearchSchemas\u003A\u003ARESPONSE",
+            "name": "RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexLocationsSearchSchemas.html#constant_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexPostalCodeValidationSchemas",
+            "name": "FedexPostalCodeValidationSchemas",
+            "summary": "Definitions\u0020of\u0020the\u0020response\u0020of\u0020the\u0020Postal\u0020Code\u0020Validation\u0020API\u0020operation\u0020that\u0020FedexPostalCodeValidation\u0020implements,\u0020written\u0020for\nSchemaValidator",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexPostalCodeValidationSchemas.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexPostalCodeValidationSchemas\u003A\u003Adefinitions\u0028\u0029",
+            "name": "definitions",
+            "summary": "Get\u0020the\u0020definitions\u0020used\u0020to\u0020validate\u0020a\u0020response\u0020\u0028the\u0020request\u0020is\u0020checked\u0020by\u0020FedexPostalCodeValidation\u0020itself\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexPostalCodeValidationSchemas.html#method_definitions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexPostalCodeValidationSchemas\u003A\u003ARESPONSE",
+            "name": "RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexPostalCodeValidationSchemas.html#constant_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexShipSchemas",
             "name": "FedexShipSchemas",
             "summary": "Definitions\u0020of\u0020the\u0020requests\u0020and\u0020responses\u0020of\u0020the\u0020Ship\u0020API\u0020operations\u0020that\u0020FedexShip\u0020implements\u0020\u0028create\u0020shipment,\nvalidate\u0020shipment,\u0020cancel\u0020shipment,\u0020create\u0020tag,\u0020cancel\u0020tag\u0020and\u0020retrieve\u0020async\u0020ship\u0029,\u0020generated\u0020from\nschemas\/ship.json\u0020and\u0020written\u0020for\u0020SchemaValidator",
-            "url": "classes/Mariopereira-Fedex-Api-FedexShipSchemas.html"
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexShipSchemas.html"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexShipSchemas\u003A\u003Adefinitions\u0028\u0029",
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexShipSchemas\u003A\u003Adefinitions\u0028\u0029",
             "name": "definitions",
             "summary": "Get\u0020the\u0020definitions\u0020of\u0020all\u0020the\u0020requests\u0020and\u0020responses.\u0020The\u0020names\u0020of\u0020the\u0020definitions,\u0020and\u0020of\u0020their\u0020fields,\u0020are\u0020the\nones\u0020of\u0020schemas\/ship.json,\u0020with\u0020these\u0020differences\u003A",
-            "url": "classes/Mariopereira-Fedex-Api-FedexShipSchemas.html#method_definitions"
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexShipSchemas.html#method_definitions"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexShipSchemas\u003A\u003ACREATE_REQUEST",
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexShipSchemas\u003A\u003ACREATE_REQUEST",
             "name": "CREATE_REQUEST",
             "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Create\u0020Shipment\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexShipSchemas.html#constant_CREATE_REQUEST"
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexShipSchemas.html#constant_CREATE_REQUEST"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexShipSchemas\u003A\u003ACREATE_RESPONSE",
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexShipSchemas\u003A\u003ACREATE_RESPONSE",
             "name": "CREATE_RESPONSE",
             "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Create\u0020Shipment\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexShipSchemas.html#constant_CREATE_RESPONSE"
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexShipSchemas.html#constant_CREATE_RESPONSE"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexShipSchemas\u003A\u003AVALIDATE_REQUEST",
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexShipSchemas\u003A\u003AVALIDATE_REQUEST",
             "name": "VALIDATE_REQUEST",
             "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Validate\u0020Shipment\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexShipSchemas.html#constant_VALIDATE_REQUEST"
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexShipSchemas.html#constant_VALIDATE_REQUEST"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexShipSchemas\u003A\u003AVALIDATE_RESPONSE",
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexShipSchemas\u003A\u003AVALIDATE_RESPONSE",
             "name": "VALIDATE_RESPONSE",
             "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Validate\u0020Shipment\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexShipSchemas.html#constant_VALIDATE_RESPONSE"
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexShipSchemas.html#constant_VALIDATE_RESPONSE"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexShipSchemas\u003A\u003ACANCEL_REQUEST",
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexShipSchemas\u003A\u003ACANCEL_REQUEST",
             "name": "CANCEL_REQUEST",
             "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Cancel\u0020Shipment\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexShipSchemas.html#constant_CANCEL_REQUEST"
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexShipSchemas.html#constant_CANCEL_REQUEST"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexShipSchemas\u003A\u003ACANCEL_RESPONSE",
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexShipSchemas\u003A\u003ACANCEL_RESPONSE",
             "name": "CANCEL_RESPONSE",
             "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Cancel\u0020Shipment\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexShipSchemas.html#constant_CANCEL_RESPONSE"
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexShipSchemas.html#constant_CANCEL_RESPONSE"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexShipSchemas\u003A\u003ACREATE_TAG_REQUEST",
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexShipSchemas\u003A\u003ACREATE_TAG_REQUEST",
             "name": "CREATE_TAG_REQUEST",
             "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Create\u0020Tag\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexShipSchemas.html#constant_CREATE_TAG_REQUEST"
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexShipSchemas.html#constant_CREATE_TAG_REQUEST"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexShipSchemas\u003A\u003ACREATE_TAG_RESPONSE",
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexShipSchemas\u003A\u003ACREATE_TAG_RESPONSE",
             "name": "CREATE_TAG_RESPONSE",
             "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Create\u0020Tag\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexShipSchemas.html#constant_CREATE_TAG_RESPONSE"
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexShipSchemas.html#constant_CREATE_TAG_RESPONSE"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexShipSchemas\u003A\u003ACANCEL_TAG_REQUEST",
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexShipSchemas\u003A\u003ACANCEL_TAG_REQUEST",
             "name": "CANCEL_TAG_REQUEST",
             "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Cancel\u0020Tag\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexShipSchemas.html#constant_CANCEL_TAG_REQUEST"
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexShipSchemas.html#constant_CANCEL_TAG_REQUEST"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexShipSchemas\u003A\u003ACANCEL_TAG_RESPONSE",
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexShipSchemas\u003A\u003ACANCEL_TAG_RESPONSE",
             "name": "CANCEL_TAG_RESPONSE",
             "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Cancel\u0020Tag\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexShipSchemas.html#constant_CANCEL_TAG_RESPONSE"
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexShipSchemas.html#constant_CANCEL_TAG_RESPONSE"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexShipSchemas\u003A\u003ARESULTS_REQUEST",
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexShipSchemas\u003A\u003ARESULTS_REQUEST",
             "name": "RESULTS_REQUEST",
             "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Retrieve\u0020Async\u0020Ship\u0020request",
-            "url": "classes/Mariopereira-Fedex-Api-FedexShipSchemas.html#constant_RESULTS_REQUEST"
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexShipSchemas.html#constant_RESULTS_REQUEST"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexShipSchemas\u003A\u003ARESULTS_RESPONSE",
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexShipSchemas\u003A\u003ARESULTS_RESPONSE",
             "name": "RESULTS_RESPONSE",
             "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Retrieve\u0020Async\u0020Ship\u0020response",
-            "url": "classes/Mariopereira-Fedex-Api-FedexShipSchemas.html#constant_RESULTS_RESPONSE"
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexShipSchemas.html#constant_RESULTS_RESPONSE"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth",
             "name": "FedexAuth",
@@ -1970,6 +2010,11 @@ Search.appendIndex(
             "name": "Mariopereira",
             "summary": "",
             "url": "namespaces/mariopereira.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas",
+            "name": "Schemas",
+            "summary": "",
+            "url": "namespaces/mariopereira-fedex-api-schemas.html"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Auth",
             "name": "Auth",

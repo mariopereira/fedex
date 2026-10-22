@@ -6,9 +6,9 @@
  * @license https://www.gnu.org/licenses/gpl-3.0.en.htmlURL GPL-3.0-or-later
  */
 
-namespace Mariopereira\Fedex\Tests\Unit\Api;
+namespace Mariopereira\Fedex\Tests\Unit\Api\Schemas;
 
-use Mariopereira\Fedex\Api\FedexConsolidationSchemas as Schemas;
+use Mariopereira\Fedex\Api\Schemas\FedexConsolidationSchemas as Schemas;
 use Mariopereira\Fedex\Misc\SchemaValidator;
 use Mariopereira\Fedex\Tests\Support\BatchAssertions;
 use Mariopereira\Fedex\Tests\Support\ConsolidationSpec as Spec;

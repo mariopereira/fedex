@@ -8,6 +8,7 @@
 
 namespace Mariopereira\Fedex\Api;
 
+use Mariopereira\Fedex\Api\Schemas\FedexConsolidationSchemas;
 use Mariopereira\Fedex\Auth\FedexAuth;
 use Mariopereira\Fedex\Exception\FedexConsolidationException;
 use Mariopereira\Fedex\Exception\FedexException;
