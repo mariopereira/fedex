@@ -13,6 +13,7 @@ use Mariopereira\Fedex\Api\FedexBasicTracking;
 use Mariopereira\Fedex\Api\FedexConsolidation;
 use Mariopereira\Fedex\Api\FedexDutyAndTax;
 use Mariopereira\Fedex\Api\FedexLocationsSearch;
+use Mariopereira\Fedex\Api\FedexServiceAvailability;
 use Mariopereira\Fedex\Api\FedexShip;
 use Mariopereira\Fedex\Exception\FedexAddressValidationException;
 use Mariopereira\Fedex\Exception\FedexAuthException;
@@ -22,6 +23,7 @@ use Mariopereira\Fedex\Exception\FedexDutyAndTaxException;
 use Mariopereira\Fedex\Exception\FedexClientException;
 use Mariopereira\Fedex\Exception\FedexException;
 use Mariopereira\Fedex\Exception\FedexLocationsSearchException;
+use Mariopereira\Fedex\Exception\FedexServiceAvailabilityException;
 use Mariopereira\Fedex\Exception\FedexShipException;
 use Mariopereira\Fedex\Tests\Support\ConsolidationSpec;
 use Mariopereira\Fedex\Tests\Support\LoopbackServer;
@@ -819,6 +821,85 @@ final class ApiLoopbackTest extends LoopbackTestCase
         });
 
         $this->assertInstanceOf(FedexDutyAndTaxException::class, $e);
+        $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
+        $this->assertSame([], self::$server->seen());
+    }
+
+    // ---------------------------------------------------------------- service availability
+
+    /**
+     * The three availability operations on the wire have the body, the length and the content type
+     * @return void
+     */
+    public function testTheAvailabilityOperationsOnTheWireHaveTheBodyTheLengthAndTheContentType(): void
+    {
+        $us = ['countryCode' => 'US'];
+        $calls = [
+            '/availability/v1/transittimes' => function (FedexServiceAvailability $api) use ($us) {
+                return $api->getTransitTimesBetween(['postalCode' => '38117', 'countryCode' => 'US'], ['postalCode' => '75201', 'countryCode' => 'US'], '10.5', 'LB', 'YOUR_PACKAGING', ['FDXE']);
+            },
+            '/availability/v1/packageandserviceoptions' => function (FedexServiceAvailability $api) use ($us) {
+                return $api->getPackageAndServiceOptionsBetween($us, ['countryCode' => 'CA']);
+            },
+            '/availability/v1/specialserviceoptions' => function (FedexServiceAvailability $api) use ($us) {
+                return $api->getSpecialServiceOptionsBetween($us, ['countryCode' => 'CA'], 5);
+            },
+        ];
+
+        foreach ($calls as $path => $call) {
+            $api = self::api(FedexServiceAvailability::class, self::$server->port());
+
+            $result = $call($api);
+            $requests = self::$server->requests();
+            $request = end($requests);
+            $headers = LoopbackServer::headerLines($request);
+
+            $this->assertSame('/' . ltrim($path, '/'), $result->target);
+            $this->assertContains('Authorization: Bearer TOK', $headers, $path);
+            $this->assertContains('X-locale: pt_PT', $headers, $path);
+            $this->assertContains('Content-Type: application/json', $headers, $path);
+            $this->assertNotEmpty(preg_grep(self::UUID_HEADER, $headers), $path);
+            $this->assertContains('Content-Length: ' . strlen($request['body']), $headers, $path);
+            $this->assertArrayHasKey('requestedShipment', json_decode($request['body'], true), $path);
+        }
+    }
+
+    /**
+     * The body of the transit times on the wire is the one that was asked for, with the number as it was given
+     * @return void
+     */
+    public function testTheBodyOfTheTransitTimesOnTheWireIsTheOneThatWasAskedFor(): void
+    {
+        $api = self::api(FedexServiceAvailability::class, self::$server->port());
+
+        $api->getTransitTimesBetween(['postalCode' => '38117', 'countryCode' => 'US'], ['postalCode' => 'M5V2T6', 'countryCode' => 'CA'], '10.5', 'KG', 'FEDEX_BOX', ['FDXE', 'FDXG']);
+        $requests = self::$server->requests();
+
+        $this->assertSame(['POST /token-ok', 'POST /availability/v1/transittimes'], self::$server->seen());
+        $this->assertSame([
+            'requestedShipment' => [
+                'shipper' => ['address' => ['postalCode' => '38117', 'countryCode' => 'US']],
+                'recipients' => [['address' => ['postalCode' => 'M5V2T6', 'countryCode' => 'CA']]],
+                'packagingType' => 'FEDEX_BOX',
+                'requestedPackageLineItems' => [['weight' => ['units' => 'KG', 'value' => '10.5']]],
+            ],
+            'carrierCodes' => ['FDXE', 'FDXG'],
+        ], json_decode($requests[1]['body'], true));
+    }
+
+    /**
+     * An invalid availability request never reaches the network, not even the token request
+     * @return void
+     */
+    public function testAnInvalidAvailabilityRequestNeverReachesTheNetworkNotEvenTheTokenRequest(): void
+    {
+        $api = self::api(FedexServiceAvailability::class, self::$server->port());
+
+        $e = self::thrown(function () use ($api) {
+            $api->getTransitTimesBetween(['countryCode' => 'US'], ['countryCode' => 'CA'], 'heavy');
+        });
+
+        $this->assertInstanceOf(FedexServiceAvailabilityException::class, $e);
         $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
         $this->assertSame([], self::$server->seen());
     }

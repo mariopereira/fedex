@@ -14,6 +14,7 @@ A PHP interface to the FedEx APIs.
 | Basic Integrated Visibility (tracking): Track by Tracking Number (`/track/v1/trackingnumbers`), Track Multiple Piece Shipment (`/track/v1/associatedshipments`), Track by References (`/track/v1/referencenumbers`), Track by Transportation Control Number (`/track/v1/tcn`), Track Document (`/track/v1/trackingdocuments`) and Send Notification (`/track/v1/notifications`) | `FedexBasicTracking` | Implemented. Checked against the FedEx schema in `schemas/`, never called against the live API |
 | Consolidation: Create (`/ship/v1/consolidations`), Modify (`PUT /ship/v1/consolidations`), Create Consolidation Shipment (`/ship/v1/consolidations/shipments`), Shipment Results (`/ship/v1/consolidations/results`), Confirm (`/ship/v1/consolidations/confirmations`), Confirm Results (`/ship/v1/consolidations/confirmationresults`), Retrieve (`/ship/v1/consolidations/retrieve`), Delete Shipments (`PUT /ship/v1/consolidations/shipments/delete`) and Delete (`PUT /ship/v1/consolidations/delete`) | `FedexConsolidation` | Implemented. Checked against the FedEx schema in `schemas/` (the top level of each request; the schema contradicts its own samples below that), never called against the live API |
 | Estimated Duty and Tax: Duties Taxes Estimates (`/dutytax/v1/estimate`) | `FedexDutyAndTax` | Implemented. Checked against the FedEx schema in `schemas/`, never called against the live API |
+| Service Availability: Retrieve Services and Transit Times (`/availability/v1/transittimes`), Retrieve Services and Packaging Options (`/availability/v1/packageandserviceoptions`) and Retrieve Special Service Options (`/availability/v1/specialserviceoptions`) | `FedexServiceAvailability` | Implemented. Checked against the FedEx schema in `schemas/` (a number may also be given as a text that is a number, as the samples of the schema do), never called against the live API |
 
 ## Requirements
 
@@ -407,6 +408,47 @@ foreach ($result->output->edtDetails as $details) {
 * The schema asks for the header `x-content-type: application/json`, which is sent besides `Content-Type`.
 * The response is checked against the schema too, and an invalid response throws a `FedexDutyAndTaxException` with the response in `getData()`. A field that FedEx adds is accepted.
 * The examples of the schema (three requests and a response) are all accepted by these checks.
+* Never called against the live FedEx API: the schema is the only reference.
+
+### Service availability
+
+`FedexServiceAvailability` asks FedEx what is available for a shipment: the services and their transit times, the services and the packaging options, and the special service options (Service Availability API, `schemas/service-availability.json`). The three operations change nothing in FedEx, so a request that failed with a timeout or a busy server can be retried (see [Retries](#retries)).
+
+```php
+use Mariopereira\Fedex\Api\FedexServiceAvailability;
+
+$availability = new FedexServiceAvailability($auth);
+
+// between two addresses, with one package (a weight of 10.5 pounds here)
+$from = ['postalCode' => '38117', 'countryCode' => 'US'];
+$to = ['postalCode' => '75201', 'countryCode' => 'US'];
+
+$result = $availability->getTransitTimesBetween($from, $to, 10.5);
+
+foreach ($result->output->transitTimes[0]->transitTimeDetails as $detail) {
+    echo $detail->serviceType, ' ', $detail->serviceName, "\n";
+}
+
+// the same for the packaging options and for the special service options
+$options = $availability->getPackageAndServiceOptionsBetween(['countryCode' => 'US'], ['countryCode' => 'CA'], ['FDXE']);
+$special = $availability->getSpecialServiceOptionsBetween(['countryCode' => 'US'], ['countryCode' => 'CA'], 5, 'KG');
+
+// or with the whole request, to use any field of the schema
+$request = FedexServiceAvailability::newTransitTimesRequest();
+$request['requestedShipment']['shipper']['address'] = $from;
+$request['requestedShipment']['recipients'][] = ['address' => $to];
+$request['requestedShipment']['packagingType'] = 'YOUR_PACKAGING';
+$request['requestedShipment']['requestedPackageLineItems'][] = ['weight' => ['units' => 'LB', 'value' => 10.5]];
+
+$result = $availability->getTransitTimes($request);
+```
+
+* The request is checked before it is sent, as in the other APIs: the fields, their types and their allowed values are the ones of the schema, and the required fields must be present. Nothing is sent when the request is not valid.
+* `newTransitTimesRequest()`, `newPackageAndServiceOptionsRequest()` and `newSpecialServiceOptionsRequest()` give the required fields. Note that the recipient is a list (`recipients`) in the transit times and in the packaging options, and one object (`recipient`) in the special service options. The schema requires nothing at the top of the transit times request, but every sample has `requestedShipment`, so the template has it.
+* A number can be given as a number or as a text that is a number (`'10.5'`), because the samples of the schema send the weight and the customs value as text although the schema says number. This also applies to the weight and the money of a response.
+* The methods `...Between()` take the addresses as arrays, with the fields of the address in the schema. `requestedShipment` and `carrierCodes` cannot be given in their `$options`: they are set by the method.
+* The response is checked against the schema too, and an invalid response throws a `FedexServiceAvailabilityException` with the response in `getData()`. A field that FedEx adds is accepted.
+* The samples of the schema (eight requests) are all accepted by these checks. The schema has no sample of a response.
 * Never called against the live FedEx API: the schema is the only reference.
 
 ### Parent/child credentials
