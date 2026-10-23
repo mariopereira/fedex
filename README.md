@@ -110,7 +110,7 @@ $result = $locations->search($request);
 The request is checked before it is sent, and a problem is reported with a `FedexLocationsSearchException`:
 
 * Fields set to `null`, and empty lists, are left out.
-* A field that is not in the schema, a value of the wrong type and a value that is not in the lists of the schema are rejected. In the schema the latitude and the longitude are strings (`searchByCoordinates()` converts numbers for you) and `excludeUnavailableLocations` is a string (`'true'` or `'false'`).
+* A value of the wrong type and a value that is not in the lists of the schema are rejected, and a field that is not in the schema is sent (see [Request validation](#request-validation)). In the schema the latitude and the longitude are strings (`searchByCoordinates()` converts numbers for you) and `excludeUnavailableLocations` is a string (`'true'` or `'false'`).
 * The country code is required. So is a city or a postal code when searching by address (the default), the latitude and the longitude when searching by geographic coordinates, and the phone number when searching by phone number.
 * The `searchBy...()` methods set the search criterion and the location themselves, so those two fields cannot be given as options.
 
@@ -164,8 +164,8 @@ $result = $validation->resolve($request);
 The request is checked before it is sent, and a problem is reported with a `FedexAddressValidationException`:
 
 * Fields set to `null`, and empty lists, are left out.
-* A field that is not in the schema or a value of the wrong type is rejected.
-* Every address needs its street lines (a list, none of them empty), a city and a postal code (a string or an integer). The state, if given, has at most two characters and the country, if given, two letters.
+* A value of the wrong type is rejected, and a field that is not in the schema is sent (see [Request validation](#request-validation)).
+* Every address needs its street lines (a list). The city, the postal code (a text or an integer), the state and the country are optional, because the minimum fields vary among countries: FedEx checks them (and an empty street line, which FedEx decides about). The state, if given, has at most two characters and the country, if given, two letters.
 * `inEffectAsOfTimestamp`, if given, must be a real date written as `YYYY-MM-DD`.
 * `validate()` and `validateArray()` set `addressesToValidate` themselves, so it cannot be given as an option.
 
@@ -202,7 +202,7 @@ $request['requestedShipment']['requestedPackageLineItems'][] = ['weight' => ['un
 $result = $ship->create($request);
 ```
 
-`validate()` takes the request of `newValidateRequest()`, which is the shipment without the account number and the label options. Note that FedEx's schema declares `totalWeight` of a validation as a whole number (an integer), and as a number with decimals when the shipment is created. `cancelByTrackingNumber()` cancels all the packages of a shipment:
+`validate()` takes the request of `newValidateRequest()`, which is the shipment without the account number and the label options. Note that FedEx's schema declares `totalWeight` of a validation as a whole number (an integer), and as a number with decimals when the shipment is created: a number with decimals is accepted in both (see [Request validation](#request-validation)), and `totalWeight` is optional, as FedEx's examples leave it out. `cancelByTrackingNumber()` cancels all the packages of a shipment:
 
 ```php
 $result = $ship->cancelByTrackingNumber('000000000', '794953555571');
@@ -257,7 +257,7 @@ $result = $ship->getAsyncResultsByJobId('000000000', '89sxxxxx233ae24ff31xxxxx')
 The request is checked before it is sent, and a problem is reported with a `FedexShipException`:
 
 * Fields set to `null`, and empty lists, are left out.
-* A field that is not in the schema, a value of the wrong type, a value that is not in the list of allowed values and a text longer than the schema allows are rejected.
+* A value of the wrong type, a value that is not in the list of allowed values and a text longer than the schema allows are rejected, and a field that is not in the schema is sent (see [Request validation](#request-validation)). `totalWeight` and `commercialInvoice`, which the schema requires, are optional, because the examples of FedEx leave them out.
 * The required fields of the schema must be present. What the schema cannot express (for example the extra fields that some services or customs declarations need) is checked by FedEx, which answers with an error.
 * The schema lists three fields of the shipment of a tag as required without ever defining them: `shipTimestamp`, `shippingLabelType` and `specialServicesRequested`. They are accepted with any value, and are not checked, so that they can be sent if FedEx asks for them.
 * The id given to `cancelTag()` cannot be empty, `.` or `..`.
@@ -322,16 +322,16 @@ $request = FedexBasicTracking::newReferencesRequest();
 $request['referencesInformation']['value'] = '56754674567546754';
 $request['referencesInformation']['accountNumber'] = '123456789';
 $request['referencesInformation']['shipDateBegin'] = '2019-02-13';
-$request['referencesInformation']['shipDateEndDate'] = '2019-02-13';
+$request['referencesInformation']['shipDateEnd'] = '2019-02-13';
 
 $result = $tracking->trackByReferences($request);
 ```
 
-* The request is checked before it is sent, as in the other APIs: the fields, their types and the values of the enums (the carrier code and the associated type) are the ones of the schema, the required fields must be present, and a request by tracking number has from 1 to 30 numbers. Nothing is sent when the request is not valid. What the schema cannot express (for example that a reference needs the account number, or the destination country and postal code) is checked by FedEx.
+* The request is checked before it is sent, as in the other APIs: the fields, their types and the values of the enums (the carrier code and the associated type) are the ones of the schema, the required fields must be present, and a request by tracking number has from 1 to 30 numbers (see [Request validation](#request-validation) for how loose the types are, and for the keys that the schema does not define, which are sent). Nothing is sent when the request is not valid. What the schema cannot express (for example that a reference needs the account number, or the destination country and postal code) is checked by FedEx.
 * The values that the schema only describes (the type of a reference, the type and the format of a document, the type of a notification, the role, the event types) are not checked: they are sent as given.
 * The response is checked against the schema too, and an invalid response throws a `FedexBasicTrackingException` with the response in `getData()`. A field that FedEx adds is accepted.
 * **`sendNotification()` sends emails.** It is never retried, because repeating it would send them twice, and an invalid response says that the notification may have been sent.
-* The schema has a few defects, handled like this: the references request requires `shipDateEndDate` but its example writes `shipDateEnd`, so both are accepted (and `shipDateEndDate` is still required); the address requires a field, `addressVerificationId`, that it never defines, so it is optional and of any type; and two enums of the responses are defective (`DelayDetail.subType` lists "EARTHQUAKE etc", and `ServiceCommitMessage.type` has a stray quote in `USPS_DELIVERING"`), so those two fields are checked as text.
+* The schema has a few defects, handled like this: the references request requires `shipDateEndDate` but its example, the other requests and the documentation write `shipDateEnd`, so `shipDateEnd` is the required one and `shipDateEndDate` is accepted as an optional field; the address requires a field, `addressVerificationId`, that it never defines, so it is optional and of any type; and two enums of the responses are defective (`DelayDetail.subType` lists "EARTHQUAKE etc", and `ServiceCommitMessage.type` has a stray quote in `USPS_DELIVERING"`), so those two fields are checked as text.
 * Never called against the live FedEx API: the schema is the only reference.
 
 ### Consolidation
@@ -368,7 +368,7 @@ $result = $consolidation->createConsolidation($request);
 | Delete Consolidation | `newDeleteRequest()` | `deleteConsolidation()` and `deleteByKey()` |
 
 * **Creating, modifying, confirming and deleting change real data in FedEx, and creating a shipment of a consolidation buys its labels.** The package never repeats those requests, except when FedEx answers that the access token is not valid (nothing was processed then). If an exception is thrown after the request was sent (a timeout, a network failure, or a response that is not valid), the operation may have been done: check it in FedEx before trying again. Modify is treated like the others, although the same modification repeated would probably do no harm. Only the results of a shipment, the results of a confirmation and the retrieval change nothing, so only those can be retried (see [Retries](#retries)).
-* **A request is checked at its top level only.** The schema contradicts its own sample payloads in the nested objects: only 3 of its 19 samples pass the whole of it (for example it requires `consolidationKey.date` and `type`, and the samples send `consolidationType` and `shipDatestamp`). So the required fields, the names of the fields and their types are checked at the top level, and each nested object or list is sent as it comes: FedEx checks the rest and answers with its errors. Nothing is sent when the top level is not valid. The 19 samples of the schema all pass this check.
+* **A request is checked at its top level only.** The schema contradicts its own sample payloads in the nested objects: only 3 of its 19 samples pass the whole of it (for example it requires `consolidationKey.date` and `type`, and the samples send `consolidationType` and `shipDatestamp`). So the required fields and the types of the fields are checked at the top level (a key that the schema does not define is sent, see [Request validation](#request-validation)), and each nested object or list is sent as it comes: FedEx checks the rest and answers with its errors. Nothing is sent when the top level is not valid. The 19 samples of the schema all pass this check.
 * **`FedexConsolidation::checkRequest()` and `checkResponse()` check the whole of the schema** and return the problems, each with the path of the field, without stopping anything (nothing is sent). The operation is one of `create`, `modify`, `createShipment`, `shipmentResults`, `confirm`, `confirmResults`, `retrieve`, `deleteShipments` and `delete`. A problem that they report is not necessarily one that FedEx refuses, given what the samples of the schema are.
 * The response is checked at its top level, and an invalid response throws a `FedexConsolidationException` with the response in `getData()`. A field that FedEx adds is accepted.
 * The schema has a few defects, handled like this in the whole check: `RequestedConsolidationShipment` requires a field `recipient` that is never defined (the field is `recipients`, and it is not required), so `recipient` is accepted with any value; and `Label.type` and `ShippingDocument.type` have an enum of one value, the whole list joined in a text, so they are checked as text.
@@ -482,12 +482,23 @@ $request['requestedShipment']['requestedPackageLineItems'][] = ['weight' => ['un
 $result = $rates->getRates($request);
 ```
 
-* The request is checked before it is sent, as in the other APIs: the types and the allowed values of the fields are the ones of the schema, and the required fields must be present: the account number, and in the shipment the shipper and the recipient (each with the postal code and the country code of its address), the pickup type and the packages (each with the weight and its unit). Nothing is sent when the request is not valid.
+* The request is checked before it is sent, as in the other APIs: the types and the allowed values of the fields are the ones of the schema, and the required fields must be present: in the shipment the shipper and the recipient (each with the postal code and the country code of its address), the pickup type and the packages (each with the weight and its unit). The account number and the customs commodities, which the schema requires, are optional, because the samples of FedEx leave them out. Nothing is sent when the request is not valid.
 * The samples of the schema contradict the schema, and the checks follow the samples: a number can be given as a number or as a text that is a number (`'10.5'`), as the samples do for the weight; a postal code can be a text or an integer (`75063`); and a field that the schema does not define is accepted and sent, so FedEx decides about it. This also applies to the weight and the money of a response.
-* Two samples of the schema, the one for Freight and the one for Intra Europe, are still refused: the first sends `groupPackageCount` as a text where the schema says integer, and the second has no account number, which the schema requires. The other twenty are accepted (a `null` is left out of the request, as for the other APIs).
+* All twenty two samples of the schema are accepted (a `null` is left out of the request, as for the other APIs): the one for Freight sends `groupPackageCount` as a text where the schema says integer, and the one for Intra Europe has no account number.
 * `getRatesBetween()` takes the addresses as arrays, with the fields of the address in the schema. `accountNumber` and `requestedShipment` cannot be given in its `$options`: they are set by the method.
 * The response is checked against the schema too, and an invalid response throws a `FedexRateTransitTimesException` with the response in `getData()`. A field that FedEx adds is accepted. The schema has no sample of a response.
 * Never called against the live FedEx API: the schema is the only reference.
+
+### Request validation
+
+Every API checks its request before sending it, against the schema of FedEx, and sends nothing when the request is not valid. FedEx's own examples contradict its schemas in many places, so the checks of the requests are looser than the schemas, in the same way for every API:
+
+* **Types are loose.** A text can be given a number or a boolean (`'phoneNumber' => 9013577890`, `'postalCode' => 75063`, `'excludeUnavailableLocations' => true`), a whole number can be a number with decimals or a text that is a number (`'width' => '10.5'`), a number can be a text that is a number (`'value' => '68.25'`), a whole number or a number can be left blank (`''`), and a boolean can be the text `'true'` or `'false'` in any case (`'TRUE'`), or `0` or `1`. The value is sent as it was given, never converted. Everything else is still refused: a text that is not a number (`'abc'`, `'1,5'`, `' 5'`), another text or number for a boolean (`'yes'`, `2`), a list where a value is expected, a value that is not in the list of allowed values, and a text that does not match the pattern or the length of the schema.
+* **Keys that the schema does not define are sent.** FedEx decides about them (a misspelled option of a helper method is not caught either, FedEx answers with an error).
+* **A few required fields are optional**, because the examples of FedEx leave them out: for a shipment `totalWeight`, `commercialInvoice`, `commodities`, `labelSpecification`, the `locationId` of a hold at location, the `phoneNumber` of a contact (except the one of the delivery on invoice) and the `allowedSpecialService` of a return email; `includeDetailedScans` of tracking by number; the `city` and the `postalCode` of an address to validate; `codDetail` and the `weight` of a package of the service availability; and `commodities` and `accountNumber` of a rates request. The other required fields of the schema must be present.
+* The **responses** are checked as before: a field that FedEx adds is accepted, and a value of the wrong type is not. `FedexConsolidation::checkRequest()` also stays strict: it exists to report what does not match the schema.
+
+When FedEx refuses a request that was accepted here, the exception is a `FedexClientException`, with the errors that FedEx gave.
 
 ### Parent/child credentials
 

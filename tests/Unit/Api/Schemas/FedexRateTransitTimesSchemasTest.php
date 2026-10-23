@@ -39,6 +39,23 @@ final class FedexRateTransitTimesSchemasTest extends TestCase
     private const UNUSED = ['DeliveryOnInvoiceAcceptanceDetailRecipient_address', 'DeliveryOnInvoiceAcceptanceDetailRecipient_contact', 'Dimensions_1', 'Party'];
 
     /**
+     * The fields that the spec requires and the class makes optional, because the examples of FedEx leave them out: definition.field
+     * @var string[]
+     */
+    private const OPTIONAL_BY_DECISION = ['CustomsClearanceDetail.commodities', 'Full_Schema_Quote_Rate.accountNumber'];
+
+    /**
+     * Is a key of an object of an instance one of those that the class makes optional (see OPTIONAL_BY_DECISION)?
+     * @param array $path The path of the object
+     * @param string $key The key
+     * @return bool
+     */
+    private static function isOptionalByDecision(array $path, string $key): bool
+    {
+        return $key === 'commodities' || ($key === 'accountNumber' && $path === []);
+    }
+
+    /**
      * The names of the definitions reachable from the two roots
      * @return array The names as keys
      */
@@ -166,7 +183,7 @@ final class FedexRateTransitTimesSchemasTest extends TestCase
             $specKeys = [];
 
             foreach ($c['properties'] as $pn => $p) {
-                $specKeys[$pn] = in_array($pn, $required, true);
+                $specKeys[$pn] = in_array($pn, $required, true) && !in_array("$n.$pn", self::OPTIONAL_BY_DECISION, true);
 
                 // an overlay that only has a description changes nothing: the property is the definition that it refers to
                 if (Spec::isOverlay($p) && (Spec::mergedOverlay($p)['required'] !== [] || Spec::mergedOverlay($p)['properties'] !== [])) {
@@ -186,7 +203,7 @@ final class FedexRateTransitTimesSchemasTest extends TestCase
             $res["$n keys and required flags"] = ($classKeys === $specKeys) ? true : 'class=' . json_encode($classKeys) . ' spec=' . json_encode($specKeys);
 
             foreach ($c['properties'] as $pn => $p) {
-                $k = $pn . (in_array($pn, $required, true) ? '' : '?');
+                $k = $pn . ((in_array($pn, $required, true) && !in_array("$n.$pn", self::OPTIONAL_BY_DECISION, true)) ? '' : '?');
 
                 if (!isset($d[$k])) {
                     continue;
@@ -555,10 +572,11 @@ final class FedexRateTransitTimesSchemasTest extends TestCase
     // ---------------------------------------------------------------- the samples and the instances
 
     /**
-     * The sample payloads of the spec are accepted as they are sent (a null is left out), except the two that the schema contradicts
+     * The sample payloads of the spec are accepted as they are sent (a null is left out), the one for Freight only by the loose
+     * validator that the class uses, because it has a count as text
      * @return void
      */
-    public function testTheSamplePayloadsOfTheSpecAreAcceptedAsTheyAreSentExceptTheTwoThatTheSchemaContradicts(): void
+    public function testTheSamplePayloadsOfTheSpecAreAcceptedAsTheyAreSentTheOneForFreightOnlyByTheLooseValidator(): void
     {
         $results = [];
         $refused = [];
@@ -566,21 +584,17 @@ final class FedexRateTransitTimesSchemasTest extends TestCase
         foreach (Spec::SAMPLES as $sample => $label) {
             $example = FedexUtils::pruneEmpty(json_decode(json_encode(Spec::components()[$sample]['example']), true));
             $validator = new SchemaValidator(true, Schemas::definitions());
+            $loose = (new SchemaValidator(true, Schemas::definitions()))->setLooseScalars(true);
+            $results[$sample . ' (loose)'] = $loose->validate($example, '@' . Spec::ROOTS[$label]) ? true : implode(' | ', $loose->getErrors());
 
-            if ($validator->validate($example, '@' . Spec::ROOTS[$label])) {
-                $results[$sample] = true;
-            } else {
+            if (!$validator->validate($example, '@' . Spec::ROOTS[$label])) {
                 $refused[$sample] = $validator->getErrors();
             }
         }
 
         $this->assertCount(22, Spec::SAMPLES);
-        $this->assertAll('the sample payloads that are accepted', $results);
-        $this->assertCount(20, $results);
-        ksort($refused);
-        $this->assertSame(['FDGSamplePayload-RateResourceDetails-IntraEurope', 'FreightSamplePayload-RateResourceDetails_1'], array_keys($refused));
-        $this->assertSame(['$.accountNumber: required key is missing'], $refused['FDGSamplePayload-RateResourceDetails-IntraEurope']);
-        $this->assertSame(['$.requestedShipment.requestedPackageLineItems[0].groupPackageCount: expected int, got string'], $refused['FreightSamplePayload-RateResourceDetails_1']);
+        $this->assertAll('the sample payloads, with the loose validator', $results);
+        $this->assertSame(['FreightSamplePayload-RateResourceDetails_1' => ['$.requestedShipment.requestedPackageLineItems[0].groupPackageCount: expected int, got string']], $refused);
     }
 
     /**
@@ -676,6 +690,11 @@ final class FedexRateTransitTimesSchemasTest extends TestCase
             $key = implode('/', $object['path']) ?: '(root)';
 
             foreach ($object['required'] as $required) {
+                if (self::isOptionalByDecision($object['path'], $required)) {
+                    $res["$key without $required, which the class makes optional"] = self::accepts(SpecInstances::unsetAt($instance, array_merge($object['path'], [$required])), $root) ? true : 'refused';
+                    continue;
+                }
+
                 $res["$key without required $required"] = self::accepts(SpecInstances::unsetAt($instance, array_merge($object['path'], [$required])), $root) ? 'accepted' : true;
             }
 

@@ -229,13 +229,6 @@
 <dd>Validate and resolve several addresses (up to 100) in one request.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
-    <a class="" href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_checkRequest">checkRequest()</a>
-    <span>
-                                &nbsp;: void    </span>
-</dt>
-<dd>Check what the schema cannot express: the street lines must not be empty.</dd>
-
-            <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_validateAndParse">validateAndParse()</a>
     <span>
                                 &nbsp;: <abbr title="\stdClass">stdClass</abbr>    </span>
@@ -520,7 +513,7 @@ is sent. Add the addresses to addressesToValidate, each one as returned by newAd
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Api/FedexAddressValidation.php"><a href="files/src-api-fedexaddressvalidation.html"><abbr title="src/Api/FedexAddressValidation.php">FedexAddressValidation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">96</span>
+    <span class="phpdocumentor-element-found-in__line">98</span>
 
     </aside>
 
@@ -534,9 +527,11 @@ is sent. Add the addresses to addressesToValidate, each one as returned by newAd
         </div>
     
         <section class="phpdocumentor-description"><p>The request is checked before it is sent: the fields, their types and their allowed values are the ones of
-schemas/address-validation.json (a field that is not in the schema is an error), from 1 to 100 addresses are
-required, each one with its street lines (not empty), city and postal code, and the date of
-inEffectAsOfTimestamp must be a valid YYYY-MM-DD date. Fields set to null and empty lists are left out</p>
+schemas/address-validation.json (a field that is not in the schema is sent as it is, and FedEx decides about it; the types
+are loose, as in the examples of FedEx: a text can be a number or a boolean, a number can be a text that is a number or
+blank, and a boolean can be the text true or false in any case, or 0 or 1), from 1 to 100 addresses are required, each one with its street lines (the
+city, the state, the postal code and the country code are optional in the schema, as the minimum fields vary among countries,
+and FedEx checks them), and the date of inEffectAsOfTimestamp must be a valid YYYY-MM-DD date. Fields set to null and empty lists are left out</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -615,8 +610,8 @@ inEffectAsOfTimestamp must be a valid YYYY-MM-DD date. Fields set to null and em
                 : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;|<abbr title="\stdClass">stdClass</abbr></span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>The address, with the fields of the address of the schema: streetLines (a list),
-city, postalCode, and optionally stateOrProvinceCode (2 characters at most) and countryCode (2 letters)</p>
+                    <section class="phpdocumentor-description"><p>The address, with the fields of the address of the schema: streetLines (a list), and
+optionally city, postalCode, stateOrProvinceCode (2 characters at most) and countryCode (2 letters)</p>
 </section>
 
             </dd>
@@ -747,69 +742,6 @@ named as in the schema. addressesToValidate cannot be used: it is set by this me
             -protected
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="method_checkRequest">
-        checkRequest()
-        <a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_checkRequest" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/Api/FedexAddressValidation.php"><a href="files/src-api-fedexaddressvalidation.html"><abbr title="src/Api/FedexAddressValidation.php">FedexAddressValidation.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">193</span>
-
-    </aside>
-
-        <p class="phpdocumentor-summary">Check what the schema cannot express: the street lines must not be empty.</p>
-
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">protected</span>
-                    <span class="phpdocumentor-signature__name">checkRequest</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$request</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
-
-    <div class="phpdocumentor-label-line">
-        </div>
-    
-        <section class="phpdocumentor-description"><p>Called with a request that already passed the schema, so that every address has its street lines</p>
-</section>
-
-        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
-    <dl class="phpdocumentor-argument-list">
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$request</span>
-                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
-                            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>The request</p>
-</section>
-
-            </dd>
-            </dl>
-
-    
-    <h5 class="phpdocumentor-tag-list__heading" id="method_checkRequest_tags">
-        Tags
-        <a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_checkRequest_tags" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h5>
-    <dl class="phpdocumentor-tag-list">
-                    <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">throws</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                <span class="phpdocumentor-tag-link"><a href="classes/Mariopereira-Fedex-Exception-FedexAddressValidationException.html"><abbr title="\Mariopereira\Fedex\Exception\FedexAddressValidationException">FedexAddressValidationException</abbr></a></span>
-                                                                                    
-                                    </dd>
-                        </dl>
-
-        
-    
-    
-</article>
-                    <article
-        class="phpdocumentor-element
-            -method
-            -protected
-                                                        "
->
     <h4 class="phpdocumentor-element__name" id="method_validateAndParse">
         validateAndParse()
         <a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_validateAndParse" class="headerlink"><i class="fas fa-link"></i></a>
@@ -818,7 +750,7 @@ named as in the schema. addressesToValidate cannot be used: it is set by this me
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Api/FedexAddressValidation.php"><a href="files/src-api-fedexaddressvalidation.html"><abbr title="src/Api/FedexAddressValidation.php">FedexAddressValidation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">213</span>
+    <span class="phpdocumentor-element-found-in__line">192</span>
 
     </aside>
 
@@ -909,7 +841,6 @@ named as in the schema. addressesToValidate cannot be used: it is set by this me
                                             <li class=""><a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_resolve">resolve()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_validate">validate()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_validateArray">validateArray()</a></li>
-                                            <li class=""><a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_checkRequest">checkRequest()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_validateAndParse">validateAndParse()</a></li>
                                     </ul>
             </li>

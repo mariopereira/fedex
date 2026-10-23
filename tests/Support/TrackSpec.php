@@ -203,9 +203,40 @@ final class TrackSpec
                 $meta = ['objects' => [], 'leaves' => []];
                 self::$instances[$key] = [self::named(self::components(), $root, $meta, [], []), $meta];
             }
+
+            self::$instances['references.request'] = self::withShipDateEnd(self::$instances['references.request']);
         }
 
         return self::$instances[$label];
+    }
+
+    /**
+     * The instance of the references request as the class takes it: the spec requires shipDateEndDate, and the class requires
+     * shipDateEnd (the example, the other schemas and the documentation write it) and accepts shipDateEndDate as an optional field
+     * @param array $built The instance and the meta that the spec gives
+     * @return array The instance and the meta, with shipDateEnd added and required, and shipDateEndDate optional
+     */
+    private static function withShipDateEnd(array $built): array
+    {
+        [$instance, $meta] = $built;
+        $path = ['referencesInformation'];
+        $instance['referencesInformation']['shipDateEnd'] = $instance['referencesInformation']['shipDateEndDate'];
+
+        foreach ($meta['objects'] as $i => $object) {
+            if ($object['path'] === $path) {
+                $meta['objects'][$i]['keys'][] = 'shipDateEnd';
+                $meta['objects'][$i]['required'] = array_values(array_merge(array_diff($object['required'], ['shipDateEndDate']), ['shipDateEnd']));
+            }
+        }
+
+        foreach ($meta['leaves'] as $i => $leaf) {
+            if ($leaf['path'] === array_merge($path, ['shipDateEndDate'])) {
+                $meta['leaves'][$i]['required'] = false;
+                $meta['leaves'][] = ['path' => array_merge($path, ['shipDateEnd']), 'type' => $leaf['type'], 'typed' => true, 'enum' => null, 'required' => true];
+            }
+        }
+
+        return [$instance, $meta];
     }
 
     /**

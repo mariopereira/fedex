@@ -1114,4 +1114,134 @@ final class SchemaValidatorTest extends TestCase
             '$.orders[1].qty: value must be <= 100 (got 500)',
         ], $validator->getErrors());
     }
+
+    // ---------------------------------------------------------------- the loose scalars
+
+    /**
+     * The cases of the loose scalars: the type, the value, and whether it is accepted when the validator is loose
+     * @return array
+     */
+    public function looseScalarsProvider(): array
+    {
+        return [
+            'text <- integer' => ['string', 5, true],
+            'text <- float' => ['string', 1.5, true],
+            'text <- text' => ['string', 'x', true],
+            'text <- boolean' => ['string', true, true],
+            'text <- false' => ['string', false, true],
+            'text <- list' => ['string', ['x'], false],
+            'text <- null' => ['string', null, false],
+            'int <- float' => ['int', 10.5, true],
+            'int <- text that is a number' => ['int', '10', true],
+            'int <- text that is a decimal' => ['int', '10.5', true],
+            'int <- text with an exponent' => ['int', '1e3', true],
+            'int <- text with a sign' => ['int', '-7', true],
+            'int <- text that is not a number' => ['int', 'ten', false],
+            'int <- empty text' => ['int', '', true],
+            'int <- text of spaces' => ['int', '  ', false],
+            'number <- text of spaces' => ['number', ' ', false],
+            'int <- text with a space' => ['int', ' 5', false],
+            'int <- text with a new line' => ['int', "5\n", false],
+            'int <- boolean' => ['int', true, false],
+            'int <- list' => ['int', [1], false],
+            'number <- text that is a number' => ['number', '68.25', true],
+            'number <- text that starts with a point' => ['number', '.5', true],
+            'number <- text that ends with a point' => ['number', '5.', false],
+            'number <- text that is not a number' => ['number', 'abc', false],
+            'number <- text with a comma' => ['number', '1,5', false],
+            'number <- boolean' => ['number', false, false],
+            'bool <- the text true' => ['bool', 'true', true],
+            'bool <- the text false' => ['bool', 'false', true],
+            'bool <- the text TRUE' => ['bool', 'TRUE', true],
+            'bool <- the text False' => ['bool', 'False', true],
+            'bool <- the text with a space' => ['bool', 'true ', false],
+            'bool <- the text yes' => ['bool', 'yes', false],
+            'bool <- the integer 1' => ['bool', 1, true],
+            'bool <- the integer 0' => ['bool', 0, true],
+            'bool <- the integer 2' => ['bool', 2, false],
+            'bool <- the text 1' => ['bool', '1', false],
+            'bool <- the float 1' => ['bool', 1.0, false],
+            'number <- empty text' => ['number', '', true],
+            'bool <- empty text' => ['bool', '', false],
+        ];
+    }
+
+    /**
+     * @dataProvider looseScalarsProvider
+     * @param string $type The type of the schema
+     * @param mixed $value The value
+     * @param bool $accepted Is it accepted when the validator is loose?
+     */
+    public function testALooseValidatorAcceptsTheLooserScalarsAndNothingElse(string $type, $value, bool $accepted): void
+    {
+        $loose = self::validator()->setLooseScalars(true);
+
+        $this->assertSame($accepted, $loose->validate(['v' => $value], ['v' => $type]), json_encode($value) . ' as ' . $type);
+    }
+
+    /**
+     * @dataProvider looseScalarsProvider
+     * @param string $type The type of the schema
+     * @param mixed $value The value
+     * @param bool $accepted Is it accepted when the validator is loose?
+     */
+    public function testAValidatorThatIsNotLooseAcceptsOnlyTheTypeOfTheSchema(string $type, $value, bool $accepted): void
+    {
+        $strict = [
+            'string' => is_string($value),
+            'int' => is_int($value),
+            'number' => is_int($value) || is_float($value),
+            'bool' => is_bool($value),
+        ][$type];
+
+        $this->assertSame($strict, self::validator()->validate(['v' => $value], ['v' => $type]), json_encode($value) . ' as ' . $type);
+    }
+
+    /**
+     * The validator is not loose by default, and the setter can turn the mode off again, and returns the validator
+     * @return void
+     */
+    public function testTheValidatorIsNotLooseByDefaultAndTheSetterCanTurnTheModeOffAgainAndReturnsTheValidator(): void
+    {
+        $validator = self::validator();
+
+        $this->assertFalse($validator->validate(['v' => '5'], ['v' => 'int']));
+        $this->assertSame($validator, $validator->setLooseScalars(true));
+        $this->assertTrue($validator->validate(['v' => '5'], ['v' => 'int']));
+        $this->assertFalse($validator->setLooseScalars(false)->validate(['v' => '5'], ['v' => 'int']));
+    }
+
+    /**
+     * The loose mode reaches the nested fields, the lists, the references and the unions, and leaves the other rules as strict as ever
+     * @return void
+     */
+    public function testTheLooseModeReachesNestedFieldsListsReferencesAndUnionsAndLeavesTheOtherRulesStrict(): void
+    {
+        $validator = self::validator(true, [
+            'Item' => ['qty' => 'int', 'price' => 'number', 'gift?' => 'bool', 'sku' => ['@type' => 'string', '@pattern' => '/^[A-Z]{2}\d+$/']],
+        ])->setLooseScalars(true);
+
+        $this->assertTrue($validator->validate(['items' => [['qty' => '2', 'price' => '9.5', 'gift' => 'true', 'sku' => 'AB1']]], ['items' => ['@Item']]), implode(' | ', $validator->getErrors()));
+        $this->assertTrue($validator->validate(['v' => '2'], ['v' => 'int|bool']), 'in a union');
+        $this->assertFalse($validator->validate(['v' => 12], ['v' => ['@type' => 'string', '@enum' => ['12']]]), 'an enum compares strictly: the integer 12 is not the text 12');
+        $this->assertFalse($validator->validate(['items' => [['qty' => '2', 'price' => '9.5', 'sku' => 12]]], ['items' => ['@Item']]), 'a pattern is checked on the text: a number is not a text that matches');
+        $this->assertFalse($validator->validate(['v' => '5'], ['v' => ['@type' => 'int', '@min' => 10]]), 'a bound is checked');
+        $this->assertFalse($validator->validate(['v' => 'x'], ['v' => ['@type' => 'int', '@check' => function () {
+            return true;
+        }]]), 'the type is checked before the check');
+    }
+
+    /**
+     * Nothing is converted: the loose values stay as they were given
+     * @return void
+     */
+    public function testNothingIsConvertedTheLooseValuesStayAsTheyWereGiven(): void
+    {
+        $data = ['a' => '5', 'b' => 5.5, 'c' => 'true'];
+        $copy = $data;
+
+        self::validator()->setLooseScalars(true)->validate($data, ['a' => 'int', 'b' => 'string', 'c' => 'bool']);
+
+        $this->assertSame($copy, $data);
+    }
 }

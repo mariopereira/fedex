@@ -246,6 +246,11 @@ final class FedexAddressValidationTest extends TestCase
                 $reqDef = array_values(array_filter(array_keys($d), function ($k) {
                     return substr($k, -1) !== '?';
                 }));
+                if ($name === 'Address') {
+                    // decided with the owner: the minimum fields vary among countries, so the city and the postal code are optional
+                    $reqSpec = array_values(array_diff($reqSpec, ['city', 'postalCode']));
+                }
+
                 sort($reqSpec);
                 sort($reqDef);
                 $res["$name: same required keys"] = ($reqSpec === $reqDef) ? true : 'spec ' . json_encode($reqSpec) . ' / class ' . json_encode($reqDef);
@@ -404,9 +409,10 @@ final class FedexAddressValidationTest extends TestCase
             $mutated = Spec::setAt($request, $leaf['path'], $bad);
             [$e, $sent] = $this->outcome($mutated);
 
-            if ($leaf['path'] === ['addressesToValidate', 0, 'address', 'postalCode']) {
-                // the postal code may be a string or an integer (the Italy example of the file)
-                $res["integer at $name (the postal code may be an integer)"] = ($e === null && $sent === 1) ? true : self::describe($e, 'not sent');
+            if ($leaf['type'] === 'string' && !$leaf['enum']) {
+                // a number is accepted as a text (the postal code of the Italy example of the file is an integer), unless a rule of its own (a pattern, a length) refuses it
+                $ok = ($e === null && $sent === 1) || (self::refused($e, $sent) && strpos(implode(' ', $e->getErrors()), 'expected string') === false);
+                $res["integer at $name (a number is accepted as a text)"] = $ok ? true : self::describe($e, 'not sent');
             } else {
                 $res["wrong scalar type at $name"] = self::refused($e, $sent) ? true : self::describe($e, 'accepted');
             }
@@ -416,10 +422,10 @@ final class FedexAddressValidationTest extends TestCase
     }
 
     /**
-     * An unknown key in any object of the request is rejected
+     * An unknown key in any object of the request is sent, because FedEx decides about it
      * @return void
      */
-    public function testAnUnknownKeyInAnyObjectOfTheRequestIsRejected(): void
+    public function testAnUnknownKeyInAnyObjectOfTheRequestIsSent(): void
     {
         [$request, $meta] = self::generatedRequest();
         $res = [];
@@ -427,7 +433,7 @@ final class FedexAddressValidationTest extends TestCase
         foreach ($meta['objects'] as $o) {
             $mutated = $o['path'] ? Spec::setAt($request, $o['path'], array_merge(Spec::getAt($request, $o['path']), ['maxresults' => 5])) : array_merge($request, ['maxresults' => 5]);
             [$e, $sent] = $this->outcome($mutated);
-            $res['unknown key in ' . ($o['path'] ? Spec::pathName($o['path']) : 'the request') . ' (' . $o['name'] . ')'] = (self::refused($e, $sent) && strpos(implode(' ', $e->getErrors()), 'maxresults: unexpected key') !== false) ? true : self::describe($e, 'accepted');
+            $res['unknown key in ' . ($o['path'] ? Spec::pathName($o['path']) : 'the request') . ' (' . $o['name'] . ')'] = ($e === null && $sent === 1) ? true : self::describe($e, 'refused');
         }
 
         $this->assertAll('an unknown key in every object of the request', $res);
@@ -446,6 +452,13 @@ final class FedexAddressValidationTest extends TestCase
             foreach ($o['required'] as $key) {
                 $path = array_merge($o['path'], [$key]);
                 [$e, $sent] = $this->outcome(Spec::unsetAt($request, $path));
+
+                if (in_array($key, ['city', 'postalCode'], true)) {
+                    // optional in the class: the minimum fields vary among countries
+                    $res['missing ' . Spec::pathName($path) . ' (optional)'] = ($e === null && $sent === 1) ? true : self::describe($e, 'refused');
+                    continue;
+                }
+
                 $res['missing ' . Spec::pathName($path)] = (self::refused($e, $sent) && strpos(implode(' ', $e->getErrors()), 'required key is missing') !== false) ? true : self::describe($e, 'accepted');
             }
         }
@@ -746,12 +759,13 @@ final class FedexAddressValidationTest extends TestCase
             'minimal address' => [$req($ok), true],
             'full address' => [$req($ok + ['stateOrProvinceCode' => 'TX', 'countryCode' => 'US']), true],
             'missing streetLines' => [$req(array_diff_key($ok, ['streetLines' => 1])), false],
-            'missing city' => [$req(array_diff_key($ok, ['city' => 1])), false],
-            'missing postalCode' => [$req(array_diff_key($ok, ['postalCode' => 1])), false],
+            'missing city' => [$req(array_diff_key($ok, ['city' => 1])), true],
+            'missing postalCode' => [$req(array_diff_key($ok, ['postalCode' => 1])), true],
             'postalCode "75063-8659"' => [$req(array_replace($ok, ['postalCode' => '75063-8659'])), true],
             'postalCode as an integer (Italy example)' => [$req(array_replace($ok, ['postalCode' => 187])), true],
-            'postalCode as a float' => [$req(array_replace($ok, ['postalCode' => 187.5])), false],
-            'postalCode as a boolean' => [$req(array_replace($ok, ['postalCode' => true])), false],
+            'postalCode as a float' => [$req(array_replace($ok, ['postalCode' => 187.5])), true],
+            'postalCode as a boolean' => [$req(array_replace($ok, ['postalCode' => true])), true],
+            'postalCode as a list' => [$req(array_replace($ok, ['postalCode' => ['1']])), false],
             'postalCode as an array' => [$req(array_replace($ok, ['postalCode' => ['1']])), false],
             'state "TX"' => [$req($ok + ['stateOrProvinceCode' => 'TX']), true],
             'state "" (Germany example)' => [$req($ok + ['stateOrProvinceCode' => '']), true],
@@ -769,9 +783,9 @@ final class FedexAddressValidationTest extends TestCase
             'streetLines with 3 lines' => [$req(array_replace($ok, ['streetLines' => ['a', 'b', 'c']])), true],
             'streetLines with 5 lines (the API ignores more than 3)' => [$req(array_replace($ok, ['streetLines' => ['a', 'b', 'c', 'd', 'e']])), true],
             'streetLines empty list' => [$req(array_replace($ok, ['streetLines' => []])), false],
-            'streetLines with an empty line' => [$req(array_replace($ok, ['streetLines' => ['a', '']])), false],
-            'streetLines with a blank line' => [$req(array_replace($ok, ['streetLines' => ['  ']])), false],
-            'streetLines with a number' => [$req(array_replace($ok, ['streetLines' => [123]])), false],
+            'streetLines with an empty line' => [$req(array_replace($ok, ['streetLines' => ['a', '']])), true],
+            'streetLines with a blank line' => [$req(array_replace($ok, ['streetLines' => ['  ']])), true],
+            'streetLines with a number' => [$req(array_replace($ok, ['streetLines' => [123]])), true],
             'streetLines as a string' => [$req(array_replace($ok, ['streetLines' => 'a'])), false],
             'inEffectAsOfTimestamp "2019-09-06"' => [$req($ok, ['inEffectAsOfTimestamp' => '2019-09-06']), true],
             'inEffectAsOfTimestamp "2020-02-29" (leap day)' => [$req($ok, ['inEffectAsOfTimestamp' => '2020-02-29']), true],
@@ -785,18 +799,19 @@ final class FedexAddressValidationTest extends TestCase
             'inEffectAsOfTimestamp empty string' => [$req($ok, ['inEffectAsOfTimestamp' => '']), false],
             'includeResolutionTokens true' => [$req($ok, ['validateAddressControlParameters' => ['includeResolutionTokens' => true]]), true],
             'includeResolutionTokens false' => [$req($ok, ['validateAddressControlParameters' => ['includeResolutionTokens' => false]]), true],
-            'includeResolutionTokens "true" (a string)' => [$req($ok, ['validateAddressControlParameters' => ['includeResolutionTokens' => 'true']]), false],
-            'validateAddressControlParameters with an unknown key' => [$req($ok, ['validateAddressControlParameters' => ['tokens' => true]]), false],
+            'includeResolutionTokens "true" (the text)' => [$req($ok, ['validateAddressControlParameters' => ['includeResolutionTokens' => 'true']]), true],
+            'includeResolutionTokens "yes" (other text)' => [$req($ok, ['validateAddressControlParameters' => ['includeResolutionTokens' => 'yes']]), false],
+            'validateAddressControlParameters with an unknown key' => [$req($ok, ['validateAddressControlParameters' => ['tokens' => true]]), true],
             'clientReferenceId "A1"' => [['addressesToValidate' => [['address' => $ok, 'clientReferenceId' => 'A1']]], true],
-            'clientReferenceId as a number' => [['addressesToValidate' => [['address' => $ok, 'clientReferenceId' => 1]]], false],
+            'clientReferenceId as a number' => [['addressesToValidate' => [['address' => $ok, 'clientReferenceId' => 1]]], true],
             'item without the address' => [['addressesToValidate' => [['clientReferenceId' => 'A1']]], false],
-            'item with an unknown key' => [['addressesToValidate' => [['address' => $ok, 'reference' => 'x']]], false],
-            'address with an unknown key' => [$req($ok + ['zip' => '1']), false],
+            'item with an unknown key' => [['addressesToValidate' => [['address' => $ok, 'reference' => 'x']]], true],
+            'address with an unknown key' => [$req($ok + ['zip' => '1']), true],
             'no addressesToValidate' => [['inEffectAsOfTimestamp' => '2019-09-06'], false],
             'addressesToValidate empty list' => [['addressesToValidate' => []], false],
             'addressesToValidate as an object (not a list)' => [['addressesToValidate' => ['address' => $ok]], false],
             'addressesToValidate item that is a string' => [['addressesToValidate' => ['text']], false],
-            'an unknown top-level key' => [$req($ok, ['maxresults' => 5]), false],
+            'an unknown top-level key' => [$req($ok, ['maxresults' => 5]), true],
         ];
     }
 
@@ -886,27 +901,26 @@ final class FedexAddressValidationTest extends TestCase
      */
     public function testTheErrorsNameEachProblemWithItsPathAndCarryNoRequestData(): void
     {
-        [$e] = $this->outcome(['maxresults' => 5, 'addressesToValidate' => [['address' => ['streetLines' => ['a'], 'city' => 'x', 'postalCode' => '1', 'zip' => '2']]]]);
+        [$e] = $this->outcome(['inEffectAsOfTimestamp' => 'tomorrow', 'addressesToValidate' => [['address' => ['streetLines' => ['a'], 'city' => ['x'], 'postalCode' => '1']]]]);
 
-        $this->assertCount(2, $e->getErrors());
-        $this->assertStringContainsString('$.maxresults: unexpected key', $e->getErrorsAsString());
-        $this->assertStringContainsString('$.addressesToValidate[0].address.zip: unexpected key', $e->getErrorsAsString());
+        $this->assertCount(3, $e->getErrors(), 'the pattern and the date of the timestamp, and the type of the city');
+        $this->assertStringContainsString('$.inEffectAsOfTimestamp', $e->getErrorsAsString());
+        $this->assertStringContainsString('$.addressesToValidate[0].address.city: expected string', $e->getErrorsAsString());
         $this->assertNull($e->getData(), 'the request holds addresses: it is not kept in the exception');
     }
 
     /**
-     * An empty street line is reported with the number of the address
+     * An empty street line is sent, because FedEx decides about it (the examples of FedEx have some)
      * @return void
      */
-    public function testAnEmptyStreetLineIsReportedWithTheNumberOfTheAddress(): void
+    public function testAnEmptyStreetLineIsSentBecauseFedexDecidesAboutIt(): void
     {
         $ok = self::okAddress();
 
         [$e, $sent] = $this->outcome(['addressesToValidate' => [['address' => $ok], ['address' => array_replace($ok, ['streetLines' => ['ok', ' ']])]]]);
 
-        $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
-        $this->assertSame('The street lines cannot be empty (address 2)', $e->getMessage());
-        $this->assertSame(0, $sent);
+        $this->assertNull($e, self::describe($e, ''));
+        $this->assertSame(1, $sent);
     }
 
     // ---------------------------------------------------------------- 6. the helpers
@@ -972,20 +986,16 @@ final class FedexAddressValidationTest extends TestCase
     }
 
     /**
-     * Validate refuses an option that is not a field of the request
+     * Validate sends an option that is not a field of the request, because FedEx decides about it
      * @return void
      */
-    public function testValidateRefusesAnOptionThatIsNotAFieldOfTheRequest(): void
+    public function testValidateSendsAnOptionThatIsNotAFieldOfTheRequest(): void
     {
         $api = $this->api();
 
-        $e = self::thrown(function () use ($api) {
-            $api->validate(self::okAddress(), ['maxResults' => 3]);
-        });
+        $api->validate(self::okAddress(), ['maxResults' => 3]);
 
-        $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
-        $this->assertStringContainsString('$.maxResults: unexpected key', $e->getErrorsAsString());
-        $this->assertSame([], $this->transport->calls);
+        $this->assertSame(3, $this->transport->bodyOf(0)['maxResults']);
     }
 
     /**
@@ -1012,12 +1022,9 @@ final class FedexAddressValidationTest extends TestCase
         $ok = self::okAddress();
 
         return [
-            'without a city' => [array_diff_key($ok, ['city' => 1])],
-            'without a postal code' => [array_diff_key($ok, ['postalCode' => 1])],
             'without street lines' => [array_replace($ok, ['streetLines' => []])],
             'with a country code of 3 letters' => [array_replace($ok, ['countryCode' => 'USA'])],
             'with a state of 3 characters' => [array_replace($ok, ['stateOrProvinceCode' => 'TEX'])],
-            'with an empty street line' => [array_replace($ok, ['streetLines' => ['']])],
             'empty' => [[]],
         ];
     }
@@ -1150,14 +1157,14 @@ final class FedexAddressValidationTest extends TestCase
     public function testOneBadAddressRefusesTheWholeRequest(): void
     {
         $api = $this->api();
-        $second = ['streetLines' => ['24 Grosvenor Square'], 'city' => null, 'postalCode' => 'W1A 2LQ', 'countryCode' => 'GB'];
+        $second = ['city' => 'London', 'postalCode' => 'W1A 2LQ', 'countryCode' => 'GB'];
 
         $e = self::thrown(function () use ($api, $second) {
             $api->validateArray([self::okAddress(), $second]);
         });
 
         $this->assertTrue(self::refused($e, count($this->transport->calls)));
-        $this->assertStringContainsString('$.addressesToValidate[1].address.city: required key is missing', $e->getErrorsAsString());
+        $this->assertStringContainsString('$.addressesToValidate[1].address.streetLines: required key is missing', $e->getErrorsAsString());
     }
 
     /**

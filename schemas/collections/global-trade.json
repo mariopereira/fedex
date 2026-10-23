@@ -1,0 +1,895 @@
+{
+	"info": {
+		"_postman_id": "59082671-19bb-40e7-869f-600b8b912d88",
+		"name": "Global Trade API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3306035"
+	},
+	"item": [
+		{
+			"name": "Retrieve Regulatory Details",
+			"item": [
+				{
+					"name": "FDP_Minimum Sample payload from FDP",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-locale",
+								"value": "en_US",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"originAddress\": {\n        \"countryCode\": \"IN\"\n    },\n    \"destinationAddress\": {\n        \"countryCode\": \"CA\"\n    },\n    \"carrierCode\": \"FDXE\",\n    \"customsClearanceDetail\": {\n        \"customsValue\": {\n            \"amount\": \"\",\n            \"currency\": \"\"\n        },\n        \"commodities\": [\n            {\n                \"harmonizedCode\": \"580122\"\n            }\n        ]\n    }\n}"
+						},
+						"url": {
+							"raw": "https://apis-sandbox.fedex.com/globaltrade/v1/shipments/regulatorydetails/retrieve",
+							"protocol": "https",
+							"host": [
+								"apis-sandbox",
+								"fedex",
+								"com"
+							],
+							"path": [
+								"globaltrade",
+								"v1",
+								"shipments",
+								"regulatorydetails",
+								"retrieve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Full schema from FDP",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-locale",
+								"value": "en_US",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serviceType\": \"INTERNATIONAL_ECONOMY\",\n    \"totalCommodityValue\": {\n        \"amount\": 12.45,\n        \"currency\": \"USD\"\n    },\n    \"originAddress\": {\n        \"countryCode\": \"US\",\n        \"postalCode\": \"75063\",\n        \"stateOrProvinceCode\": \"TX\"\n    },\n    \"destinationAddress\": {\n        \"countryCode\": \"CA\",\n        \"postalCode\": \"V7C4V7\",\n        \"stateOrProvinceCode\": \"BC\"\n    },\n    \"serviceOptionType\": [\n        \"SATURDAY_DELIVERY\"\n    ],\n    \"customsClearanceDetail\": {\n        \"insuranceCharges\": {\n            \"amount\": 12.45,\n            \"currency\": \"USD\"\n        },\n        \"importerOfRecordAccountNumber\": {\n            \"0\": \"8\",\n            \"1\": \"4\",\n            \"2\": \"6\",\n            \"3\": \"0\",\n            \"4\": \"6\",\n            \"5\": \"6\",\n            \"6\": \"1\",\n            \"7\": \"2\",\n            \"8\": \"8\"\n        },\n        \"customsValue\": {\n            \"amount\": 12.45,\n            \"currency\": \"USD\"\n        },\n        \"commodities\": [\n            {\n                \"quantity\": \"1\",\n                \"customsValue\": {\n                    \"amount\": 12.45,\n                    \"currency\": \"USD\"\n                },\n                \"countryOfManufacture\": \"US\",\n                \"name\": \"my commodity\",\n                \"harmonizedCode\": \"\",\n                \"description\": \"harmonized code description\",\n                \"weight\": {\n                    \"units\": \"LB\",\n                    \"value\": 68\n                }\n            }\n        ],\n        \"documentContent\": \"DOCUMENT\"\n    },\n    \"shipDate\": \"2023-07-21\",\n    \"carrierCode\": \"FDXE\",\n    \"totalWeight\": {\n        \"units\": \"LB\",\n        \"value\": 68\n    },\n    \"includeURLReferences\": true,\n    \"consolidationType\": \"INTERNATIONAL_PRIORITY_DISTRIBUTION\",\n    \"consolidationRole\": \"CRN_SHIPMENT\"\n}"
+						},
+						"url": {
+							"raw": "https://apis-sandbox.fedex.com/globaltrade/v1/shipments/regulatorydetails/retrieve",
+							"protocol": "https",
+							"host": [
+								"apis-sandbox",
+								"fedex",
+								"com"
+							],
+							"path": [
+								"globaltrade",
+								"v1",
+								"shipments",
+								"regulatorydetails",
+								"retrieve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "US to CA",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-locale",
+								"value": "en_US",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"originAddress\": {\n        \"countryCode\": \"US\"\n    },\n    \"destinationAddress\": {\n        \"countryCode\": \"CA\"\n    },\n    \"carrierCode\": \"FDXE\",\n    \"customsClearanceDetail\": {\n        \"customsValue\": {\n            \"amount\": \"300\",\n            \"currency\": \"USD\"\n        },\n        \"commodities\": [\n            {\n                \"harmonizedCode\": \"580122\"\n            }\n        ]\n    }\n}"
+						},
+						"url": {
+							"raw": "https://apis-sandbox.fedex.com/globaltrade/v1/shipments/regulatorydetails/retrieve",
+							"protocol": "https",
+							"host": [
+								"apis-sandbox",
+								"fedex",
+								"com"
+							],
+							"path": [
+								"globaltrade",
+								"v1",
+								"shipments",
+								"regulatorydetails",
+								"retrieve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CA_US",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-locale",
+								"value": "en_US",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serviceType\": \"PRIORITY\",\n    \"shipDate\": \"2021-10-22\",\n    \"originAddress\": {\n        \"countryCode\": \"CA\"\n    },\n    \"destinationAddress\": {\n        \"countryCode\": \"US\"\n    },\n    \"carrierCode\": \"FDXE\",\n    \"customsClearanceDetail\": {\n        \"documentContent\": \"\",\n        \"customsValue\": {\n            \"amount\": \"2501\",\n            \"currency\": \"USD\"\n        },\n        \"commodities\": [\n            {\n                \"harmonizedCode\": \"580122\",\n                \"weight\": {\n                    \"units\": \"\",\n                    \"values\": \"\"\n                },\n                \"customsValue\": {\n                    \"amount\": \"\",\n                    \"currency\": \"\"\n                }\n            }\n        ]\n    }\n}"
+						},
+						"url": {
+							"raw": "https://apis-sandbox.fedex.com/globaltrade/v1/shipments/regulatorydetails/retrieve",
+							"protocol": "https",
+							"host": [
+								"apis-sandbox",
+								"fedex",
+								"com"
+							],
+							"path": [
+								"globaltrade",
+								"v1",
+								"shipments",
+								"regulatorydetails",
+								"retrieve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BE_ES",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-locale",
+								"value": "en_US",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"originAddress\": {\n        \"countryCode\": \"BE\",\n        \"postalCode\": \"1820\",\n        \"stateOrProvinceCode\": \"\"\n    },\n    \"destinationAddress\": {\n        \"countryCode\": \"ES\",\n        \"postalCode\": \"52000\",\n        \"stateOrProvinceCode\": \"\"\n    },\n    \"carrierCode\": \"FDXE\",\n    \"customsClearanceDetail\": {\n        \"customsValue\": {\n            \"amount\": \"20\",\n            \"currency\": \"EUR\"\n        },\n        \"commodities\": [\n            {\n                \"harmonizedCode\": \"580122\"\n            }\n        ]\n    }\n}"
+						},
+						"url": {
+							"raw": "https://apis-sandbox.fedex.com/globaltrade/v1/shipments/regulatorydetails/retrieve",
+							"protocol": "https",
+							"host": [
+								"apis-sandbox",
+								"fedex",
+								"com"
+							],
+							"path": [
+								"globaltrade",
+								"v1",
+								"shipments",
+								"regulatorydetails",
+								"retrieve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CA to IN, Carriercode:FDXE, serviceType:FEDEX_INTERNATIONAL_PRIORITY, regulatoryControls:NOT_IN_FREE_CIRCULATION, serviceoptionType:SATURDAY_DELIVERY",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-locale",
+								"value": "en_US",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serviceType\": \"FEDEX_INTERNATIONAL_PRIORITY\",\n    \"originAddress\": {\n        \"countryCode\": \"CA\"\n    },\n    \"destinationAddress\": {\n        \"countryCode\": \"IN\"\n    },\n    \"serviceOptionType\": [\n        \"SATURDAY_DELIVERY\"\n    ],\n    \"carrierCode\": \"FDXE\",\n    \"customsClearanceDetail\": {\n        \"regulatoryControls\": [\n            \"NOT_IN_FREE_CIRCULATION\"\n        ],\n        \"documentContent\": \"DOCUMENT\",\n        \"customsValue\": {\n            \"amount\": \"2501\",\n            \"currency\": \"USD\"\n        },\n        \"commodities\": [\n            {\n                \"harmonizedCode\": \"580122\",\n                \"weight\": {\n                    \"units\": \"KG\",\n                    \"values\": \"10\"\n                },\n                \"customsValue\": {\n                    \"amount\": \"10.50\",\n                    \"currency\": \"USD\"\n                }\n            }\n        ]\n    },\n    \"totalWeight\": {\n        \"units\": \"KG\",\n        \"value\": 10\n    },\n    \"consolidationType\": \"INTERNATIONAL_PRIORITY_DISTRIBUTION\",\n    \"consolidationRole\": \"CONSOLIDATION_DOCUMENTS_SHIPMENT\"\n}"
+						},
+						"url": {
+							"raw": "https://apis-sandbox.fedex.com/globaltrade/v1/shipments/regulatorydetails/retrieve",
+							"protocol": "https",
+							"host": [
+								"apis-sandbox",
+								"fedex",
+								"com"
+							],
+							"path": [
+								"globaltrade",
+								"v1",
+								"shipments",
+								"regulatorydetails",
+								"retrieve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CA to US,Carriercode:FDXG, serviceType:FEDEX_GROUND, regulatoryControls:FOOD_OR_PERISHABLE, serviceoptionType:FEDEX_ONE_RATE",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-locale",
+								"value": "en_US",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serviceType\": \"FEDEX_GROUND\",\n    \"originAddress\": {\n        \"countryCode\": \"CA\"\n    },\n    \"destinationAddress\": {\n        \"countryCode\": \"US\"\n    },\n    \"serviceOptionType\": [\n        \"FEDEX_ONE_RATE\"\n    ],\n    \"carrierCode\": \"FDXG\",\n    \"customsClearanceDetail\": {\n        \"documentContent\": \"COMMODITY\",\n        \"customsValue\": {\n            \"amount\": \"2501\",\n            \"currency\": \"CAD\"\n        },\n        \"commodities\": [\n            {\n                \"harmonizedCode\": \"580122\",\n                \"weight\": {\n                    \"units\": \"LB\",\n                    \"values\": \"10\"\n                },\n                \"customsValue\": {\n                    \"amount\": \"10.50\",\n                    \"currency\": \"CAD\"\n                }\n            }\n        ]\n    },\n    \"totalWeight\": {\n        \"units\": \"LB\",\n        \"value\": 10\n    },\n    \"consolidationType\": \"INTERNATIONAL_GROUND_DISTRIBUTION\",\n    \"consolidationRole\": \"CRN_SHIPMENT\"\n}"
+						},
+						"url": {
+							"raw": "https://apis-sandbox.fedex.com/globaltrade/v1/shipments/regulatorydetails/retrieve",
+							"protocol": "https",
+							"host": [
+								"apis-sandbox",
+								"fedex",
+								"com"
+							],
+							"path": [
+								"globaltrade",
+								"v1",
+								"shipments",
+								"regulatorydetails",
+								"retrieve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CA to UK,Carriercode:FDXE, serviceType:INTERNATIONAL_PRIORITY_FREIGHT,serviceoptionType:FEDEX_ONE_RATE",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-locale",
+								"value": "en_US",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serviceType\": \"INTERNATIONAL_PRIORITY_FREIGHT\",\n    \"originAddress\": {\n        \"countryCode\": \"CA\"\n    },\n    \"destinationAddress\": {\n        \"countryCode\": \"UK\"\n    },\n    \"serviceOptionType\": [\n        \"FEDEX_ONE_RATE\"\n    ],\n    \"carrierCode\": \"FDXE\",\n    \"customsClearanceDetail\": {\n        \"regulatoryControls\": [\n            \"FOOD_OR_PERISHABLE\"\n        ],\n        \"documentContent\": \"DOCUMENT\",\n        \"customsValue\": {\n            \"amount\": \"2501\",\n            \"currency\": \"USD\"\n        },\n        \"commodities\": [\n            {\n                \"harmonizedCode\": \"580122\",\n                \"weight\": {\n                    \"units\": \"KG\",\n                    \"values\": \"10\"\n                },\n                \"customsValue\": {\n                    \"amount\": \"10.50\",\n                    \"currency\": \"USD\"\n                }\n            }\n        ]\n    },\n    \"totalWeight\": {\n        \"units\": \"KG\",\n        \"value\": 10\n    },\n    \"consolidationType\": \"INTERNATIONAL_DISTRIBUTION_FREIGHT\",\n    \"consolidationRole\": \"MASTER_AIRWAYBILL_SIHPMENT\"\n}"
+						},
+						"url": {
+							"raw": "https://apis-sandbox.fedex.com/globaltrade/v1/shipments/regulatorydetails/retrieve",
+							"protocol": "https",
+							"host": [
+								"apis-sandbox",
+								"fedex",
+								"com"
+							],
+							"path": [
+								"globaltrade",
+								"v1",
+								"shipments",
+								"regulatorydetails",
+								"retrieve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "IN to CN,Carriercode:FDXE, serviceType:INTERNATIONAL_ECONOMY, regulatoryControls:USMCA, serviceoptionType:SATURDAY_DELIVERY",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-locale",
+								"value": "en_US",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serviceType\": \"INTERNATIONAL_ECONOMY\",\n    \"originAddress\": {\n        \"countryCode\": \"IN\"\n    },\n    \"destinationAddress\": {\n        \"countryCode\": \"CN\"\n    },\n    \"serviceOptionType\": [\n        \"SATURDAY_DELIVERY\"\n    ],\n    \"carrierCode\": \"FDXE\",\n    \"customsClearanceDetail\": {\n        \"regulatoryControls\": [\n            \"USMCA\"\n        ],\n        \"documentContent\": \"DOCUMENT\",\n        \"customsValue\": {\n            \"amount\": \"2501\",\n            \"currency\": \"USD\"\n        },\n        \"commodities\": [\n            {\n                \"harmonizedCode\": \"580122\",\n                \"weight\": {\n                    \"units\": \"KG\",\n                    \"values\": \"10\"\n                },\n                \"customsValue\": {\n                    \"amount\": \"10.50\",\n                    \"currency\": \"USD\"\n                }\n            }\n        ]\n    },\n    \"totalWeight\": {\n        \"units\": \"KG\",\n        \"value\": 10\n    },\n    \"consolidationType\": \"INTERNATIONAL_ECONOMY_DISTRIBUTION\",\n    \"consolidationRole\": \"CONSOLIDATION_DOCUMENTS_SHIPMENT\"\n}"
+						},
+						"url": {
+							"raw": "https://apis-sandbox.fedex.com/globaltrade/v1/shipments/regulatorydetails/retrieve",
+							"protocol": "https",
+							"host": [
+								"apis-sandbox",
+								"fedex",
+								"com"
+							],
+							"path": [
+								"globaltrade",
+								"v1",
+								"shipments",
+								"regulatorydetails",
+								"retrieve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BR to GB,Carriercode:FDXE, serviceType:INTERNATIONAL_ECONOMY, regulatoryControls:NOT_APPLICABLE_FOR_LOW_VALUE_CUSTOMS_EXCEPTIONS, serviceoptionType:SATURDAY_DELIVERY",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-locale",
+								"value": "en_US",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serviceType\": \"INTERNATIONAL_ECONOMY\",\n    \"originAddress\": {\n        \"countryCode\": \"BR\"\n    },\n    \"destinationAddress\": {\n        \"countryCode\": \"GB\"\n    },\n    \"serviceOptionType\": [\n        \"SATURDAY_DELIVERY\"\n    ],\n    \"carrierCode\": \"FDXE\",\n    \"customsClearanceDetail\": {\n        \"regulatoryControls\": [\n            \"NOT_APPLICABLE_FOR_LOW_VALUE_CUSTOMS_EXCEPTIONS\"\n        ],\n        \"documentContent\": \"COMMODITY\",\n        \"customsValue\": {\n            \"amount\": \"2501\",\n            \"currency\": \"USD\"\n        },\n        \"commodities\": [\n            {\n                \"harmonizedCode\": \"580122\",\n                \"weight\": {\n                    \"units\": \"KG\",\n                    \"values\": \"10\"\n                },\n                \"customsValue\": {\n                    \"amount\": \"10.50\",\n                    \"currency\": \"USD\"\n                }\n            }\n        ]\n    },\n    \"totalWeight\": {\n        \"units\": \"KG\",\n        \"value\": 10\n    },\n    \"consolidationType\": \"TRANSBORDER_DISTRIBUTION\",\n    \"consolidationRole\": \"MASTER_AIRWAYBILL_SIHPMENT\"\n}"
+						},
+						"url": {
+							"raw": "https://apis-sandbox.fedex.com/globaltrade/v1/shipments/regulatorydetails/retrieve",
+							"protocol": "https",
+							"host": [
+								"apis-sandbox",
+								"fedex",
+								"com"
+							],
+							"path": [
+								"globaltrade",
+								"v1",
+								"shipments",
+								"regulatorydetails",
+								"retrieve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "JP to IN,Carriercode:FDXE, serviceType:FEDEX_INTERNATIONAL_PRIORITY_EXPRESS, regulatoryControls:NOT_IN_FREE_CIRCULATION, USMCA, serviceoptionType:FEDEX_ONE_RATE",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-locale",
+								"value": "en_US",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serviceType\": \"FEDEX_INTERNATIONAL_PRIORITY_EXPRESS\",\n    \"originAddress\": {\n        \"countryCode\": \"JP\"\n    },\n    \"destinationAddress\": {\n        \"countryCode\": \"IN\"\n    },\n    \"serviceOptionType\": [\n        \"FEDEX_ONE_RATE\"\n    ],\n    \"carrierCode\": \"FDXE\",\n    \"customsClearanceDetail\": {\n        \"regulatoryControls\": [\n            \"NOT_IN_FREE_CIRCULATION\",\n            \"USMCA\"\n        ],\n        \"documentContent\": \"DOCUMENT\",\n        \"customsValue\": {\n            \"amount\": \"2501\",\n            \"currency\": \"USD\"\n        },\n        \"commodities\": [\n            {\n                \"harmonizedCode\": \"580122\",\n                \"weight\": {\n                    \"units\": \"KG\",\n                    \"values\": \"10\"\n                },\n                \"customsValue\": {\n                    \"amount\": \"10.50\",\n                    \"currency\": \"USD\"\n                }\n            }\n        ]\n    },\n    \"totalWeight\": {\n        \"units\": \"KG\",\n        \"value\": 10\n    },\n    \"consolidationType\": \"INTERNATIONAL_PRIORITY_DISTRIBUTION\",\n    \"consolidationRole\": \"MASTER_AIRWAYBILL_SIHPMENT\"\n}"
+						},
+						"url": {
+							"raw": "https://apis-sandbox.fedex.com/globaltrade/v1/shipments/regulatorydetails/retrieve",
+							"protocol": "https",
+							"host": [
+								"apis-sandbox",
+								"fedex",
+								"com"
+							],
+							"path": [
+								"globaltrade",
+								"v1",
+								"shipments",
+								"regulatorydetails",
+								"retrieve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "US to MX,Carriercode:FDXE, serviceType:INTERNATIONAL_FIRST, regulatoryControls:FOOD_OR_PERISHABLE, NOT_APPLICABLE_FOR_LOW_VALUE_CUSTOMS_EXCEPTIONS, serviceoptionType:SATURDAY_DELIVERY",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-locale",
+								"value": "en_US",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serviceType\": \"INTERNATIONAL_FIRST\",\n    \"originAddress\": {\n        \"countryCode\": \"US\"\n    },\n    \"destinationAddress\": {\n        \"countryCode\": \"MX\"\n    },\n    \"serviceOptionType\": [\n        \"SATURDAY_DELIVERY\"\n    ],\n    \"carrierCode\": \"FDXE\",\n    \"customsClearanceDetail\": {\n        \"regulatoryControls\": [\n            \"FOOD_OR_PERISHABLE\",\n            \"NOT_APPLICABLE_FOR_LOW_VALUE_CUSTOMS_EXCEPTIONS\"\n        ],\n        \"documentContent\": \"COMMODITY\",\n        \"customsValue\": {\n            \"amount\": \"2501\",\n            \"currency\": \"USD\"\n        },\n        \"commodities\": [\n            {\n                \"harmonizedCode\": \"580122\",\n                \"weight\": {\n                    \"units\": \"KG\",\n                    \"values\": \"10\"\n                },\n                \"customsValue\": {\n                    \"amount\": \"10.50\",\n                    \"currency\": \"USD\"\n                }\n            }\n        ]\n    },\n    \"totalWeight\": {\n        \"units\": \"KG\",\n        \"value\": 10\n    },\n    \"consolidationType\": \"INTERNATIONAL_PRIORITY_DISTRIBUTION\",\n    \"consolidationRole\": \"CRN_SHIPMENT\"\n}"
+						},
+						"url": {
+							"raw": "https://apis-sandbox.fedex.com/globaltrade/v1/shipments/regulatorydetails/retrieve",
+							"protocol": "https",
+							"host": [
+								"apis-sandbox",
+								"fedex",
+								"com"
+							],
+							"path": [
+								"globaltrade",
+								"v1",
+								"shipments",
+								"regulatorydetails",
+								"retrieve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CA to MX,Carriercode:FDXE, serviceType:FEDEX_INTERNATIONAL_PRIORITY, regulatoryControls:FOOD_OR_PERISHABLE, USMCA, serviceoptionType:SATURDAY_DELIVERY",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-locale",
+								"value": "en_US",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serviceType\": \"FEDEX_INTERNATIONAL_PRIORITY\",\n    \"originAddress\": {\n        \"countryCode\": \"CA\"\n    },\n    \"destinationAddress\": {\n        \"countryCode\": \"MX\"\n    },\n    \"serviceOptionType\": [\n        \"SATURDAY_DELIVERY\"\n    ],\n    \"carrierCode\": \"FDXE\",\n    \"customsClearanceDetail\": {\n        \"regulatoryControls\": [\n            \"FOOD_OR_PERISHABLE\",\n            \"USMCA\"\n        ],\n        \"documentContent\": \"DOCUMENT\",\n        \"customsValue\": {\n            \"amount\": \"2501\",\n            \"currency\": \"USD\"\n        },\n        \"commodities\": [\n            {\n                \"harmonizedCode\": \"580122\",\n                \"weight\": {\n                    \"units\": \"KG\",\n                    \"values\": \"10\"\n                },\n                \"customsValue\": {\n                    \"amount\": \"10.50\",\n                    \"currency\": \"USD\"\n                }\n            }\n        ]\n    },\n    \"totalWeight\": {\n        \"units\": \"KG\",\n        \"value\": 10\n    },\n    \"consolidationType\": \"INTERNATIONAL_GROUND_DISTRIBUTION\",\n    \"consolidationRole\": \"CONSOLIDATION_DOCUMENTS_SHIPMENT\"\n}"
+						},
+						"url": {
+							"raw": "https://apis-sandbox.fedex.com/globaltrade/v1/shipments/regulatorydetails/retrieve",
+							"protocol": "https",
+							"host": [
+								"apis-sandbox",
+								"fedex",
+								"com"
+							],
+							"path": [
+								"globaltrade",
+								"v1",
+								"shipments",
+								"regulatorydetails",
+								"retrieve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GB to CH,Carriercode:FDXE, serviceType:INTERNATIONAL_ECONOMY_FREIGHT, regulatoryControls:FOOD_OR_PERISHABLE, NOT_IN_FREE_CIRCULATION, USMCA, serviceoptionType:FEDEX_ONE_RATE",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-locale",
+								"value": "en_US",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serviceType\": \"INTERNATIONAL_ECONOMY_FREIGHT\",\n    \"originAddress\": {\n        \"countryCode\": \"GB\"\n    },\n    \"destinationAddress\": {\n        \"countryCode\": \"CH\"\n    },\n    \"serviceOptionType\": [\n        \"FEDEX_ONE_RATE\"\n    ],\n    \"carrierCode\": \"FDXE\",\n    \"customsClearanceDetail\": {\n        \"regulatoryControls\": [\n            \"FOOD_OR_PERISHABLE\",\n            \"NOT_IN_FREE_CIRCULATION\",\n            \"USMCA\"\n        ],\n        \"documentContent\": \"DOCUMENT\",\n        \"customsValue\": {\n            \"amount\": \"2501\",\n            \"currency\": \"USD\"\n        },\n        \"commodities\": [\n            {\n                \"harmonizedCode\": \"580122\",\n                \"weight\": {\n                    \"units\": \"KG\",\n                    \"values\": \"10\"\n                },\n                \"customsValue\": {\n                    \"amount\": \"10.50\",\n                    \"currency\": \"USD\"\n                }\n            }\n        ]\n    },\n    \"totalWeight\": {\n        \"units\": \"KG\",\n        \"value\": 10\n    },\n    \"consolidationType\": \"INTERNATIONAL_DISTRIBUTION_FREIGHT\",\n    \"consolidationRole\": \"CRN_SHIPMENT\"\n}"
+						},
+						"url": {
+							"raw": "https://apis-sandbox.fedex.com/globaltrade/v1/shipments/regulatorydetails/retrieve",
+							"protocol": "https",
+							"host": [
+								"apis-sandbox",
+								"fedex",
+								"com"
+							],
+							"path": [
+								"globaltrade",
+								"v1",
+								"shipments",
+								"regulatorydetails",
+								"retrieve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CH to GB,Carriercode:FDXE, serviceType:INTERNATIONAL_PRIORITY_DISTRIBUTION, regulatoryControls:USMCA, NOT_APPLICABLE_FOR_LOW_VALUE_CUSTOMS_EXCEPTIONS, serviceoptionType:SATURDAY_DELIVERY, ConsolidationType:INTERNATIONAL_EC",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-locale",
+								"value": "en_US",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serviceType\": \"INTERNATIONAL_PRIORITY_DISTRIBUTION\",\n    \"originAddress\": {\n        \"countryCode\": \"CH\"\n    },\n    \"destinationAddress\": {\n        \"countryCode\": \"GB\"\n    },\n    \"serviceOptionType\": [\n        \"SATURDAY_DELIVERY\"\n    ],\n    \"carrierCode\": \"FDXE\",\n    \"customsClearanceDetail\": {\n        \"regulatoryControls\": [\n            \"USMCA\",\n            \"NOT_APPLICABLE_FOR_LOW_VALUE_CUSTOMS_EXCEPTIONS\"\n        ],\n        \"documentContent\": \"DOCUMENT\",\n        \"customsValue\": {\n            \"amount\": \"2501\",\n            \"currency\": \"USD\"\n        },\n        \"commodities\": [\n            {\n                \"harmonizedCode\": \"580122\",\n                \"weight\": {\n                    \"units\": \"KG\",\n                    \"values\": \"10\"\n                },\n                \"customsValue\": {\n                    \"amount\": \"10.50\",\n                    \"currency\": \"USD\"\n                }\n            }\n        ]\n    },\n    \"totalWeight\": {\n        \"units\": \"KG\",\n        \"value\": 10\n    },\n    \"consolidationType\": \"INTERNATIONAL_ECONOMY_DISTRIBUTION\",\n    \"consolidationRole\": \"CRN_SHIPMENT\"\n}"
+						},
+						"url": {
+							"raw": "https://apis-sandbox.fedex.com/globaltrade/v1/shipments/regulatorydetails/retrieve",
+							"protocol": "https",
+							"host": [
+								"apis-sandbox",
+								"fedex",
+								"com"
+							],
+							"path": [
+								"globaltrade",
+								"v1",
+								"shipments",
+								"regulatorydetails",
+								"retrieve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CA to US,Carriercode:FXFR, serviceType:FEDEX_FREIGHT_PRIORITY, regulatoryControls:NOT_APPLICABLE_FOR_LOW_VALUE_CUSTOMS_EXCEPTIONS, serviceoptionType:FREIGHT_GUARANTEE",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-locale",
+								"value": "en_US",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serviceType\": \"FEDEX_FREIGHT_PRIORITY\",\n    \"originAddress\": {\n        \"countryCode\": \"CA\"\n    },\n    \"destinationAddress\": {\n        \"countryCode\": \"US\"\n    },\n    \"serviceOptionType\": [\n        \"FREIGHT_GUARANTEE\"\n    ],\n    \"carrierCode\": \"FXFR\",\n    \"customsClearanceDetail\": {\n        \"regulatoryControls\": [\n            \"NOT_APPLICABLE_FOR_LOW_VALUE_CUSTOMS_EXCEPTIONS\"\n        ],\n        \"documentContent\": \"COMMODITY\",\n        \"customsValue\": {\n            \"amount\": \"2501\",\n            \"currency\": \"CAD\"\n        },\n        \"commodities\": [\n            {\n                \"harmonizedCode\": \"580122\",\n                \"weight\": {\n                    \"units\": \"LB\",\n                    \"values\": \"100\"\n                },\n                \"customsValue\": {\n                    \"amount\": \"1000.50\",\n                    \"currency\": \"CAD\"\n                }\n            }\n        ]\n    },\n    \"totalWeight\": {\n        \"units\": \"LB\",\n        \"value\": 1000\n    },\n    \"consolidationType\": \"INTERNATIONAL_DISTRIBUTION_FREIGHT\",\n    \"consolidationRole\": \"CRN_SHIPMENT\"\n}"
+						},
+						"url": {
+							"raw": "https://apis-sandbox.fedex.com/globaltrade/v1/shipments/regulatorydetails/retrieve",
+							"protocol": "https",
+							"host": [
+								"apis-sandbox",
+								"fedex",
+								"com"
+							],
+							"path": [
+								"globaltrade",
+								"v1",
+								"shipments",
+								"regulatorydetails",
+								"retrieve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MX to CA,Carriercode:FXFR, serviceType:FEDEX_FREIGHT_ECONOMY, regulatoryControls:NOT_IN_FREE_CIRCULATION, USMCA, serviceoptionType:FREIGHT_GUARANTEE",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-locale",
+								"value": "en_US",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serviceType\": \"FEDEX_FREIGHT_ECONOMY\",\n    \"originAddress\": {\n        \"countryCode\": \"MX\"\n    },\n    \"destinationAddress\": {\n        \"countryCode\": \"CA\"\n    },\n    \"serviceOptionType\": [\n        \"FREIGHT_GUARANTEE\"\n    ],\n    \"carrierCode\": \"FXFR\",\n    \"customsClearanceDetail\": {\n        \"regulatoryControls\": [\n            \"NOT_IN_FREE_CIRCULATION\",\n            \"USMCA\"\n        ],\n        \"documentContent\": \"COMMODITY\",\n        \"customsValue\": {\n            \"amount\": \"2501\",\n            \"currency\": \"NMP\"\n        },\n        \"commodities\": [\n            {\n                \"harmonizedCode\": \"961511\",\n                \"weight\": {\n                    \"units\": \"KG\",\n                    \"values\": \"100\"\n                },\n                \"customsValue\": {\n                    \"amount\": \"1000.50\",\n                    \"currency\": \"NMP\"\n                }\n            }\n        ]\n    },\n    \"totalWeight\": {\n        \"units\": \"KG\",\n        \"value\": 1000\n    },\n    \"consolidationType\": \"INTERNATIONAL_DISTRIBUTION_FREIGHT\",\n    \"consolidationRole\": \"MASTER_AIRWAYBILL_SIHPMENT\"\n}"
+						},
+						"url": {
+							"raw": "https://apis-sandbox.fedex.com/globaltrade/v1/shipments/regulatorydetails/retrieve",
+							"protocol": "https",
+							"host": [
+								"apis-sandbox",
+								"fedex",
+								"com"
+							],
+							"path": [
+								"globaltrade",
+								"v1",
+								"shipments",
+								"regulatorydetails",
+								"retrieve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "US to AE,Carriercode:FDXE, serviceType:INTERNATIONAL_CONNECT_PLUS, regulatoryControls:USMCA, serviceoptionType:FEDEX_ONE_RATE",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-locale",
+								"value": "en_US",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serviceType\": \"INTERNATIONAL_CONNECT_PLUS\",\n    \"originAddress\": {\n        \"countryCode\": \"US\"\n    },\n    \"destinationAddress\": {\n        \"countryCode\": \"AE\"\n    },\n    \"serviceOptionType\": [\n        \"FEDEX_ONE_RATE\"\n    ],\n    \"carrierCode\": \"FDXE\",\n    \"customsClearanceDetail\": {\n        \"regulatoryControls\": [\n            \"USMCA\"\n        ],\n        \"documentContent\": \"COMMODITY\",\n        \"customsValue\": {\n            \"amount\": \"2501\",\n            \"currency\": \"USD\"\n        },\n        \"commodities\": [\n            {\n                \"harmonizedCode\": \"580122\",\n                \"weight\": {\n                    \"units\": \"KG\",\n                    \"values\": \"10\"\n                },\n                \"customsValue\": {\n                    \"amount\": \"10.50\",\n                    \"currency\": \"USD\"\n                }\n            }\n        ]\n    },\n    \"totalWeight\": {\n        \"units\": \"KG\",\n        \"value\": 10\n    },\n    \"consolidationType\": \"INTERNATIONAL_ECONOMY_DISTRIBUTION\",\n    \"consolidationRole\": \"MASTER_AIRWAYBILL_SIHPMENT\"\n}"
+						},
+						"url": {
+							"raw": "https://apis-sandbox.fedex.com/globaltrade/v1/shipments/regulatorydetails/retrieve",
+							"protocol": "https",
+							"host": [
+								"apis-sandbox",
+								"fedex",
+								"com"
+							],
+							"path": [
+								"globaltrade",
+								"v1",
+								"shipments",
+								"regulatorydetails",
+								"retrieve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FR to DE,Carriercode:FDXE, serviceType:REGIONAL_ECONOMY, regulatoryControls:USMCA, NOT_APPLICABLE_FOR_LOW_VALUE_CUSTOMS_EXCEPTIONS, serviceoptionType:SATURDAY_DELIVERY",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-locale",
+								"value": "en_US",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serviceType\": \"REGIONAL_ECONOMY\",\n    \"originAddress\": {\n        \"countryCode\": \"FR\"\n    },\n    \"destinationAddress\": {\n        \"countryCode\": \"DE\"\n    },\n    \"serviceOptionType\": [\n        \"SATURDAY_DELIVERY\"\n    ],\n    \"carrierCode\": \"FDXE\",\n    \"customsClearanceDetail\": {\n        \"regulatoryControls\": [\n            \"USMCA\",\n            \"NOT_APPLICABLE_FOR_LOW_VALUE_CUSTOMS_EXCEPTIONS\"\n        ],\n        \"documentContent\": \"DOCUMENT\",\n        \"customsValue\": {\n            \"amount\": \"2501\",\n            \"currency\": \"EUR\"\n        },\n        \"commodities\": [\n            {\n                \"harmonizedCode\": \"961511\",\n                \"weight\": {\n                    \"units\": \"KG\",\n                    \"values\": \"100\"\n                },\n                \"customsValue\": {\n                    \"amount\": \"1000.50\",\n                    \"currency\": \"EUR\"\n                }\n            }\n        ]\n    },\n    \"totalWeight\": {\n        \"units\": \"KG\",\n        \"value\": 1000\n    },\n    \"consolidationType\": \"INTERNATIONAL_ECONOMY_DISTRIBUTION\",\n    \"consolidationRole\": \"CRN_SHIPMENT\"\n}"
+						},
+						"url": {
+							"raw": "https://apis-sandbox.fedex.com/globaltrade/v1/shipments/regulatorydetails/retrieve",
+							"protocol": "https",
+							"host": [
+								"apis-sandbox",
+								"fedex",
+								"com"
+							],
+							"path": [
+								"globaltrade",
+								"v1",
+								"shipments",
+								"regulatorydetails",
+								"retrieve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "intra IN,Carriercode:FDXE, serviceType:PRIORITY_OVENIGHT, regulatoryControls:NOT_IN_FREE_CIRCULATION, USMCA, serviceoptionType:SATURDAY_DELIVERY",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-locale",
+								"value": "en_US",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serviceType\": \"PRIORITY_OVENIGHT\",\n    \"originAddress\": {\n        \"countryCode\": \"IN\"\n    },\n    \"destinationAddress\": {\n        \"countryCode\": \"IN\"\n    },\n    \"serviceOptionType\": [\n        \"SATURDAY_DELIVERY\"\n    ],\n    \"carrierCode\": \"FDXE\",\n    \"shipDate\": \"2023-08-25\",\n    \"customsClearanceDetail\": {\n        \"regulatoryControls\": [\n            \"NOT_IN_FREE_CIRCULATION\",\n            \"USMCA\"\n        ],\n        \"documentContent\": \"COMMODITY\",\n        \"customsValue\": {\n            \"amount\": \"2500\",\n            \"currency\": \"INR\"\n        },\n        \"commercialInvoice\": {\n            \"purpose\": \"SOLD\"\n        },\n        \"commodities\": [\n            {\n                \"harmonizedCode\": \"902830100000\",\n                \"countryOfManufacture\": \"IN\",\n                \"weight\": {\n                    \"units\": \"KG\",\n                    \"values\": \"60\"\n                },\n                \"customsValue\": {\n                    \"amount\": \"2500\",\n                    \"currency\": \"INR\"\n                }\n            }\n        ]\n    },\n    \"totalWeight\": {\n        \"units\": \"KG\",\n        \"value\": 60\n    },\n    \"consolidationType\": \"INTERNATIONAL_PRIORITY_DISTRIBUTION\",\n    \"consolidationRole\": \"CONSOLIDATION_DOCUMENTS_SHIPMENT\"\n}"
+						},
+						"url": {
+							"raw": "https://apis-sandbox.fedex.com/globaltrade/v1/shipments/regulatorydetails/retrieve",
+							"protocol": "https",
+							"host": [
+								"apis-sandbox",
+								"fedex",
+								"com"
+							],
+							"path": [
+								"globaltrade",
+								"v1",
+								"shipments",
+								"regulatorydetails",
+								"retrieve"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

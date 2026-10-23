@@ -18,6 +18,7 @@ use Mariopereira\Fedex\Exception\FedexException;
 use Mariopereira\Fedex\Http\FedexClient;
 use Mariopereira\Fedex\Http\FedexTransportResponse;
 use Mariopereira\Fedex\Tests\Support\BatchAssertions;
+use Mariopereira\Fedex\Tests\Support\LooseScalars;
 use Mariopereira\Fedex\Tests\Support\ConsolidationSpec as Spec;
 use Mariopereira\Fedex\Tests\Support\FakeTransport;
 use Mariopereira\Fedex\Tests\Support\Responses;
@@ -31,6 +32,7 @@ use PHPUnit\Framework\TestCase;
 final class FedexConsolidationTest extends TestCase
 {
     use BatchAssertions;
+    use LooseScalars;
 
     /**
      * The transport of the last object made by api()
@@ -319,22 +321,16 @@ final class FedexConsolidationTest extends TestCase
      * @param string $path The path that has to be called
      * @param bool $changes True when the operation changes data in FedEx
      */
-    public function testAnUnknownKeyAtTheTopLevelIsRefusedBeforeAnythingIsSentNotEvenTheTokenRequest(string $name, string $method, string $label, string $responseLabel, string $template, string $verb, string $path, bool $changes): void
+    public function testAnUnknownKeyAtTheTopLevelIsSentBecauseFedexDecidesAboutIt(string $name, string $method, string $label, string $responseLabel, string $template, string $verb, string $path, bool $changes): void
     {
         $request = self::request($label);
         $request['notInTheSchema'] = 1;
         $api = $this->api();
 
-        $e = self::thrown(function () use ($api, $method, $request) {
-            $api->$method($request);
-        });
+        $api->$method($request);
 
-        $this->assertInstanceOf(FedexConsolidationException::class, $e, self::describe($e));
-        $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
-        $this->assertSame('Invalid request', $e->getMessage());
-        $this->assertNotEmpty($e->getErrors());
-        $this->assertSame([], $this->transport->calls);
-        $this->assertSame([], $this->auth->forceSeen, 'no token was requested');
+        $this->assertCount(1, $this->transport->calls);
+        $this->assertSame(1, $this->transport->bodyOf(0)['notInTheSchema']);
     }
 
     /**
@@ -461,7 +457,7 @@ final class FedexConsolidationTest extends TestCase
                     continue;
                 }
 
-                $wrong = ($node === 'object') ? 'text' : (($node === 'array') ? 'text' : ((is_array($node) || $node === 'string') ? 12345 : 'mixed'));
+                $wrong = ($node === 'object') ? 'text' : (($node === 'array') ? 'text' : ((is_array($node) || $node === 'string') ? ['x'] : 'mixed'));
 
                 if ($wrong === 'mixed') {
                     continue;
@@ -472,7 +468,7 @@ final class FedexConsolidationTest extends TestCase
                 $e = self::thrown(function () use ($api, $method, $request) {
                     $api->$method($request);
                 });
-                $results["$name $field as $wrong"] = ($e instanceof FedexConsolidationException && $this->transport->calls === []) ? true : self::describe($e);
+                $results["$name $field as " . json_encode($wrong)] = ($e instanceof FedexConsolidationException && $this->transport->calls === []) ? true : self::describe($e);
             }
         }
 
@@ -985,5 +981,27 @@ final class FedexConsolidationTest extends TestCase
         $this->assertSame(400, $e->getStatusCode());
         $this->assertSame('624deea6', $e->getTransactionId());
         $this->assertCount(1, $e->getErrors());
+    }
+
+    /**
+     * The scalars of a looser type than the one of the schema are sent as they are, at the top level that is checked: a number for a
+     * text, and the text that is not a number is still refused
+     * @return void
+     */
+    public function testTheScalarsOfALooserTypeAreSentAsTheyAre(): void
+    {
+        $request = ['accountNumber' => ['value' => '123456789'], 'jobId' => 12345];
+        $api = $this->api();
+
+        $api->getShipmentResults($request);
+
+        $this->assertSame(12345, $this->transport->bodyOf(0)['jobId']);
+
+        $e = self::thrown(function () use ($api) {
+            $api->getShipmentResults(['accountNumber' => ['value' => '123456789'], 'jobId' => ['x']]);
+        });
+
+        $this->assertInstanceOf(FedexConsolidationException::class, $e);
+        $this->assertCount(1, $this->transport->calls);
     }
 }

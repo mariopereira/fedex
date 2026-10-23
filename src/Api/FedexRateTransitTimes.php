@@ -85,11 +85,12 @@ class FedexRateTransitTimes extends AbstractFedexApi
     /**
      * Retrieve the rates, and the transit times, of the services that are available for a shipment.
      * The request is checked before it is sent: the types and the allowed values of the fields are the ones of
-     * schemas/rate.json and the required fields must be present. A number can be given as a number or as a text that is a
-     * number, and a postal code as a text or an integer, as in the samples of the schema. A field that is not in the schema is
-     * not an error (the samples of the schema for Freight and for Intra Europe have fields that it does not list), and FedEx
-     * decides about it. What the schema cannot express is checked by FedEx. Fields set to null and empty lists are left out.
-     * Nothing is changed in FedEx, so the request can be repeated
+     * schemas/rate.json and the required fields must be present (the account number and the customs commodities are not
+     * required, because the samples of FedEx leave them out). The types are loose, as in the samples of the schema: a text can be a
+     * number (a postal code as an integer), a number can be a text that is a number, and a boolean can be the text true or false.
+     * A field that is not in the schema is not an error (the samples of the schema for Freight and for Intra Europe have fields
+     * that it does not list), and FedEx decides about it. What the schema cannot express is checked by FedEx. Fields set to
+     * null and empty lists are left out. Nothing is changed in FedEx, so the request can be repeated
      * @param array|\stdClass $request The request, as returned by newRatesRequest() once filled in
      * @return \stdClass The response, with the same structure as in the schema
      * @throws FedexRateTransitTimesException
@@ -108,7 +109,7 @@ class FedexRateTransitTimes extends AbstractFedexApi
         }
 
         $request = FedexUtils::pruneEmpty($request) ?? [];
-        $validator = new SchemaValidator(true, FedexRateTransitTimesSchemas::definitions());
+        $validator = (new SchemaValidator(true, FedexRateTransitTimesSchemas::definitions()))->setLooseScalars(true);
 
         if (!$validator->validate($request, '@' . FedexRateTransitTimesSchemas::REQUEST)) {
             throw new FedexRateTransitTimesException(

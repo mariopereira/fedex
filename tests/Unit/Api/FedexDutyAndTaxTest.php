@@ -17,6 +17,7 @@ use Mariopereira\Fedex\Exception\FedexException;
 use Mariopereira\Fedex\Http\FedexClient;
 use Mariopereira\Fedex\Http\FedexTransportResponse;
 use Mariopereira\Fedex\Tests\Support\BatchAssertions;
+use Mariopereira\Fedex\Tests\Support\LooseScalars;
 use Mariopereira\Fedex\Tests\Support\DutyAndTaxSpec as Spec;
 use Mariopereira\Fedex\Tests\Support\FakeTransport;
 use Mariopereira\Fedex\Tests\Support\Responses;
@@ -30,6 +31,7 @@ use PHPUnit\Framework\TestCase;
 final class FedexDutyAndTaxTest extends TestCase
 {
     use BatchAssertions;
+    use LooseScalars;
 
     /**
      * The transport of the last object made by api()
@@ -229,27 +231,21 @@ final class FedexDutyAndTaxTest extends TestCase
     }
 
     /**
-     * An unknown key is refused before anything is sent, not even the token request
+     * An unknown key is sent, because FedEx decides about it
      * @return void
      */
-    public function testAnUnknownKeyIsRefusedBeforeAnythingIsSentNotEvenTheTokenRequest(): void
+    public function testAnUnknownKeyIsSentBecauseFedexDecidesAboutIt(): void
     {
         $api = $this->api();
 
-        foreach ([['notInTheSchema' => 1], ['shipper' => ['countryCode' => 'US', 'city' => 'Memphis']], ['commodities' => [['description' => 'x', 'quantity' => 1, 'unitPrice' => ['amount' => 1, 'currencyCode' => 'USD', 'tax' => 2]]]]] as $extra) {
+        foreach ([['notInTheSchema' => 1], ['shipper' => ['countryCode' => 'US', 'city' => 'Memphis']], ['commodities' => [['description' => 'x', 'quantity' => 1, 'unitPrice' => ['amount' => 1, 'currencyCode' => 'USD', 'tax' => 2]]]]] as $i => $extra) {
             $request = array_replace_recursive(Spec::requestExamples()['MinimumSchemaSample'], $extra);
-            $e = self::thrown(function () use ($api, $request) {
-                $api->estimate($request);
-            });
 
-            $this->assertInstanceOf(FedexDutyAndTaxException::class, $e, self::describe($e));
-            $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
-            $this->assertSame('Invalid request', $e->getMessage());
-            $this->assertNotEmpty($e->getErrors());
+            $api->estimate($request);
+
+            $this->assertCount($i + 1, $this->transport->calls);
+            $this->assertEquals($request, $this->transport->bodyOf($i));
         }
-
-        $this->assertSame([], $this->transport->calls);
-        $this->assertSame([], $this->auth->forceSeen, 'no token was requested');
     }
 
     /**
@@ -342,7 +338,7 @@ final class FedexDutyAndTaxTest extends TestCase
                 $node = &$node[$step];
             }
 
-            $node = ['string' => 12345, 'integer' => 'text', 'number' => 'text', 'boolean' => 'text'][$leaf['type']];
+            $node = ['string' => ['x'], 'integer' => 'text', 'number' => 'text', 'boolean' => 'text'][$leaf['type']];
             unset($node);
             $api = $this->api();
             $e = self::thrown(function () use ($api, $copy) {
@@ -737,5 +733,22 @@ final class FedexDutyAndTaxTest extends TestCase
         $this->assertSame(400, $e->getStatusCode());
         $this->assertSame('624deea6', $e->getTransactionId());
         $this->assertCount(1, $e->getErrors());
+    }
+
+    /**
+     * The scalars of a looser type than the one of the schema are sent as they are: a number for a text, a text that is a number
+     * for a number, and the text true for a boolean
+     * @return void
+     */
+    public function testTheScalarsOfALooserTypeAreSentAsTheyAre(): void
+    {
+        [$request, $meta] = Spec::instance('estimate.request');
+
+        $this->assertLooseScalarsAreSent($request, $meta['leaves'], function (array $r) {
+            $api = $this->api();
+            $api->estimate($r);
+
+            return $this->transport->bodyOf(0);
+        });
     }
 }

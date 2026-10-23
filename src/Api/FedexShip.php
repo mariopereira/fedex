@@ -261,7 +261,7 @@ class FedexShip extends AbstractFedexApi
     /**
      * Create a shipment (and its labels). THIS BUYS A LABEL: it is a real, billable operation.
      * The request is checked before it is sent: the fields, their types and their allowed values are the ones of
-     * schemas/ship.json (a field that is not in the schema is an error) and the required fields must be present.
+     * schemas/ship.json (a field that is not in the schema is sent as it is, and FedEx decides about it; the types are loose, as in the examples of FedEx: a text can be a number or a boolean, a number can be a text that is a number or blank, and a boolean can be the text true or false in any case, or 0 or 1) and the required fields must be present.
      * What the schema cannot express (for example the fields that are required for some services, or for customs)
      * is checked by FedEx. Fields set to null and empty lists are left out.
      * The request is never repeated by this library, except when FedEx answers that the token is not valid, which
@@ -437,7 +437,7 @@ class FedexShip extends AbstractFedexApi
         }
 
         $request = FedexUtils::pruneEmpty($request) ?? [];
-        $validator = new SchemaValidator(false, FedexShipSchemas::definitions());
+        $validator = (new SchemaValidator(true, FedexShipSchemas::definitions()))->setLooseScalars(true);
 
         if (!$validator->validate($request, '@' . $requestSchema)) {
             throw new FedexShipException(

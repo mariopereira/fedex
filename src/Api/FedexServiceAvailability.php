@@ -138,7 +138,7 @@ class FedexServiceAvailability extends AbstractFedexApi
     /**
      * Retrieve the services and the transit times that are available for a shipment.
      * The request is checked before it is sent: the fields, their types and their allowed values are the ones of
-     * schemas/service-availability.json (a field that is not in the schema is an error) and the required fields must be present.
+     * schemas/service-availability.json (a field that is not in the schema is sent as it is, and FedEx decides about it; the types are loose, as in the examples of FedEx: a text can be a number or a boolean, a number can be a text that is a number or blank, and a boolean can be the text true or false in any case, or 0 or 1) and the required fields must be present.
      * A number can be given as a number or as a text that is a number, as in the samples of the schema. What the schema cannot
      * express is checked by FedEx. Fields set to null and empty lists are left out. Nothing is changed in FedEx, so the request
      * can be repeated
@@ -306,7 +306,7 @@ class FedexServiceAvailability extends AbstractFedexApi
         }
 
         $request = FedexUtils::pruneEmpty($request) ?? [];
-        $validator = new SchemaValidator(false, FedexServiceAvailabilitySchemas::definitions());
+        $validator = (new SchemaValidator(true, FedexServiceAvailabilitySchemas::definitions()))->setLooseScalars(true);
 
         if (!$validator->validate($request, '@' . $requestSchema)) {
             throw new FedexServiceAvailabilityException(

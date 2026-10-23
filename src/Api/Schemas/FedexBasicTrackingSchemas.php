@@ -89,10 +89,12 @@ final class FedexBasicTrackingSchemas
     /**
      * Get the definitions of all the requests and responses. The names of the definitions, and of their fields, are the
      * ones of schemas/track.json, with these differences, all of them decided with the owner:
-     *  - ReferenceInformation requires shipDateEndDate, and its example writes shipDateEnd, as every other schema does:
-     *    shipDateEnd is accepted too, as an optional field
+     *  - ReferenceInformation requires shipDateEndDate, and its example, the other schemas and the documentation of the API
+     *    write shipDateEnd: shipDateEnd is the required field, and shipDateEndDate is accepted too, as an optional field
      *  - AddressVO requires the field addressVerificationId, which the file never defines, so FedEx can never send it:
      *    it is accepted as an optional field of any type
+     *  - includeDetailedScans (of Full_Schema_Tracking_Numbers) is optional, although the file requires it: the examples of FedEx
+     *    leave it out, and FedEx decides
      *  - DelayDetail.subType (an enum with the values SNOW, TORNADO and "EARTHQUAKE etc") and ServiceCommitMessage.type
      *    (an enum with a stray quote in USPS_DELIVERING") are defective in the file: they are checked as text
      * @return array
@@ -258,7 +260,7 @@ final class FedexBasicTrackingSchemas
         ];
 
         $schemas['Full_Schema_Tracking_Numbers'] = [
-            'includeDetailedScans' => 'bool',
+            'includeDetailedScans?' => 'bool',
             'trackingInfo' => ['@TrackingInfo']
         ];
 
@@ -344,10 +346,10 @@ final class FedexBasicTrackingSchemas
             'value' => 'string',
             'accountNumber?' => 'string',
             'shipDateBegin' => 'string',
-            'shipDateEndDate' => 'string',
+            'shipDateEndDate?' => 'string',
             'destinationCountryCode?' => 'string',
             'destinationPostalCode?' => 'string',
-            'shipDateEnd?' => 'string'
+            'shipDateEnd' => 'string'
         ];
 
         $schemas['RequestedAppointmentDetail'] = [

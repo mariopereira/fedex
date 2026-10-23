@@ -16,7 +16,9 @@ use Mariopereira\Fedex\Exception\FedexException;
 use Mariopereira\Fedex\Exception\FedexServiceAvailabilityException;
 use Mariopereira\Fedex\Http\FedexClient;
 use Mariopereira\Fedex\Http\FedexTransportResponse;
+use Mariopereira\Fedex\Misc\FedexUtils;
 use Mariopereira\Fedex\Tests\Support\BatchAssertions;
+use Mariopereira\Fedex\Tests\Support\LooseScalars;
 use Mariopereira\Fedex\Tests\Support\FakeTransport;
 use Mariopereira\Fedex\Tests\Support\Responses;
 use Mariopereira\Fedex\Tests\Support\ServiceAvailabilitySpec as Spec;
@@ -31,6 +33,7 @@ use PHPUnit\Framework\TestCase;
 final class FedexServiceAvailabilityTest extends TestCase
 {
     use BatchAssertions;
+    use LooseScalars;
 
     /**
      * The transport of the last object made by api()
@@ -258,29 +261,21 @@ final class FedexServiceAvailabilityTest extends TestCase
     }
 
     /**
-     * An unknown key is refused before anything is sent, not even the token request
+     * An unknown key is sent, because FedEx decides about it
      * @dataProvider operationsProvider
      * @param string $label The label of the operation in the spec
      * @param string $method The method
      */
-    public function testAnUnknownKeyIsRefusedBeforeAnythingIsSentNotEvenTheTokenRequest(string $label, string $method): void
+    public function testAnUnknownKeyIsSentBecauseFedexDecidesAboutIt(string $label, string $method): void
     {
         $api = $this->api();
-        $request = Spec::instance($label . '.request')[0];
+        $request = array_replace_recursive(Spec::instance($label . '.request')[0], ['notInTheSchema' => 1, 'requestedShipment' => ['shipper' => ['address' => ['city' => 'Memphis', 'unknown' => 1]]]]);
 
-        foreach ([['notInTheSchema' => 1], ['requestedShipment' => ['shipper' => ['address' => ['city' => 'Memphis', 'unknown' => 1]]]]] as $extra) {
-            $e = self::thrown(function () use ($api, $method, $request, $extra) {
-                $api->$method(array_replace_recursive($request, $extra));
-            });
+        $api->$method($request);
 
-            $this->assertInstanceOf(FedexServiceAvailabilityException::class, $e, self::describe($e));
-            $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
-            $this->assertSame('Invalid request', $e->getMessage());
-            $this->assertNotEmpty($e->getErrors());
-        }
-
-        $this->assertSame([], $this->transport->calls);
-        $this->assertSame([], $this->auth->forceSeen, 'no token was requested');
+        $this->assertCount(1, $this->transport->calls);
+        $this->assertSame(1, $this->transport->bodyOf(0)['notInTheSchema']);
+        $this->assertSame(1, $this->transport->bodyOf(0)['requestedShipment']['shipper']['address']['unknown']);
     }
 
     /**
@@ -376,6 +371,15 @@ final class FedexServiceAvailabilityTest extends TestCase
                 }
 
                 $copy = SpecInstances::unsetAt($request, array_merge($object['path'], [$key]));
+
+                // the fields that the class makes optional, because the examples of FedEx leave them out, are sent without
+                if ($key === 'codDetail' || ($key === 'weight' && in_array('requestedPackageLineItems', $object['path'], true))) {
+                    $api = $this->api();
+                    $api->$method($copy);
+                    $results[implode('.', array_merge($object['path'], [$key])) . ' (optional)'] = ($this->transport->bodyOf(0) == FedexUtils::pruneEmpty($copy)) ? true : 'sent differently';
+                    continue;
+                }
+
                 $api = $this->api();
                 $e = self::thrown(function () use ($api, $method, $copy) {
                     $api->$method($copy);
@@ -396,7 +400,7 @@ final class FedexServiceAvailabilityTest extends TestCase
     public function testAValueOfTheWrongTypeInAnyLeafIsRefusedAndNothingIsSent(string $label, string $method): void
     {
         [$request, $meta] = Spec::instance($label . '.request');
-        $wrong = ['string' => 12345, 'integer' => 'text', 'number' => 'text', 'boolean' => 'text'];
+        $wrong = ['string' => ['x'], 'integer' => 'text', 'number' => 'text', 'boolean' => 'text'];
         $results = [];
 
         foreach ($meta['leaves'] as $leaf) {
@@ -598,7 +602,7 @@ final class FedexServiceAvailabilityTest extends TestCase
     }
 
     /**
-     * An address that is not valid, and a unit that is not valid, are refused before anything is sent
+     * An address that is not complete, and a unit that is not valid, are refused before anything is sent
      * @return void
      */
     public function testAnAddressThatIsNotValidAndAUnitThatIsNotValidAreRefusedBeforeAnythingIsSent(): void
@@ -613,7 +617,7 @@ final class FedexServiceAvailabilityTest extends TestCase
                 $api->getTransitTimesBetween($us, $us, 'heavy');
             },
             function () use ($api) {
-                $api->getPackageAndServiceOptionsBetween(['countryCode' => 'US', 'nope' => 1], ['countryCode' => 'US']);
+                $api->getPackageAndServiceOptionsBetween(['countryCode' => 'US'], []);
             },
             function () use ($api, $us) {
                 $api->getSpecialServiceOptionsBetween($us, [], 1);
@@ -839,5 +843,22 @@ final class FedexServiceAvailabilityTest extends TestCase
         $this->assertSame(400, $e->getStatusCode());
         $this->assertSame('624deea6', $e->getTransactionId());
         $this->assertCount(1, $e->getErrors());
+    }
+
+    /**
+     * The scalars of a looser type than the one of the schema are sent as they are: a number for a text, a text that is a number
+     * for a number, and the text true for a boolean
+     * @return void
+     */
+    public function testTheScalarsOfALooserTypeAreSentAsTheyAre(): void
+    {
+        [$request, $meta] = Spec::instance('transittimes.request');
+
+        $this->assertLooseScalarsAreSent($request, $meta['leaves'], function (array $r) {
+            $api = $this->api();
+            $api->getTransitTimes($r);
+
+            return $this->transport->bodyOf(0);
+        });
     }
 }

@@ -143,7 +143,7 @@ class FedexLocationsSearch extends AbstractFedexApi
     /**
      * Search for FedEx locations.
      * The request is checked before it is sent: the fields, their types and their allowed values are the ones of
-     * schemas/locations.json (a field that is not in the schema is an error), the country code is required, and the
+     * schemas/locations.json (a field that is not in the schema is sent as it is, and FedEx decides about it; the types are loose, as in the examples of FedEx: a text can be a number or a boolean, a number can be a text that is a number or blank, and a boolean can be the text true or false in any case, or 0 or 1), the country code is required, and the
      * data needed by the search criterion must be present: a city or a postal code for ADDRESS (the default),
      * the latitude and the longitude for GEOGRAPHIC_COORDINATES and the phone number for PHONE_NUMBER.
      * Fields set to null and empty lists are left out. The latitude and the longitude are strings, as in the schema
@@ -165,7 +165,7 @@ class FedexLocationsSearch extends AbstractFedexApi
         }
 
         $request = FedexUtils::pruneEmpty($request) ?? [];
-        $validator = new SchemaValidator(false, FedexLocationsSearchSchemas::definitions());
+        $validator = (new SchemaValidator(true, FedexLocationsSearchSchemas::definitions()))->setLooseScalars(true);
 
         if (!$validator->validate($request, '@' . FedexLocationsSearchSchemas::REQUEST)) {
             throw new FedexLocationsSearchException(

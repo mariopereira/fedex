@@ -34,7 +34,8 @@ final class FedexAddressValidationSchemas
      * Full_Schema_Validate_Address describes the request. The names of the schemas, and of their fields, are the
      * ones of the file. The differences from the file are the checks added to the postal code (a string or an
      * integer, as in the examples of the file), to the state or province code (2 characters at most), to the
-     * country code (2 letters), to the date (YYYY-MM-DD) and to the number of addresses (1 to 100)
+     * country code (2 letters), to the date (YYYY-MM-DD) and to the number of addresses (1 to 100), and that the city and
+     * the postal code are optional, although the file requires them: the minimum fields vary among countries, and FedEx decides
      * @return array
      */
     public static function requestDefinitions() : array
@@ -62,9 +63,9 @@ final class FedexAddressValidationSchemas
 
         $schemas['Address'] = [
             'streetLines' => ['string'],
-            'city' => 'string',
+            'city?' => 'string',
             'stateOrProvinceCode?' => ['@type' => 'string', '@max' => 2],
-            'postalCode' => 'string|int',
+            'postalCode?' => 'string|int',
             'countryCode?' => ['@type' => 'string', '@pattern' => '/^[A-Za-z]{2}$/D']
         ];
 

@@ -972,9 +972,9 @@ Fields set to null and empty lists are left out when the request is sent</p>
         </div>
     
         <section class="phpdocumentor-description"><p>Any other field of the schema can be added (carrierCode, type, accountNumber, destinationCountryCode,
-destinationPostalCode, includeDetailedScans). The schema requires shipDateEndDate, and the example of the
-schema writes shipDateEnd: both are accepted. Fields set to null and empty lists are left out when the request
-is sent</p>
+destinationPostalCode, includeDetailedScans). The schema requires shipDateEndDate, and its example, the other
+schemas and the documentation write shipDateEnd: shipDateEnd is required, and shipDateEndDate is accepted too.
+Fields set to null and empty lists are left out when the request is sent</p>
 </section>
 
     
@@ -1543,7 +1543,7 @@ trackByTrackingNumbers()</p>
         </div>
     
         <section class="phpdocumentor-description"><p>The request is checked before it is sent: the fields, their types and their allowed values are the ones of
-schemas/track.json (a field that is not in the schema is an error), the required fields must be present and
+schemas/track.json (a field that is not in the schema is sent as it is, and FedEx decides about it; the types are loose, as in the examples of FedEx: a text can be a number or a boolean, a number can be a text that is a number or blank, and a boolean can be the text true or false in any case, or 0 or 1), the required fields must be present and
 trackingInfo has from 1 to 30 entries. What the schema cannot express is checked by FedEx. Fields set to null
 and empty lists are left out. Nothing is changed in FedEx, so the request can be repeated</p>
 </section>

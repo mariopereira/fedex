@@ -1,0 +1,876 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+		"title": "Harmonized System (HS) Code Classification API",
+		"version": "2.0.0"
+	},
+	"servers": [
+		{
+			"url": "https://apis-sandbox.fedex.com",
+			"description": "Sandbox Server"
+		},
+		{
+			"url": "https://apis.fedex.com",
+			"description": "Production Server"
+		}
+	],
+	"paths": {
+		"/commodity/v2/hscodes/search": {
+			"post": {
+				"summary": "Search Harmonized Code Data V2",
+				"description": "Use this endpoint to search a fully qualified Harmonized System information based on commodity description and origin or destination country",
+				"operationId": "HSCodeSearchV2",
+				"parameters": [
+					{
+						"name": "x-content-type",
+						"in": "header",
+						"description": "This is used to indicate the media type of the resource. The media type is a string sent along with the file indicating format of the file.",
+						"required": true,
+						"style": "simple",
+						"explode": false,
+						"schema": {
+							"type": "string",
+							"example": "application/json"
+						}
+					},
+					{
+						"name": "x-customer-transaction-id",
+						"in": "header",
+						"description": "This element allows you to assign a unique identifier to your transaction. This element is also returned in the reply and helps you match the request to the reply.",
+						"required": false,
+						"style": "simple",
+						"explode": false,
+						"schema": {
+							"type": "string"
+						},
+						"example": "AnyCo_order123456789"
+					},
+					{
+						"name": "x-locale",
+						"in": "header",
+						"description": "These are locale details.<a onclick='loadDocReference(\"locales\")'>click here to see locales</a><br> ",
+						"required": false,
+						"style": "simple",
+						"explode": false,
+						"schema": {
+							"type": "string"
+						},
+						"example": "en_US"
+					},
+					{
+						"name": "authorization",
+						"in": "header",
+						"description": "This indicates the authorization token for the input request.",
+						"required": false,
+						"style": "simple",
+						"explode": false,
+						"schema": {
+							"type": "string"
+						},
+						"example": "bearer XXXX"
+					},
+					{
+						"in": "header",
+						"name": "content-type",
+						"description": "This is used to indicate the media type of the resource. The media type is a string sent along with the file indicating format of the file.",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"example": "application/json"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "Request object containing commodity details for classification.",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/HarmonizedCodeSearchRequestVO"
+							},
+							"examples": {
+								"MinimumSchemaExample1": {
+									"summary": "HS Classification - Mandatory Element - Sample 1",
+									"value": {
+										"hsClassify": [
+											{
+												"commodityDescription": "Footwear with outer soles of rubber or plastics. Sports footwear",
+												"destinationCountryCodes": [
+													"US"
+												]
+											}
+										]
+									}
+								},
+								"MinimumSchemaExample2": {
+									"summary": "HS Classification - Mandatory Element - Sample 2",
+									"value": {
+										"hsClassify": [
+											{
+												"commodityDescription": "Footwear with outer soles of rubber or plastics. Sports footwear",
+												"originCountryCode": "IN"
+											}
+										]
+									}
+								},
+								"MultipleClassification": {
+									"summary": "HS Classification - Multiple commodities",
+									"value": {
+										"hsClassify": [
+											{
+												"commodityDescription": "Footwear with outer soles of rubber or plastics. Sports footwear",
+												"destinationCountryCodes": [
+													"US"
+												],
+												"originCountryCode": "IN",
+												"countryOfManufacture": "VN",
+												"categories": [
+													"footwear, athletic shoes"
+												],
+												"material": "leather",
+												"unitPrice": {
+													"amount": 12.5,
+													"currency": "USD"
+												}
+											},
+											{
+												"commodityDescription": "custom shoes",
+												"destinationCountryCodes": [
+													"GB"
+												],
+												"originCountryCode": "US"
+											}
+										]
+									}
+								},
+								"FullSchemaExample": {
+									"summary": "HS Classification - Full Schema",
+									"value": {
+										"hsClassify": [
+											{
+												"commodityName": "Athletic running shoes",
+												"commodityDescription": "Footwear with outer soles of rubber or plastics: Sports footwear;",
+												"destinationCountryCodes": [
+													"US",
+													"CA"
+												],
+												"originCountryCode": "IN",
+												"countryOfManufacture": "VN",
+												"productId": "UDA-GR-09",
+												"categories": [
+													"footwear, athletic shoes"
+												],
+												"material": "leather",
+												"unitPrice": {
+													"amount": 12.5,
+													"currency": "USD"
+												}
+											}
+										]
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HarmonizedCodeSearchResponseVO"
+								},
+								"examples": {
+									"OriginCountryOnly": {
+										"summary": "Output - Origin Country Only",
+										"value": {
+											"transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+											"customerTransactionId": "AnyCo_order123456789",
+											"output": {
+												"hsClassifications": [
+													{
+														"countryCode": "GB",
+														"countryType": "ORIGIN",
+														"subheadingOptions": [
+															{
+																"name": "Athletic Shoes",
+																"code": "6404.11.0000",
+																"description": "Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of textile materials: Footwear with outer soles of rubber or plastics: Sports footwear; tennis shoes, basketball shoes, gym shoes, training shoes and the like",
+																"confidenceScore": 0.94,
+																"tarriffAlternates": []
+															},
+															{
+																"name": "Athletic Shoes",
+																"code": "6403.19.0000",
+																"description": "Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of leather: Sports footwear: Other",
+																"confidenceScore": 0.02,
+																"tarriffAlternates": []
+															}
+														]
+													}
+												]
+											}
+										}
+									},
+									"DestinationCountryOnly": {
+										"summary": "Output - Destination Country Only",
+										"value": {
+											"transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+											"customerTransactionId": "AnyCo_order123456789",
+											"output": {
+												"hsClassifications": [
+													{
+														"countryCode": "US",
+														"countryType": "DESTINATION",
+														"subheadingOptions": [
+															{
+																"name": "Athletic Shoes",
+																"code": "6404.11.2030",
+																"description": "Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of textile materials: Footwear with outer soles of rubber or plastics: Sports footwear; tennis shoes, basketball shoes, gym shoes, training shoes and the like: Having uppers of which over 50 percent of the external surface area (including any leather accessories or reinforcements such as those mentioned in note 4(a) to this chapter) is leather: For men",
+																"confidenceScore": 0.94,
+																"tarriffAlternates": [
+																	{
+																		"code": "6404.11.8990",
+																		"description": "Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of textile materials: Footwear with outer soles of rubber or plastics: Sports footwear; tennis shoes, basketball shoes, gym shoes, training shoes and the like: Other: Valued over $6.50 but not over $12/pair: Other"
+																	}
+																]
+															},
+															{
+																"name": "Athletic Shoes",
+																"code": "6403.19.7061",
+																"description": "Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of leather: Sports footwear: Other: For other persons: Other: For women",
+																"confidenceScore": 0.02,
+																"tarriffAlternates": [
+																	{
+																		"code": "6403.19.4090",
+																		"description": "Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of leather: Sports footwear: Other: For men, youths and boys"
+																	},
+																	{
+																		"code": "6403.19.1000",
+																		"description": "Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of leather: Sports footwear: Other: For men, youths and boys: Welt footwear: Golf shoes"
+																	},
+																	{
+																		"code": "6403.19.3030",
+																		"description": "Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of leather: Sports footwear: Other: For men, youths and boys: Golf shoes: With pigskin uppers"
+																	},
+																	{
+																		"code": "6403.19.2000",
+																		"description": "Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of leather: Sports footwear: Other: For men, youths and boys: Welt footwear"
+																	}
+																]
+															}
+														]
+													}
+												]
+											}
+										}
+									},
+									"OriginAndDestinationCountry": {
+										"summary": "Output - Origin And Destination Country",
+										"value": {
+											"transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+											"customerTransactionId": "AnyCo_order123456789",
+											"output": {
+												"hsClassifications": [
+													{
+														"countryCode": "GB",
+														"countryType": "ORIGIN",
+														"subheadingOptions": [
+															{
+																"name": "Athletic Shoes",
+																"code": "6404.11.0000",
+																"description": "Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of textile materials: Footwear with outer soles of rubber or plastics: Sports footwear; tennis shoes, basketball shoes, gym shoes, training shoes and the like",
+																"confidenceScore": 0.94,
+																"tarriffAlternates": []
+															},
+															{
+																"name": "Athletic Shoes",
+																"code": "6403.19.0000",
+																"description": "Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of leather: Sports footwear: Other",
+																"confidenceScore": 0.02,
+																"tarriffAlternates": []
+															}
+														]
+													},
+													{
+														"countryCode": "US",
+														"countryType": "DESTINATION",
+														"subheadingOptions": [
+															{
+																"name": "Athletic Shoes",
+																"code": "6404.11.2030",
+																"description": "Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of textile materials: Footwear with outer soles of rubber or plastics: Sports footwear; tennis shoes, basketball shoes, gym shoes, training shoes and the like: Having uppers of which over 50 percent of the external surface area (including any leather accessories or reinforcements such as those mentioned in note 4(a) to this chapter) is leather: For men",
+																"confidenceScore": 0.94,
+																"tarriffAlternates": [
+																	{
+																		"code": "6404.11.8990",
+																		"description": "Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of textile materials: Footwear with outer soles of rubber or plastics: Sports footwear; tennis shoes, basketball shoes, gym shoes, training shoes and the like: Other: Valued over $6.50 but not over $12/pair: Other"
+																	}
+																]
+															},
+															{
+																"name": "Athletic Shoes",
+																"code": "6403.19.7061",
+																"description": "Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of leather: Sports footwear: Other: For other persons: Other: For women",
+																"confidenceScore": 0.02,
+																"tarriffAlternates": [
+																	{
+																		"code": "6403.19.4090",
+																		"description": "Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of leather: Sports footwear: Other: For men, youths and boys"
+																	},
+																	{
+																		"code": "6403.19.1000",
+																		"description": "Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of leather: Sports footwear: Other: For men, youths and boys: Welt footwear: Golf shoes"
+																	},
+																	{
+																		"code": "6403.19.3030",
+																		"description": "Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of leather: Sports footwear: Other: For men, youths and boys: Golf shoes: With pigskin uppers"
+																	},
+																	{
+																		"code": "6403.19.2000",
+																		"description": "Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of leather: Sports footwear: Other: For men, youths and boys: Welt footwear"
+																	}
+																]
+															}
+														]
+													}
+												]
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CXSError400"
+								},
+								"example": {
+									"transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+									"errors": [
+										{
+											"code": "INPUT.DATA.INVALID",
+											"message": "We are unable to process your request at the moment. Please try again later or contact FedEx Customer Service."
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CXSError401"
+								},
+								"example": {
+									"transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+									"errors": [
+										{
+											"code": "LOGIN.REAUTHENTICATE.ERROR",
+											"message": "Re-Login authentication error"
+										}
+									]
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CXSError403"
+								},
+								"example": {
+									"transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+									"errors": [
+										{
+											"code": "FORBIDDEN.ERROR",
+											"message": "We could not authorize your credentials. Please check your permissions and try again."
+										}
+									]
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CXSError404"
+								},
+								"example": {
+									"transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+									"errors": [
+										{
+											"code": "NOT.FOUND.ERROR",
+											"message": "The resource you requested is no longer available. Please modify your request and try again."
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CXSError500"
+								},
+								"example": {
+									"transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+									"errors": [
+										{
+											"code": "SYSTEM.UNEXPECTED.ERROR",
+											"message": "The system has experienced an unexpected problem and is unable to complete your request. Please try again later. We regret any inconvenience."
+										}
+									]
+								}
+							}
+						}
+					},
+					"503": {
+						"description": "Service Unavailable",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CXSError503"
+								},
+								"example": {
+									"transactionId": "08f37269-2fcf-4a52-8f02-01c8349d143f",
+									"errors": [
+										{
+											"code": "SERVICE.UNAVAILABLE.ERROR",
+											"message": "The service is currently unavailable and we are working to resolve the issue. We apologize for any inconvenience. Please check back at a later time."
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"x-code-samples": [
+					{
+						"lang": "C#",
+						"source": "var client = new RestClient(\"https://apis-sandbox.fedex.com/commodity/v2/hscodes/search\");\nvar request = new RestRequest(Method.POST);\nrequest.AddHeader(\"Authorization\", \"Bearer \");\nrequest.AddHeader(\"X-locale\", \"en_US\");\nrequest.AddHeader(\"Content-Type\", \"application/json\");\n// 'input' refers to JSON Payload\nrequest.AddParameter(\"application/x-www-form-urlencoded\", input, ParameterType.RequestBody);\nIRestResponse response = client.Execute(request);\n\n\n\n\n"
+					},
+					{
+						"lang": "JAVA",
+						"source": "OkHttpClient client = new OkHttpClient();\n\nMediaType mediaType = MediaType.parse(\"application/json\");\n// 'input' refers to JSON Payload\nRequestBody body = RequestBody.create(mediaType, input);\nRequest request = new Request.Builder()\n    .url(\"https://apis-sandbox.fedex.com/commodity/v2/hscodes/search\")\n    .post(body)\n    .addHeader(\"Content-Type\", \"application/json\")\n    .addHeader(\"X-locale\", \"en_US\")\n    .addHeader(\"Authorization\", \"Bearer \")\n    .build();\n            \nResponse response = client.newCall(request).execute();"
+					},
+					{
+						"lang": "JAVASCRIPT",
+						"source": "// 'input' refers to JSON Payload\nvar data = JSON.stringify(input);\n  \n  var xhr = new XMLHttpRequest();\n  xhr.withCredentials = true;\n  \n  xhr.addEventListener(\"readystatechange\", function () {\n    if (this.readyState === 4) {\n      console.log(this.responseText);\n    }\n  });\n  \n  xhr.open(\"POST\", \"https://apis-sandbox.fedex.com/commodity/v2/hscodes/search\");\n  xhr.setRequestHeader(\"Content-Type\", \"application/json\");\n  xhr.setRequestHeader(\"X-locale\", \"en_US\");\n  xhr.setRequestHeader(\"Authorization\", \"Bearer \");\n  \n  xhr.send(data);"
+					},
+					{
+						"lang": "PHP",
+						"source": "<?php\n\n$request = new HttpRequest();\n$request->setUrl('https://apis-sandbox.fedex.com/commodity/v2/hscodes/search');\n$request->setMethod(HTTP_METH_POST);\n\n$request->setHeaders(array(\n  'Authorization' => 'Bearer ',\n  'X-locale' => 'en_US',\n  'Content-Type' => 'application/json'\n));\n\n$request->setBody(input); // 'input' refers to JSON Payload\n\ntry {\n  $response = $request->send();\n\n  echo $response->getBody();\n} catch (HttpException $ex) {\n  echo $ex;\n}"
+					},
+					{
+						"lang": "PYTHON",
+						"source": "import requests\n\nurl = \"https://apis-sandbox.fedex.com/commodity/v2/hscodes/search\"\n\npayload = input # 'input' refers to JSON Payload\nheaders = {\n    'Content-Type': \"application/json\",\n    'X-locale': \"en_US\",\n    'Authorization': \"Bearer \"\n    }\n\nresponse = requests.post(url, data=payload, headers=headers)\n\nprint(response.text)"
+					},
+					{
+						"lang": "RUST",
+						"source": "extern crate reqwest;\n\nuse std::io::Read;\n\nfn construct_headers() -> HeaderMap {\n    let mut headers = HeaderMap::new();\n    headers.insert(\"Content-Type\", \"application/json\");\n    headers.insert(\"X-locale\", \"en_US\");\n    headers.insert(\"Authorization\", \"Bearer \");\n    headers\n}\n\nfn run() -> Result<()> {\n    let client = reqwest::Client::new();\n    let mut res = client.post(\"https://apis-sandbox.fedex.com/commodity/v2/hscodes/search\")\n        .body(input) // 'input' refers to JSON Payload\n        .headers(construct_headers())\n        .send()?;\n    let mut body = String::new();\n    res.read_to_string(&mut body)?;\n\n    println!(\"Status: {}\", res.status());\n    println!(\"Headers:\\n{:#?}\", res.headers());\n    println!(\"Body:\\n{}\", body);\n\n    Ok(())\n}"
+					},
+					{
+						"lang": "SWIFT",
+						"source": "import Foundation\n\nlet headers = [\n  \"Content-Type\": \"application/json\",\n  \"X-locale\": \"en_US\",\n  \"Authorization\": \"Bearer \"\n]\nlet parameters = [\n  input // 'input' refers to JSON Payload\n] as [String : Any]\n\nlet postData = JSONSerialization.data(withJSONObject: parameters, options: [])\n\nlet request = NSMutableURLRequest(url: NSURL(string: \"https://apis-sandbox.fedex.com/commodity/v2/hscodes/search\")! as URL,\n                                        cachePolicy: .useProtocolCachePolicy,\n                                    timeoutInterval: 10.0)\nrequest.httpMethod = \"POST\"\nrequest.allHTTPHeaderFields = headers\nrequest.httpBody = postData as Data\n\nlet session = URLSession.shared\nlet dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in\n  if (error != nil) {\n    print(error)\n  } else {\n    let httpResponse = response as? HTTPURLResponse\n    print(httpResponse)\n  }\n})\n\ndataTask.resume()"
+					}
+				]
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"HarmonizedCodeSearchRequestVO": {
+				"type": "object",
+				"properties": {
+					"hsClassify": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/HsClassifyVO"
+						}
+					}
+				},
+				"description": "These are the harmonized code search request details."
+			},
+			"HarmonizedCodeSearchResponseVO": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"description": "The transaction ID is a special set of numbers that defines each transaction.",
+						"example": "624deea6-b709-470c-8c39-4b5511281492"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"description": "This element allows you to assign a unique identifier to your transaction. This element is also returned in the reply and helps you match the request to the reply",
+						"example": "AnyCo_order123456789"
+					},
+					"output": {
+						"$ref": "#/components/schemas/HarmonizedCodeOutputVO"
+					}
+				},
+				"description": "These are the harmonized code search response details."
+			},
+			"HsClassifyVO": {
+				"required": [
+					"commodityDescription",
+					"destinationCountryCodes",
+					"originCountryCode"
+				],
+				"type": "object",
+				"properties": {
+					"commodityName": {
+						"maxLength": 256,
+						"type": "string",
+						"description": "The name of the commodity",
+						"example": "Athletic running shoes"
+					},
+					"commodityDescription": {
+						"maxLength": 512,
+						"type": "string",
+						"description": "Commodity description that would describe the commodity.",
+						"example": "Footwear with outer soles of rubber or plastics: Sports footwear;"
+					},
+					"destinationCountryCodes": {
+						"type": "array",
+						"description": "List of destination country codes for the classification. Either originCountryCode or destinationCountryCodes is mandatory",
+						"example": [
+							"US",
+							"CA"
+						],
+						"items": {
+							"maxLength": 2,
+							"type": "string"
+						}
+					},
+					"originCountryCode": {
+						"maxLength": 2,
+						"type": "string",
+						"description": "The country of origin code for the commodity.  Either originCountryCode or destinationCountryCodes is mandatory",
+						"example": "IN"
+					},
+					"countryOfManufacture": {
+						"maxLength": 2,
+						"type": "string",
+						"description": "The country code where the commodity was manufactured.",
+						"example": "VN"
+					},
+					"productId": {
+						"maxLength": 100,
+						"type": "string",
+						"description": "sku of the commodity",
+						"example": "UDA-GR-09"
+					},
+					"categories": {
+						"type": "array",
+						"description": "List of categories associated with the commodity.",
+						"example": [
+							"footwear, athletic shoes"
+						],
+						"items": {
+							"type": "string"
+						}
+					},
+					"material": {
+						"type": "string",
+						"description": "The material composition of the commodity for classification. e.g., plastic, wood, steel",
+						"example": "leather"
+					},
+					"unitPrice": {
+						"$ref": "#/components/schemas/UnitPriceVO"
+					}
+				},
+				"description": "These are the details required to classify a commodity for a harmonized code search.",
+				"maxProperties": 10
+			},
+			"HarmonizedCodeOutputVO": {
+				"type": "object",
+				"properties": {
+					"hsClassifications": {
+						"type": "array",
+						"description": "Indicates the Harmonized system search summaries.",
+						"items": {
+							"$ref": "#/components/schemas/SummaryVO"
+						}
+					}
+				},
+				"description": "These are all the harmonized search response details."
+			},
+			"SummaryVO": {
+				"type": "object",
+				"properties": {
+					"countryCode": {
+						"type": "string",
+						"description": "The ISO country code associated with this classification.",
+						"example": "US"
+					},
+					"countryType": {
+						"type": "string",
+						"description": "Specifies if the country is the origin or the destination.<br>Valid values: DESTINATION, ORIGIN",
+						"example": "DESTINATION",
+						"enum": [
+							"DESTINATION",
+							"ORIGIN"
+						]
+					},
+					"subheadingOptions": {
+						"maxItems": 4,
+						"type": "array",
+						"description": "A list of subheading alternattes",
+						"items": {
+							"$ref": "#/components/schemas/SubheadingAlternatesVO"
+						}
+					}
+				},
+				"description": "Summary information for a specific harmonized code search result."
+			},
+			"SubheadingAlternatesVO": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string",
+						"description": "The name of the commodity",
+						"example": "Sports Footwear (textile uppers)"
+					},
+					"code": {
+						"type": "string",
+						"description": "The alternative Harmonized System (HS) code.",
+						"example": "6403.99.3300"
+					},
+					"description": {
+						"type": "string",
+						"description": "Description of the commodity associated with this alternative code.",
+						"example": "Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of leather: Other footwear: Other: Other: Footwear with a vamp made of straps or which has one or several pieces cut out: Other, with insoles of a length: Of less than 24 cm"
+					},
+					"confidenceScore": {
+						"type": "number",
+						"description": "The numerical score indicating the system's confidence in this specific classification.",
+						"format": "double",
+						"example": 0.95
+					},
+					"tarriffAlternates": {
+						"maxItems": 4,
+						"type": "array",
+						"description": "A list of tarriff alternattes",
+						"items": {
+							"$ref": "#/components/schemas/TarriffAlternatesVO"
+						}
+					}
+				},
+				"description": "An Subheading classification option provided by the system."
+			},
+			"TarriffAlternatesVO": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string",
+						"description": "The name of the commodity",
+						"example": "Sports Footwear (textile uppers)"
+					},
+					"code": {
+						"type": "string",
+						"description": "The alternative Harmonized System (HS) code.",
+						"example": "6403.99.3300"
+					},
+					"description": {
+						"type": "string",
+						"description": "Description of the commodity associated with this alternative code.",
+						"example": "Footwear with outer soles of rubber, plastics, leather or composition leather and uppers of leather: Other footwear: Other: Other: Footwear with a vamp made of straps or which has one or several pieces cut out: Other, with insoles of a length: Of less than 24 cm"
+					}
+				},
+				"description": "An Tarriff alternative classification option provided by the system."
+			},
+			"UnitPriceVO": {
+				"type": "object",
+				"properties": {
+					"amount": {
+						"type": "number",
+						"description": "The numeric value of the unit price.",
+						"format": "double",
+						"example": 12.5
+					},
+					"currency": {
+						"type": "string",
+						"description": "The currency code associated with the price (e.g., USD).",
+						"example": "USD"
+					}
+				},
+				"description": "Represents the monetary value per unit of the commodity."
+			},
+			"CXSError400": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"description": "The transaction ID is a special set of numbers that defines each transaction.",
+						"example": "624deea6-b709-470c-8c39-4b5511281492"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"description": "This element allows you to assign a unique identifier to your transaction. This element is also returned in the reply and helps you match the request to the reply. <br> Example: AnyCo_order123456789",
+						"example": "AnyCo_order123456789"
+					},
+					"errors": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/CXSError"
+						}
+					}
+				}
+			},
+			"CXSError401": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "624deea6-b709-470c-8c39-4b5511281492"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "0e671149-016f-1000-941f-ef4dbabadd2e"
+					},
+					"errors": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/CXSError"
+						}
+					}
+				}
+			},
+			"CXSError403": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "624deea6-b709-470c-8c39-4b5511281492"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "0e671149-016f-1000-941f-ef4dbabadd2e"
+					},
+					"errors": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/CXSError"
+						}
+					}
+				}
+			},
+			"CXSError404": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "624deea6-b709-470c-8c39-4b5511281492"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "0e671149-016f-1000-941f-ef4dbabadd2e"
+					},
+					"errors": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/CXSError"
+						}
+					}
+				}
+			},
+			"CXSError500": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "624deea6-b709-470c-8c39-4b5511281492"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "0e671149-016f-1000-941f-ef4dbabadd2e"
+					},
+					"errors": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/CXSError"
+						}
+					}
+				}
+			},
+			"CXSError503": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "624deea6-b709-470c-8c39-4b5511281492"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "0e671149-016f-1000-941f-ef4dbabadd2e"
+					},
+					"errors": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/CXSError"
+						}
+					}
+				}
+			},
+			"CXSError": {
+				"type": "object",
+				"properties": {
+					"code": {
+						"type": "string",
+						"description": "Indicates the error code.",
+						"example": "INPUT.DATA.INVALID"
+					},
+					"message": {
+						"type": "string",
+						"description": "Indicates the error message.",
+						"example": "We are unable to process your request at the moment. Please try again later or contact FedEx Customer Service."
+					},
+					"parameterList": {
+						"type": "array",
+						"description": "Specifies the message parameter list.",
+						"items": {
+							"$ref": "#/components/schemas/Parameter"
+						}
+					}
+				},
+				"description": "Indicates error alert when suspicious files, potential exploits and viruses found while scanning files, directories and user accounts. This includes code, message and parameter"
+			},
+			"Parameter": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "string",
+						"description": "Parameter value"
+					},
+					"key": {
+						"type": "string",
+						"description": "Parameter key"
+					}
+				}
+			}
+		}
+	}
+}

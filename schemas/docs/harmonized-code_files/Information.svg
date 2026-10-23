@@ -1,0 +1,10 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Information">
+<path id="Path" fill-rule="evenodd" clip-rule="evenodd" d="M16 1C7.7 1 1 7.7 1 16C1 24.3 7.7 31 16 31C24.3 31 31 24.3 31 16C31 7.7 24.3 1 16 1Z" stroke="#007AB7" stroke-width="2"/>
+<circle id="Oval" cx="15" cy="9" r="2" fill="#007AB7"/>
+<g id="Group">
+<path id="Path_2" d="M13 14H16V24" stroke="#007AB7" stroke-width="2" stroke-linejoin="round"/>
+<path id="Path_3" d="M13 23H19" stroke="#007AB7" stroke-width="2" stroke-linejoin="round"/>
+</g>
+</g>
+</svg>

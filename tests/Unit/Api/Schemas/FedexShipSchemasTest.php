@@ -36,6 +36,34 @@ final class FedexShipSchemasTest extends TestCase
     private static $validators;
 
     /**
+     * The fields that the spec requires and the class makes optional, because the examples of FedEx leave them out: definition.field
+     * @var string[]
+     */
+    private const OPTIONAL_BY_DECISION = [
+        'RequestedShipment_1.totalWeight', 'RequestedShipmentVerify.totalWeight', 'CreateTagRequestedShipment.totalWeight',
+        'CustomsClearanceDetail.commercialInvoice', 'CustomsClearanceDetail_1.commercialInvoice', 'CustomsClearanceDetail_tag.commercialInvoice',
+        'HoldAtLocationDetail.locationId', 'CustomsClearanceDetail.commodities', 'CustomsClearanceDetail_1.commodities', 'CustomsClearanceDetail_tag.commodities',
+        'PartyContact.phoneNumber', 'RequestedShipment_1.labelSpecification', 'RequestedShipmentVerify.labelSpecification',
+        'CreateTagRequestedShipment.labelSpecification', 'ReturnEmailDetail.allowedSpecialService',
+    ];
+
+    /**
+     * Is a key of an object of an instance one of those that the class makes optional (see OPTIONAL_BY_DECISION)?
+     * @param string $key The key
+     * @param array $path The path of the object
+     * @return bool
+     */
+    private static function isOptionalByDecision(string $key, array $path): bool
+    {
+        if ($key === 'phoneNumber') {
+            // the contact of the recipient of the delivery on invoice keeps it required: it is not the contact of the other parties
+            return !in_array('deliveryOnInvoiceAcceptanceDetail', $path, true);
+        }
+
+        return in_array($key, ['totalWeight', 'commercialInvoice', 'locationId', 'commodities', 'labelSpecification', 'allowedSpecialService'], true);
+    }
+
+    /**
      * The names that the twelve roots have in the spec, with the names of the definitions reachable from them
      * @return array
      */
@@ -94,6 +122,7 @@ final class FedexShipSchemasTest extends TestCase
                 $undefined = array_values(array_diff($c['required'], array_keys($base['properties']), ['pickupDetail']));
                 $expectKeys = array_merge(array_fill_keys(array_keys($base['properties']), null), ['pickupDetail' => null], array_fill_keys($undefined, null));
                 $expectRequired = array_values(array_unique(array_merge($base['required'], array_diff($c['required'], $undefined))));
+                $expectRequired = array_values(array_diff($expectRequired, ['totalWeight', 'labelSpecification']));
                 sort($expectRequired);
                 $gotKeys = [];
                 $gotRequired = [];
@@ -116,7 +145,7 @@ final class FedexShipSchemasTest extends TestCase
                 $res["$n: pickupDetail requires what the spec overlay requires"] = ($overlay['required'] === ['latestPickupDateTime', 'readyPickupDateTime'] && ($defs['CreateTagRequestedShipment_pickupDetail'] ?? null) === ['readyPickupDateTime' => 'string', 'latestPickupDateTime' => 'string']) ? true : json_encode($defs['CreateTagRequestedShipment_pickupDetail'] ?? null);
 
                 foreach ($base['properties'] as $pn => $p) {
-                    $k = $pn . (in_array($pn, $base['required'], true) ? '' : '?');
+                    $k = $pn . ((in_array($pn, $base['required'], true) && !in_array($pn, ['totalWeight', 'labelSpecification'], true)) ? '' : '?');
                     $res["$n.$pn"] = (isset($d[$k]) && Spec::canonClass($d[$k]) === Spec::canonSpec($p, "$n.$pn")) ? true : 'differs';
                 }
 
@@ -144,7 +173,7 @@ final class FedexShipSchemasTest extends TestCase
             $specKeys = [];
 
             foreach ($c['properties'] as $pn => $p) {
-                $specKeys[$pn] = in_array($pn, $required, true);
+                $specKeys[$pn] = in_array($pn, $required, true) && !in_array("$cn.$pn", self::OPTIONAL_BY_DECISION, true);
 
                 if (Spec::isOverlay($p)) {
                     $expectedDerived[str_replace('.', '_', "$n.$pn")] = true;
@@ -158,7 +187,7 @@ final class FedexShipSchemasTest extends TestCase
             $res["$n keys and required flags"] = ($classKeys === $specKeys) ? true : 'class=' . json_encode($classKeys) . ' spec=' . json_encode($specKeys);
 
             foreach ($c['properties'] as $pn => $p) {
-                $k = $pn . (in_array($pn, $required, true) ? '' : '?');
+                $k = $pn . ((in_array($pn, $required, true) && !in_array("$cn.$pn", self::OPTIONAL_BY_DECISION, true)) ? '' : '?');
 
                 if (isset($d[$k])) {
                     $a = Spec::canonClass($d[$k]);
@@ -449,6 +478,11 @@ final class FedexShipSchemasTest extends TestCase
             $key = implode('/', $object['path']) ?: '(root)';
 
             foreach ($object['required'] as $required) {
+                if (self::isOptionalByDecision($required, $object['path'])) {
+                    $res["$key without $required, which the class makes optional"] = self::accepts(SpecInstances::unsetAt($instance, array_merge($object['path'], [$required])), $root, $isRequest) ? true : 'refused';
+                    continue;
+                }
+
                 $res["$key without required $required"] = self::accepts(SpecInstances::unsetAt($instance, array_merge($object['path'], [$required])), $root, $isRequest) ? 'accepted' : true;
             }
 

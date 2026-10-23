@@ -41,6 +41,8 @@ final class FedexRateTransitTimesSchemas
      *    an integer
      *  - the request allows keys that the file does not define (see FedexRateTransitTimes::getRates()): the schema of the file does
      *    not list the keys of the samples for Freight and for Intra Europe
+     *  - commodities (of CustomsClearanceDetail) and accountNumber (of Full_Schema_Quote_Rate) are optional, although the file
+     *    requires them: the samples of FedEx leave them out, and FedEx decides
      * @return array
      */
     public static function definitions() : array
@@ -212,7 +214,7 @@ final class FedexRateTransitTimesSchemas
             'commercialInvoice?' => '@CommercialInvoice',
             'freightOnValue?' => ['@type' => 'string', '@enum' => ['CARRIER_RISK', 'OWN_RISK']],
             'dutiesPayment?' => '@Payment',
-            'commodities' => ['@Commodity']
+            'commodities?' => ['@Commodity']
         ];
 
         $schemas['DangerousGoodsContainer'] = [
@@ -318,7 +320,7 @@ final class FedexRateTransitTimesSchemas
         ];
 
         $schemas['Full_Schema_Quote_Rate'] = [
-            'accountNumber' => '@AccountNumber',
+            'accountNumber?' => '@AccountNumber',
             'rateRequestControlParameters?' => '@RateRequestControlParameters',
             'requestedShipment' => '@RequestedShipment',
             'processingOptions?' => [['@type' => 'string', '@enum' => ['INCLUDE_PICKUPRATES']]],

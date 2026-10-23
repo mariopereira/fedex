@@ -86,9 +86,11 @@ class FedexAddressValidation extends AbstractFedexApi
     /**
      * Validate and resolve addresses, with the full control of the request.
      * The request is checked before it is sent: the fields, their types and their allowed values are the ones of
-     * schemas/address-validation.json (a field that is not in the schema is an error), from 1 to 100 addresses are
-     * required, each one with its street lines (not empty), city and postal code, and the date of
-     * inEffectAsOfTimestamp must be a valid YYYY-MM-DD date. Fields set to null and empty lists are left out
+     * schemas/address-validation.json (a field that is not in the schema is sent as it is, and FedEx decides about it; the types
+     * are loose, as in the examples of FedEx: a text can be a number or a boolean, a number can be a text that is a number or
+     * blank, and a boolean can be the text true or false in any case, or 0 or 1), from 1 to 100 addresses are required, each one with its street lines (the
+     * city, the state, the postal code and the country code are optional in the schema, as the minimum fields vary among countries,
+     * and FedEx checks them), and the date of inEffectAsOfTimestamp must be a valid YYYY-MM-DD date. Fields set to null and empty lists are left out
      * @param array|\stdClass $request The request, as returned by newRequest() once filled in
      * @return \stdClass The response, with the same structure as in the schema
      * @throws FedexAddressValidationException
@@ -107,7 +109,7 @@ class FedexAddressValidation extends AbstractFedexApi
         }
 
         $request = FedexUtils::pruneEmpty($request) ?? [];
-        $validator = new SchemaValidator(false, FedexAddressValidationSchemas::requestDefinitions());
+        $validator = (new SchemaValidator(true, FedexAddressValidationSchemas::requestDefinitions()))->setLooseScalars(true);
 
         if (!$validator->validate($request, '@' . FedexAddressValidationSchemas::REQUEST)) {
             throw new FedexAddressValidationException(
@@ -120,8 +122,6 @@ class FedexAddressValidation extends AbstractFedexApi
             );
         }
 
-        $this->checkRequest($request);
-
         $customerTransactionId = FedexUtils::uuidV4();
 
         $response = $this->client->request('POST', self::ENDPOINT, $request, [], [], $customerTransactionId, true);
@@ -131,8 +131,8 @@ class FedexAddressValidation extends AbstractFedexApi
 
     /**
      * Validate and resolve one address
-     * @param array|\stdClass $address The address, with the fields of the address of the schema: streetLines (a list),
-     * city, postalCode, and optionally stateOrProvinceCode (2 characters at most) and countryCode (2 letters)
+     * @param array|\stdClass $address The address, with the fields of the address of the schema: streetLines (a list), and
+     * optionally city, postalCode, stateOrProvinceCode (2 characters at most) and countryCode (2 letters)
      * @param array $options Any other field of the request (inEffectAsOfTimestamp, validateAddressControlParameters),
      * named as in the schema. addressesToValidate cannot be used: it is set by this method
      * @return \stdClass The response, with the same structure as in the schema
@@ -181,27 +181,6 @@ class FedexAddressValidation extends AbstractFedexApi
         $options['addressesToValidate'] = $items;
 
         return $this->resolve($options);
-    }
-
-    /**
-     * Check what the schema cannot express: the street lines must not be empty.
-     * Called with a request that already passed the schema, so that every address has its street lines
-     * @param array $request The request
-     * @return void
-     * @throws FedexAddressValidationException
-     */
-    protected function checkRequest(array $request) : void
-    {
-        foreach ($request['addressesToValidate'] as $i => $item) {
-            foreach ($item['address']['streetLines'] as $line) {
-                if ('' === trim($line)) {
-                    throw new FedexAddressValidationException(
-                        'The street lines cannot be empty (address ' . ($i + 1) . ')',
-                        FedexException::EC_BAD_PARAMETER
-                    );
-                }
-            }
-        }
     }
 
     /**

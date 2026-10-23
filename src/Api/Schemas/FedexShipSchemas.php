@@ -98,7 +98,13 @@ final class FedexShipSchemas
      * ClearanceItemDetail_address or BrokerDetail_broker);
      * - CreateTagRequestedShipment lists as required three keys that the file does not define anywhere (shipTimestamp,
      * shippingLabelType and specialServicesRequested): they are accepted as optional values of any type, and are not
-     * checked. Its pickupDetail, which the file adds as an overlay, is required.
+     * checked. Its pickupDetail, which the file adds as an overlay, is required;
+     * - totalWeight (of RequestedShipment_1, RequestedShipmentVerify and CreateTagRequestedShipment) and commercialInvoice
+     * (of CustomsClearanceDetail, CustomsClearanceDetail_1 and CustomsClearanceDetail_tag) are optional, although the file
+     * requires them: the examples of FedEx leave them out, and FedEx decides;
+     * - commodities (of the three CustomsClearanceDetail), locationId (of HoldAtLocationDetail), phoneNumber (of PartyContact),
+     * labelSpecification (of the three shipments) and allowedSpecialService (of ReturnEmailDetail) are optional too, for the
+     * same reason.
      * @return array
      */
     public static function definitions() : array
@@ -477,7 +483,7 @@ final class FedexShipSchemas
             'pickupType' => ['@type' => 'string', '@enum' => ['CONTACT_FEDEX_TO_SCHEDULE', 'DROPOFF_AT_FEDEX_LOCATION', 'USE_SCHEDULED_PICKUP']],
             'serviceType' => 'string',
             'packagingType' => 'string',
-            'totalWeight' => 'number',
+            'totalWeight?' => 'number',
             'origin?' => '@ContactAndAddress_1',
             'shippingChargesPayment' => '@Payment',
             'shipmentSpecialServices?' => '@ShipmentSpecialServicesRequested_tag',
@@ -487,7 +493,7 @@ final class FedexShipSchemas
             'customsClearanceDetail?' => '@CustomsClearanceDetail_tag',
             'smartPostInfoDetail?' => '@SmartPostInfoDetail',
             'blockInsightVisibility?' => 'bool',
-            'labelSpecification' => '@LabelSpecification',
+            'labelSpecification?' => '@LabelSpecification',
             'shippingDocumentSpecification?' => '@ShippingDocumentSpecification',
             'rateRequestType?' => [['@type' => 'string', '@enum' => ['LIST', 'NONE', 'PREFERRED', 'ACCOUNT', 'INCENTIVE', 'RETAIL']]],
             'preferredCurrency?' => 'string',
@@ -540,10 +546,10 @@ final class FedexShipSchemas
         $schemas['CustomsClearanceDetail'] = [
             'regulatoryControls?' => [['@type' => 'string', '@enum' => ['FOOD_OR_PERISHABLE', 'USMCA', 'NOT_APPLICABLE_FOR_LOW_VALUE_CUSTOMS_EXCEPTIONS', 'NOT_IN_FREE_CIRCULATION']]],
             'brokers?' => ['@BrokerDetail'],
-            'commercialInvoice' => '@CommercialInvoice',
+            'commercialInvoice?' => '@CommercialInvoice',
             'freightOnValue?' => ['@type' => 'string', '@enum' => ['CARRIER_RISK', 'OWN_RISK']],
             'dutiesPayment?' => '@Payment_1',
-            'commodities' => ['@Commodity'],
+            'commodities?' => ['@Commodity'],
             'isDocumentOnly?' => 'bool',
             'recipientCustomsId?' => '@RecipientCustomsId',
             'customsOption?' => '@CustomsOptionDetail',
@@ -559,10 +565,10 @@ final class FedexShipSchemas
         $schemas['CustomsClearanceDetail_1'] = [
             'regulatoryControls?' => [['@type' => 'string', '@enum' => ['FOOD_OR_PERISHABLE', 'USMCA', 'NOT_APPLICABLE_FOR_LOW_VALUE_CUSTOMS_EXCEPTIONS', 'NOT_IN_FREE_CIRCULATION']]],
             'brokers?' => ['@BrokerDetail'],
-            'commercialInvoice' => '@CommercialInvoice',
+            'commercialInvoice?' => '@CommercialInvoice',
             'freightOnValue?' => ['@type' => 'string', '@enum' => ['CARRIER_RISK', 'OWN_RISK']],
             'dutiesPayment?' => '@Payment_1',
-            'commodities' => ['@Commodity_1'],
+            'commodities?' => ['@Commodity_1'],
             'isDocumentOnly?' => 'bool',
             'recipientCustomsId?' => '@RecipientCustomsId',
             'customsOption?' => '@CustomsOptionDetail',
@@ -578,10 +584,10 @@ final class FedexShipSchemas
         $schemas['CustomsClearanceDetail_tag'] = [
             'regulatoryControls?' => [['@type' => 'string', '@enum' => ['FOOD_OR_PERISHABLE', 'USMCA', 'NOT_APPLICABLE_FOR_LOW_VALUE_CUSTOMS_EXCEPTIONS', 'NOT_IN_FREE_CIRCULATION']]],
             'brokers?' => ['@BrokerDetail'],
-            'commercialInvoice' => '@CommercialInvoice',
+            'commercialInvoice?' => '@CommercialInvoice',
             'freightOnValue?' => ['@type' => 'string', '@enum' => ['CARRIER_RISK', 'OWN_RISK']],
             'dutiesPayment?' => '@Payment_1_tag',
-            'commodities' => ['@Commodity_1'],
+            'commodities?' => ['@Commodity_1'],
             'isDocumentOnly?' => 'bool',
             'recipientCustomsId?' => '@RecipientCustomsId',
             'customsOption?' => '@CustomsOptionDetail',
@@ -817,7 +823,7 @@ final class FedexShipSchemas
         ];
 
         $schemas['HoldAtLocationDetail'] = [
-            'locationId' => 'string',
+            'locationId?' => 'string',
             'locationContactAndAddress?' => '@ContactAndAddress',
             'locationType?' => ['@type' => 'string', '@enum' => ['FEDEX_AUTHORIZED_SHIP_CENTER', 'FEDEX_OFFICE', 'FEDEX_SELF_SERVICE_LOCATION', 'FEDEX_STAFFED', 'RETAIL_ALLICANCE_LOCATION', 'FEDEX_GROUND_TERMINAL', 'FEDEX_ONSITE']]
         ];
@@ -1025,7 +1031,7 @@ final class FedexShipSchemas
             'personName?' => 'string',
             'emailAddress?' => 'string',
             'phoneExtension?' => 'string',
-            'phoneNumber' => 'string',
+            'phoneNumber?' => 'string',
             'companyName?' => 'string'
         ];
 
@@ -1272,7 +1278,7 @@ final class FedexShipSchemas
             'pickupType' => ['@type' => 'string', '@enum' => ['CONTACT_FEDEX TO_SCHEDULE', 'DROPOFF_AT_FEDEX_LOCATION', 'USE_SCHEDULED_PICKUP']],
             'serviceType' => 'string',
             'packagingType' => 'string',
-            'totalWeight' => 'int',
+            'totalWeight?' => 'int',
             'shipper' => '@ShipperParty',
             'recipients' => ['@RecipientsParty'],
             'origin?' => '@ContactAndAddress_Verify',
@@ -1284,7 +1290,7 @@ final class FedexShipSchemas
             'smartPostInfoDetail?' => '@SmartPostInfoDetail',
             'expressFreightDetail?' => '@ExpressFreightDetail',
             'blockInsightVisibility?' => 'bool',
-            'labelSpecification' => '@LabelSpecification',
+            'labelSpecification?' => '@LabelSpecification',
             'shippingDocumentSpecification?' => '@ShippingDocumentSpecification',
             'rateRequestType?' => [['@type' => 'string', '@enum' => ['LIST', 'NONE', 'PREFERRED', 'ACCOUNT', 'INCENTIVE', 'RETAIL']]],
             'preferredCurrency?' => 'string',
@@ -1317,7 +1323,7 @@ final class FedexShipSchemas
             'pickupType' => ['@type' => 'string', '@enum' => ['CONTACT_FEDEX_TO_SCHEDULE', 'DROPOFF_AT_FEDEX_LOCATION', 'USE_SCHEDULED_PICKUP']],
             'serviceType' => 'string',
             'packagingType' => 'string',
-            'totalWeight' => 'number',
+            'totalWeight?' => 'number',
             'origin?' => '@ContactAndAddress_1',
             'shippingChargesPayment' => '@Payment',
             'shipmentSpecialServices?' => '@ShipmentSpecialServicesRequested',
@@ -1327,7 +1333,7 @@ final class FedexShipSchemas
             'customsClearanceDetail?' => '@CustomsClearanceDetail',
             'smartPostInfoDetail?' => '@SmartPostInfoDetail',
             'blockInsightVisibility?' => 'bool',
-            'labelSpecification' => '@LabelSpecification',
+            'labelSpecification?' => '@LabelSpecification',
             'shippingDocumentSpecification?' => '@ShippingDocumentSpecification',
             'rateRequestType?' => [['@type' => 'string', '@enum' => ['LIST', 'NONE', 'PREFERRED', 'ACCOUNT', 'INCENTIVE', 'RETAIL']]],
             'preferredCurrency?' => 'string',
@@ -1355,7 +1361,7 @@ final class FedexShipSchemas
 
         $schemas['ReturnEmailDetail'] = [
             'merchantPhoneNumber' => 'string',
-            'allowedSpecialService' => [['@type' => 'string', '@enum' => ['SATURDAY_DELIVERY', 'SATURDAY_PICKUP']]]
+            'allowedSpecialService?' => [['@type' => 'string', '@enum' => ['SATURDAY_DELIVERY', 'SATURDAY_PICKUP']]]
         ];
 
         $schemas['ReturnInstructionsDetail'] = [

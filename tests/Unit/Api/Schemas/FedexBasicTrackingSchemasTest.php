@@ -255,6 +255,16 @@ final class FedexBasicTrackingSchemasTest extends TestCase
                 }
             }
 
+            // the class does not require includeDetailedScans of the tracking numbers: the examples of FedEx leave it out
+            if ($name === 'Full_Schema_Tracking_Numbers') {
+                $expected = array_values(array_diff($expected, ['includeDetailedScans']));
+            }
+
+            // the class requires shipDateEnd of the references, which the spec never defines, and not the shipDateEndDate that the spec requires
+            if ($name === 'ReferenceInformation') {
+                $expected = array_values(array_merge(array_diff($expected, ['shipDateEndDate']), ['shipDateEnd']));
+            }
+
             sort($required);
             sort($expected);
             $results[$name] = ($required === $expected) ? true : 'required ' . json_encode($required) . ', the spec requires ' . json_encode($expected);
@@ -303,8 +313,8 @@ final class FedexBasicTrackingSchemasTest extends TestCase
             $example = json_decode(json_encode(Spec::components()[$root]['example']), true);
 
             if ($label === 'references.request') {
-                // the schema requires shipDateEndDate and the example writes shipDateEnd: both are accepted, but the required one has to be there
-                $example['referencesInformation']['shipDateEndDate'] = $example['referencesInformation']['shipDateEnd'];
+                // the example writes shipDateEnd, which the class requires, and not the shipDateEndDate that the spec requires
+                $this->assertArrayNotHasKey('shipDateEndDate', $example['referencesInformation']);
                 // and the example has includeDetailedScans as the text "true", where the schema says boolean
                 $this->assertSame('true', $example['includeDetailedScans']);
                 $example['includeDetailedScans'] = true;
@@ -318,21 +328,28 @@ final class FedexBasicTrackingSchemasTest extends TestCase
     }
 
     /**
-     * The example of the references without shipDateEndDate is refused, because the schema requires it
+     * The example of the references without shipDateEnd is refused, because it is the required one, even with the shipDateEndDate that
+     * the spec requires
      * @return void
      */
-    public function testTheExampleOfTheReferencesWithoutShipDateEndDateIsRefusedBecauseTheSchemaRequiresIt(): void
+    public function testTheExampleOfTheReferencesWithoutShipDateEndIsRefusedBecauseItIsTheRequiredOne(): void
     {
         $example = json_decode(json_encode(Spec::components()['Full_Schema_Tracking_References']['example']), true);
         $example['includeDetailedScans'] = true;
         $validator = new SchemaValidator(false, self::definitions());
 
-        $this->assertFalse($validator->validate($example, '@Full_Schema_Tracking_References'));
-        $this->assertStringContainsString('shipDateEndDate', implode(' | ', $validator->getErrors()));
-
-        $example['referencesInformation']['shipDateEndDate'] = '2019-02-13';
-
         $this->assertTrue($validator->validate($example, '@Full_Schema_Tracking_References'), implode(' | ', $validator->getErrors()));
+
+        $withDate = $example;
+        $withDate['referencesInformation']['shipDateEndDate'] = $example['referencesInformation']['shipDateEnd'];
+        unset($withDate['referencesInformation']['shipDateEnd']);
+
+        $this->assertFalse($validator->validate($withDate, '@Full_Schema_Tracking_References'));
+        $this->assertStringContainsString('shipDateEnd: required key is missing', implode(' | ', $validator->getErrors()));
+
+        $withDate['referencesInformation']['shipDateEnd'] = '2019-02-13';
+
+        $this->assertTrue($validator->validate($withDate, '@Full_Schema_Tracking_References'), implode(' | ', $validator->getErrors()));
     }
 
     /**
@@ -469,6 +486,10 @@ final class FedexBasicTrackingSchemasTest extends TestCase
 
             foreach ($meta['objects'] as $object) {
                 foreach ($object['required'] as $key) {
+                    if ($key === 'includeDetailedScans' && $object['path'] === [] && $label === 'trackingnumbers.request') {
+                        continue; // optional in the class: the examples of FedEx leave it out
+                    }
+
                     $copy = json_decode(json_encode($instance), true);
                     $node = &$copy;
 
@@ -558,6 +579,10 @@ final class FedexBasicTrackingSchemasTest extends TestCase
 
         $request['referencesInformation']['shipDateEnd'] = 5;
         $results['shipDateEnd is text'] = $validator->validate($request, '@Full_Schema_Tracking_References') ? 'a number was accepted' : true;
+
+        $request['referencesInformation']['shipDateEnd'] = '2020-01-03';
+        $request['referencesInformation']['shipDateEndDate'] = 5;
+        $results['shipDateEndDate is text'] = $validator->validate($request, '@Full_Schema_Tracking_References') ? 'a number was accepted' : true;
 
         $this->assertIsArray($response);
         $this->assertAll('the fields that the spec does not define', $results);

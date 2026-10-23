@@ -666,7 +666,7 @@ ones of schemas/ship.json, with these differences:</dd>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Api/Schemas/FedexShipSchemas.php"><a href="files/src-api-schemas-fedexshipschemas.html"><abbr title="src/Api/Schemas/FedexShipSchemas.php">FedexShipSchemas.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">104</span>
+    <span class="phpdocumentor-element-found-in__line">110</span>
 
     </aside>
 
@@ -688,7 +688,13 @@ required&quot;) is a definition of its own, named after the definition and the f
 ClearanceItemDetail_address or BrokerDetail_broker);</li>
 <li>CreateTagRequestedShipment lists as required three keys that the file does not define anywhere (shipTimestamp,
 shippingLabelType and specialServicesRequested): they are accepted as optional values of any type, and are not
-checked. Its pickupDetail, which the file adds as an overlay, is required.</li>
+checked. Its pickupDetail, which the file adds as an overlay, is required;</li>
+<li>totalWeight (of RequestedShipment_1, RequestedShipmentVerify and CreateTagRequestedShipment) and commercialInvoice
+(of CustomsClearanceDetail, CustomsClearanceDetail_1 and CustomsClearanceDetail_tag) are optional, although the file
+requires them: the examples of FedEx leave them out, and FedEx decides;</li>
+<li>commodities (of the three CustomsClearanceDetail), locationId (of HoldAtLocationDetail), phoneNumber (of PartyContact),
+labelSpecification (of the three shipments) and allowedSpecialService (of ReturnEmailDetail) are optional too, for the
+same reason.</li>
 </ul>
 </section>
 

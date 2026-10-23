@@ -257,10 +257,12 @@ FedexBasicTracking implements, generated from schemas/track.json and written for
 </dt>
 <dd>Get the definitions of all the requests and responses. The names of the definitions, and of their fields, are the
 ones of schemas/track.json, with these differences, all of them decided with the owner:
- - ReferenceInformation requires shipDateEndDate, and its example writes shipDateEnd, as every other schema does:
-   shipDateEnd is accepted too, as an optional field
+ - ReferenceInformation requires shipDateEndDate, and its example, the other schemas and the documentation of the API
+   write shipDateEnd: shipDateEnd is the required field, and shipDateEndDate is accepted too, as an optional field
  - AddressVO requires the field addressVerificationId, which the file never defines, so FedEx can never send it:
    it is accepted as an optional field of any type
+ - includeDetailedScans (of Full_Schema_Tracking_Numbers) is optional, although the file requires it: the examples of FedEx
+   leave it out, and FedEx decides
  - DelayDetail.subType (an enum with the values SNOW, TORNADO and &quot;EARTHQUAKE etc&quot;) and ServiceCommitMessage.type
    (an enum with a stray quote in USPS_DELIVERING&quot;) are defective in the file: they are checked as text</dd>
 
@@ -671,16 +673,18 @@ ones of schemas/track.json, with these differences, all of them decided with the
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Api/Schemas/FedexBasicTrackingSchemas.php"><a href="files/src-api-schemas-fedexbasictrackingschemas.html"><abbr title="src/Api/Schemas/FedexBasicTrackingSchemas.php">FedexBasicTrackingSchemas.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">100</span>
+    <span class="phpdocumentor-element-found-in__line">102</span>
 
     </aside>
 
         <p class="phpdocumentor-summary">Get the definitions of all the requests and responses. The names of the definitions, and of their fields, are the
 ones of schemas/track.json, with these differences, all of them decided with the owner:
- - ReferenceInformation requires shipDateEndDate, and its example writes shipDateEnd, as every other schema does:
-   shipDateEnd is accepted too, as an optional field
+ - ReferenceInformation requires shipDateEndDate, and its example, the other schemas and the documentation of the API
+   write shipDateEnd: shipDateEnd is the required field, and shipDateEndDate is accepted too, as an optional field
  - AddressVO requires the field addressVerificationId, which the file never defines, so FedEx can never send it:
    it is accepted as an optional field of any type
+ - includeDetailedScans (of Full_Schema_Tracking_Numbers) is optional, although the file requires it: the examples of FedEx
+   leave it out, and FedEx decides
  - DelayDetail.subType (an enum with the values SNOW, TORNADO and &quot;EARTHQUAKE etc&quot;) and ServiceCommitMessage.type
    (an enum with a stray quote in USPS_DELIVERING&quot;) are defective in the file: they are checked as text</p>
 

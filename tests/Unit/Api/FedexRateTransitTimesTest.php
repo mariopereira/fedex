@@ -146,13 +146,12 @@ final class FedexRateTransitTimesTest extends TestCase
     }
 
     /**
-     * The samples of the spec are sent as they are, a null being left out, except the two that the schema contradicts
+     * The samples of the spec are all sent as they are, a null being left out
      * @return void
      */
-    public function testTheSamplesOfTheSpecAreSentAsTheyAreExceptTheTwoThatTheSchemaContradicts(): void
+    public function testTheSamplesOfTheSpecAreAllSentAsTheyAre(): void
     {
         $results = [];
-        $refused = [];
 
         foreach (array_keys(Spec::SAMPLES) as $sample) {
             $api = $this->api();
@@ -161,20 +160,11 @@ final class FedexRateTransitTimesTest extends TestCase
                 $api->getRates($example);
             });
 
-            if ($e instanceof FedexRateTransitTimesException) {
-                $refused[] = $sample;
-                $this->assertSame([], $this->transport->calls, "$sample is refused before anything is sent");
-                continue;
-            }
-
             $results[$sample] = ($e === null && $this->transport->bodyOf(0) === FedexUtils::pruneEmpty($example)) ? true : self::describe($e);
         }
 
-        sort($refused);
-
         $this->assertAll('the samples of the spec', $results);
-        $this->assertCount(20, $results);
-        $this->assertSame(['FDGSamplePayload-RateResourceDetails-IntraEurope', 'FreightSamplePayload-RateResourceDetails_1'], $refused);
+        $this->assertCount(22, $results);
     }
 
     /**
@@ -321,6 +311,15 @@ final class FedexRateTransitTimesTest extends TestCase
                 }
 
                 $copy = SpecInstances::unsetAt($request, array_merge($object['path'], [$key]));
+
+                // the fields that the class makes optional, because the examples of FedEx leave them out, are sent without
+                if ($key === 'commodities' || ($key === 'accountNumber' && $object['path'] === [])) {
+                    $api = $this->api();
+                    $api->getRates($copy);
+                    $results[implode('.', array_merge($object['path'], [$key])) . ' (optional)'] = ($this->transport->bodyOf(0) == FedexUtils::pruneEmpty($copy)) ? true : 'sent differently';
+                    continue;
+                }
+
                 $api = $this->api();
                 $e = self::thrown(function () use ($api, $copy) {
                     $api->getRates($copy);
@@ -413,7 +412,7 @@ final class FedexRateTransitTimesTest extends TestCase
             $this->assertSame([], $this->transport->calls);
         }
 
-        foreach ([['75063', true], [75063, true], [1.5, false], [true, false], [['x'], false]] as [$value, $ok]) {
+        foreach ([['75063', true], [75063, true], [1.5, true], [true, true], [['x'], false]] as [$value, $ok]) {
             $request = self::sample('US_Domestic_Rate_shop');
             $request['requestedShipment']['shipper']['address']['postalCode'] = $value;
             $api = $this->api();

@@ -1,0 +1,1313 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+		"title": "Regulatory API",
+		"version": "1.0.0"
+	},
+	"servers": [
+		{
+			"url": "https://apis-sandbox.fedex.com",
+			"description": "Sandbox Server"
+		},
+		{
+			"url": "https://apis.fedex.com",
+			"description": "Production Server"
+		}
+	],
+	"paths": {
+		"/regulatory/v1/profiles": {
+			"post": {
+				"summary": "Regulatory Profile",
+				"description": "API End point being to submit regulatory compliance information. Support the regulations related to CPSC and EU De Minimis transactions",
+				"operationId": "RegulatoryProfile",
+				"parameters": [
+					{
+						"name": "x-locale",
+						"in": "header",
+						"description": "This indicates the combination of language code and country code.",
+						"required": false,
+						"schema": {
+							"type": "string"
+						},
+						"example": "en_US"
+					},
+					{
+						"name": "x-content-type",
+						"in": "header",
+						"description": "This is used to indicate the media type of the resource. The media type is a string sent along with the file indicating format of the file.",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"example": "application/json"
+						}
+					},
+					{
+						"name": "x-customer-transaction-id",
+						"in": "header",
+						"description": "This element allows you to assign a unique identifier to your transaction. This element is also returned in the reply and helps you match the request to the reply.",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"example": "0e671149-016f-1000-941f-ef4dbabadd2e"
+						}
+					},
+					{
+						"name": "authorization",
+						"in": "header",
+						"description": "This indicates the authorization token for the input request.",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"example": "Bearer XXX"
+						}
+					},
+					{
+						"in": "header",
+						"name": "content-type",
+						"description": "This is used to indicate the media type of the resource. The media type is a string sent along with the file indicating format of the file.",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"example": "application/json"
+						}
+					}
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RegulatoryProfileRequest"
+							},
+							"examples": {
+								"fullSchemaExample": {
+									"summary": "Full Schema Sample",
+									"value": [
+										{
+											"regulationCode": "CPSC",
+											"productId": "KIDUZ-PZ-001",
+											"productIdType": "SKU",
+											"countryOfImport": "US",
+											"details": [
+												{
+													"disclaimMessageSet": {
+														"disclaimCode": "A",
+														"intendedUseCode": "130.006",
+														"intendedUseDescription": "string"
+													},
+													"referenceMessageSet": {
+														"productVersion": "PRIV-2026-Q1",
+														"certifierId": "CERT-ACME-0007",
+														"registryProductId": "CPSC-2026-001234"
+													},
+													"fullMessageSet": {
+														"productDetails": {
+															"childrensProduct": true,
+															"skuProductCode": "KIDUZ-PZ-001",
+															"gtinUpcCode": "00012345678905",
+															"gtinUpcQualifierCode": "SRV",
+															"serialNumber": "string",
+															"registeredNumber": "string",
+															"productName": "KIDUZZLE PUZZLE",
+															"brandName": "KIDUZZLE",
+															"alternateId": "string",
+															"previousTestDate": "2026-02-15",
+															"modelNumber": "KP-2026-A",
+															"modelColor": "RED/BLUE/YELLOW",
+															"modelDescription": "48-PIECE WOODEN PUZZLE WITH TRAY",
+															"modelStyle": "string",
+															"declarationCode": "CPY"
+														},
+														"manufacturerDetails": {
+															"smallBatchManufacturerRegistryId": "string",
+															"manufactureDate": "2026-03",
+															"contact": {
+																"personName": "Jane Doe",
+																"emailAddress": "qc@acmetoys.example.com",
+																"phoneExtension": "000",
+																"phoneNumber": "755-8888-0001",
+																"companyName": "ACME TOYS LTD"
+															},
+															"address": {
+																"streetLines": [
+																	"123 INDUSTRIAL PKWY"
+																],
+																"city": "SHENZHEN",
+																"stateOrProvinceCode": "GD",
+																"postalCode": "518000",
+																"countryCode": "CN"
+															}
+														},
+														"lotDetails": {
+															"lotNumber": "L-2026-0342",
+															"lotNumberQualifier": 1,
+															"productionStartDate": "2026-02-10",
+															"productionEndDate": "2026-02-28"
+														},
+														"certifierEntity": {
+															"contact": {
+																"personName": "Jane Doe",
+																"emailAddress": "qc@acmetoys.example.com",
+																"phoneExtension": "000",
+																"phoneNumber": "755-8888-0001",
+																"companyName": "ACME TOYS LTD"
+															},
+															"address": {
+																"streetLines": [
+																	"123 INDUSTRIAL PKWY"
+																],
+																"city": "SHENZHEN",
+																"stateOrProvinceCode": "GD",
+																"postalCode": "518000",
+																"countryCode": "CN"
+															}
+														},
+														"pointOfContact": {
+															"contact": {
+																"personName": "Jane Doe",
+																"emailAddress": "qc@acmetoys.example.com",
+																"phoneExtension": "000",
+																"phoneNumber": "755-8888-0001",
+																"companyName": "ACME TOYS LTD"
+															},
+															"address": {
+																"streetLines": [
+																	"123 INDUSTRIAL PKWY"
+																],
+																"city": "SHENZHEN",
+																"stateOrProvinceCode": "GD",
+																"postalCode": "518000",
+																"countryCode": "CN"
+															}
+														},
+														"citationDetails": [
+															{
+																"testingDetails": [
+																	{
+																		"citationCode": [
+																			"16CFR1303",
+																			"16CFR1250",
+																			"ASTMF963"
+																		],
+																		"labType": "ITL",
+																		"labTestDate": "2026-02-15",
+																		"labId": "0112",
+																		"testReportId": "GTL-RPT-2026-00482",
+																		"testReportUrl": "https://reports.intertek.com/ITK-2026-04-88821",
+																		"testReportAccessKey": "ak_38hfj28f9a",
+																		"componentPartDescription": "ak_38hfj28f9a",
+																		"contact": {
+																			"personName": "Jane Doe",
+																			"emailAddress": "qc@acmetoys.example.com",
+																			"phoneExtension": "000",
+																			"phoneNumber": "755-8888-0001",
+																			"companyName": "ACME TOYS LTD"
+																		},
+																		"address": {
+																			"streetLines": [
+																				"123 INDUSTRIAL PKWY"
+																			],
+																			"city": "SHENZHEN",
+																			"stateOrProvinceCode": "GD",
+																			"postalCode": "518000",
+																			"countryCode": "CN"
+																		}
+																	}
+																]
+															}
+														]
+													},
+													"nonStandardManufacturerProductId": "SH123456-L",
+													"standardManufacturerProductId": "GTIN 00000006",
+													"merchantProductId": "12345"
+												}
+											]
+										}
+									]
+								},
+								"cpscExample1": {
+									"summary": "CPSC Disclaimer (A) — unfinished component part",
+									"value": [
+										{
+											"regulationCode": "CPSC",
+											"productId": "BOTTLE-SHELL-AL-001",
+											"productIdType": "SKU",
+											"countryOfImport": "US",
+											"details": [
+												{
+													"disclaimMessageSet": {
+														"disclaimCode": "A",
+														"intendedUseCode": "155.000"
+													}
+												}
+											]
+										}
+									]
+								},
+								"cpscExample2": {
+									"summary": "CPSC Reference — youth bicycle helmets registered with CPSC",
+									"value": [
+										{
+											"regulationCode": "CPSC",
+											"productId": "HELMET-YTH-001",
+											"productIdType": "SKU",
+											"countryOfImport": "US",
+											"details": [
+												{
+													"referenceMessageSet": {
+														"productVersion": "PRIV-2026-Q1",
+														"certifierId": "CERT-ACME-0007",
+														"registryProductId": "CPSC-2026-001234"
+													}
+												}
+											]
+										}
+									]
+								},
+								"cpscExample3": {
+									"summary": "CPSC Full — Children's Product Certificate (FCP) for a wooden puzzle",
+									"value": [
+										{
+											"regulationCode": "CPSC",
+											"productId": "KIDUZ-PZ-001",
+											"productIdType": "SKU",
+											"countryOfImport": "US",
+											"details": [
+												{
+													"fullMessageSet": {
+														"productDetails": {
+															"childrensProduct": true,
+															"skuProductCode": "KIDUZ-PZ-001",
+															"gtinUpcCode": "00012345678905",
+															"gtinUpcQualifierCode": "SRV",
+															"productName": "KIDUZZLE PUZZLE",
+															"brandName": "KIDUZZLE",
+															"previousTestDate": "2026-02-15",
+															"modelNumber": "KP-2026-A",
+															"modelColor": "RED/BLUE/YELLOW",
+															"modelDescription": "48-PIECE WOODEN PUZZLE WITH TRAY",
+															"declarationCode": "CPY"
+														},
+														"manufacturerDetails": {
+															"manufactureDate": "2026-03",
+															"contact": {
+																"personName": "Jane Doe",
+																"emailAddress": "qc@acmetoys.example.com",
+																"phoneNumber": "+86-755-8888-0001",
+																"companyName": "ACME TOYS LTD"
+															},
+															"address": {
+																"streetLines": [
+																	"123 INDUSTRIAL PKWY"
+																],
+																"city": "SHENZHEN",
+																"stateOrProvinceCode": "GD",
+																"postalCode": "518000",
+																"countryCode": "CN"
+															}
+														},
+														"lotDetails": {
+															"lotNumber": "L-2026-0342",
+															"lotNumberQualifier": "1",
+															"productionStartDate": "2026-02-10",
+															"productionEndDate": "2026-02-28"
+														},
+														"citationDetails": [
+															{
+																"testingDetails": [
+																	{
+																		"citationCode": [
+																			"16CFR1303",
+																			"16CFR1250",
+																			"ASTMF963"
+																		],
+																		"labType": "ITL",
+																		"labTestDate": "2026-02-15",
+																		"labId": "0112",
+																		"testReportId": "GTL-RPT-2026-00482",
+																		"testReportUrl": "gtl.example.com/r/00482",
+																		"testReportAccessKey": "ak_38hfj28f9a",
+																		"isNoLabEntry": false,
+																		"contact": {
+																			"personName": "Lab Contact",
+																			"emailAddress": "reports@gtl.example.com",
+																			"phoneNumber": "+852-2345-6789",
+																			"companyName": "GLOBAL TEST LABS INC"
+																		},
+																		"address": {
+																			"streetLines": [
+																				"500 CERTIFICATION WAY"
+																			],
+																			"city": "HONG KONG",
+																			"countryCode": "HK"
+																		}
+																	}
+																]
+															}
+														]
+													}
+												}
+											]
+										}
+									]
+								},
+								"cpscExample4": {
+									"summary": "CPSC Full — Small Batch Manufacturer",
+									"value": [
+										{
+											"regulationCode": "CPSC",
+											"productId": "BOUTIQUE-RATTLE-007",
+											"productIdType": "SKU",
+											"countryOfImport": "US",
+											"details": [
+												{
+													"fullMessageSet": {
+														"productDetails": {
+															"childrensProduct": true,
+															"skuProductCode": "BOUTIQUE-RATTLE-007",
+															"productName": "TINY OAK RATTLE",
+															"modelNumber": "TOR-001",
+															"declarationCode": "CPY"
+														},
+														"manufacturerDetails": {
+															"smallBatchManufacturerRegistryId": "SBM-2026-04412",
+															"manufactureDate": "2026-04",
+															"contact": {
+																"personName": "Erin Park",
+																"emailAddress": "compliance@oakspruce.example.com",
+																"phoneNumber": "+1-503-555-0190",
+																"companyName": "OAK & SPRUCE TOYS LLC"
+															},
+															"address": {
+																"streetLines": [
+																	"47 MILLWORK LN"
+																],
+																"city": "PORTLAND",
+																"stateOrProvinceCode": "OR",
+																"postalCode": "97214",
+																"countryCode": "US"
+															}
+														},
+														"citationDetails": [
+															{
+																"testingDetails": [
+																	{
+																		"citationCode": [
+																			"ASTMF963"
+																		],
+																		"labType": "ITL",
+																		"labTestDate": "2026-04-02",
+																		"labId": "0345",
+																		"contact": {
+																			"companyName": "PACIFIC TESTING LABS",
+																			"emailAddress": "reports@pactest.example.com",
+																			"phoneNumber": "+1-206-555-0181"
+																		},
+																		"address": {
+																			"streetLines": [
+																				"120 INDUSTRY DR"
+																			],
+																			"city": "SEATTLE",
+																			"stateOrProvinceCode": "WA",
+																			"postalCode": "98109",
+																			"countryCode": "US"
+																		}
+																	},
+																	{
+																		"citationCode": [
+																			"EXCL-LEAD"
+																		],
+																		"labType": "NOL"
+																	}
+																]
+															}
+														]
+													}
+												}
+											]
+										}
+									]
+								},
+								"EU De Minimis": {
+									"summary": "EU De Minimis",
+									"value": [
+										{
+											"regulationCode": "EU_DE_MINIMIS",
+											"productId": "TSHIRT-L-001",
+											"productIdType": "SKU",
+											"countryOfImport": "FR",
+											"details": [
+												{
+													"nonStandardManufacturerProductId": "SH123456-L",
+													"standardManufacturerProductId": "GTIN 00000006",
+													"merchantProductId": "12345"
+												}
+											]
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RegulatoryProfileResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CXSError400"
+								},
+								"example": {
+									"transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+									"errors": [
+										{
+											"code": "REGULATORYPROFILE.COUNTRYOFIMPORT.REQUIRED",
+											"message": "Country of import is required. Please provide a valid country code."
+										},
+										{
+											"code": "REGULATORYPROFILE.REGULATIONCODE.REQUIRED",
+											"message": "Regulation code is required. Please provide CPSC or EU_DE_MINIMIS."
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CXSError401"
+								},
+								"example": {
+									"transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+									"errors": [
+										{
+											"code": "LOGIN.REAUTHENTICATE.ERROR",
+											"message": "Re-Login authentication error"
+										}
+									]
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CXSError403"
+								},
+								"example": {
+									"transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+									"errors": [
+										{
+											"code": "FORBIDDEN.ERROR",
+											"message": "We could not authorize your credentials. Please check your permissions and try again."
+										}
+									]
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CXSError404"
+								},
+								"example": {
+									"transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+									"errors": [
+										{
+											"code": "NOT.FOUND.ERROR",
+											"message": "The resource you requested is no longer available. Please modify your request and try again."
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CXSError500"
+								},
+								"example": {
+									"transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+									"errors": [
+										{
+											"code": "INTERNAL.SERVER.ERROR",
+											"message": "We encountered an unexpected error and are working to resolve the issue. We apologize for any inconvenience. Please check back at a later time."
+										}
+									]
+								}
+							}
+						}
+					},
+					"503": {
+						"description": "Service Unavailable",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CXSError503"
+								},
+								"example": {
+									"transactionId": "08f37269-2fcf-4a52-8f02-01c8349d143f",
+									"errors": [
+										{
+											"code": "SERVICE.UNAVAILABLE.ERROR",
+											"message": "The service is currently unavailable and we are working to resolve the issue. We apologize for any inconvenience. Please check back at a later time."
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"x-code-samples": [
+					{
+						"lang": "C#",
+						"source": "var client = new RestClient(\"https://apis-sandbox.fedex.com/regulatory/v1/profiles\");\nvar request = new RestRequest(Method.POST);\nrequest.AddHeader(\"Authorization\", \"Bearer \");\nrequest.AddHeader(\"X-locale\", \"en_US\");\nrequest.AddHeader(\"Content-Type\", \"application/json\");\n// 'input' refers to JSON Payload\nrequest.AddParameter(\"application/x-www-form-urlencoded\", input, ParameterType.RequestBody);\nIRestResponse response = client.Execute(request);\n\n\n\n\n"
+					},
+					{
+						"lang": "JAVA",
+						"source": "OkHttpClient client = new OkHttpClient();\n\nMediaType mediaType = MediaType.parse(\"application/json\");\n// 'input' refers to JSON Payload\nRequestBody body = RequestBody.create(mediaType, input);\nRequest request = new Request.Builder()\n    .url(\"https://apis-sandbox.fedex.com/regulatory/v1/profiles\")\n    .post(body)\n    .addHeader(\"Content-Type\", \"application/json\")\n    .addHeader(\"X-locale\", \"en_US\")\n    .addHeader(\"Authorization\", \"Bearer \")\n    .build();\n            \nResponse response = client.newCall(request).execute();"
+					},
+					{
+						"lang": "JAVASCRIPT",
+						"source": "// 'input' refers to JSON Payload\nvar data = JSON.stringify(input);\n  \n  var xhr = new XMLHttpRequest();\n  xhr.withCredentials = true;\n  \n  xhr.addEventListener(\"readystatechange\", function () {\n    if (this.readyState === 4) {\n      console.log(this.responseText);\n    }\n  });\n  \n  xhr.open(\"POST\", \"https://apis-sandbox.fedex.com/regulatory/v1/profiles\");\n  xhr.setRequestHeader(\"Content-Type\", \"application/json\");\n  xhr.setRequestHeader(\"X-locale\", \"en_US\");\n  xhr.setRequestHeader(\"Authorization\", \"Bearer \");\n  \n  xhr.send(data);"
+					},
+					{
+						"lang": "PHP",
+						"source": "<?php\n\n$request = new HttpRequest();\n$request->setUrl('https://apis-sandbox.fedex.com/regulatory/v1/profiles');\n$request->setMethod(HTTP_METH_POST);\n\n$request->setHeaders(array(\n  'Authorization' => 'Bearer ',\n  'X-locale' => 'en_US',\n  'Content-Type' => 'application/json'\n));\n\n$request->setBody(input); // 'input' refers to JSON Payload\n\ntry {\n  $response = $request->send();\n\n  echo $response->getBody();\n} catch (HttpException $ex) {\n  echo $ex;\n}"
+					},
+					{
+						"lang": "PYTHON",
+						"source": "import requests\n\nurl = \"https://apis-sandbox.fedex.com/regulatory/v1/profiles\"\n\npayload = input # 'input' refers to JSON Payload\nheaders = {\n    'Content-Type': \"application/json\",\n    'X-locale': \"en_US\",\n    'Authorization': \"Bearer \"\n    }\n\nresponse = requests.post(url, data=payload, headers=headers)\n\nprint(response.text)"
+					},
+					{
+						"lang": "RUST",
+						"source": "extern crate reqwest;\n\nuse std::io::Read;\n\nfn construct_headers() -> HeaderMap {\n    let mut headers = HeaderMap::new();\n    headers.insert(\"Content-Type\", \"application/json\");\n    headers.insert(\"X-locale\", \"en_US\");\n    headers.insert(\"Authorization\", \"Bearer \");\n    headers\n}\n\nfn run() -> Result<()> {\n    let client = reqwest::Client::new();\n    let mut res = client.post(\"https://apis-sandbox.fedex.com/regulatory/v1/profiles\")\n        .body(input) // 'input' refers to JSON Payload\n        .headers(construct_headers())\n        .send()?;\n    let mut body = String::new();\n    res.read_to_string(&mut body)?;\n\n    println!(\"Status: {}\", res.status());\n    println!(\"Headers:\\n{:#?}\", res.headers());\n    println!(\"Body:\\n{}\", body);\n\n    Ok(())\n}"
+					},
+					{
+						"lang": "SWIFT",
+						"source": "import Foundation\n\nlet headers = [\n  \"Content-Type\": \"application/json\",\n  \"X-locale\": \"en_US\",\n  \"Authorization\": \"Bearer \"\n]\nlet parameters = [\n  input // 'input' refers to JSON Payload\n] as [String : Any]\n\nlet postData = JSONSerialization.data(withJSONObject: parameters, options: [])\n\nlet request = NSMutableURLRequest(url: NSURL(string: \"https://apis-sandbox.fedex.com/regulatory/v1/profiles\")! as URL,\n                                        cachePolicy: .useProtocolCachePolicy,\n                                    timeoutInterval: 10.0)\nrequest.httpMethod = \"POST\"\nrequest.allHTTPHeaderFields = headers\nrequest.httpBody = postData as Data\n\nlet session = URLSession.shared\nlet dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in\n  if (error != nil) {\n    print(error)\n  } else {\n    let httpResponse = response as? HTTPURLResponse\n    print(httpResponse)\n  }\n})\n\ndataTask.resume()"
+					}
+				]
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"RegulatoryProfileRequest": {
+				"maxItems": 25,
+				"type": "array",
+				"description": "Supports maximum 25 regulation submissions.",
+				"items": {
+					"$ref": "#/components/schemas/RegulatoryProfileRequest_inner"
+				}
+			},
+			"RegulatoryDetail": {
+				"type": "object",
+				"properties": {
+					"disclaimMessageSet": {
+						"$ref": "#/components/schemas/DisclaimMessageSet"
+					},
+					"referenceMessageSet": {
+						"$ref": "#/components/schemas/ReferenceMessageSet"
+					},
+					"fullMessageSet": {
+						"$ref": "#/components/schemas/FullMessageSet"
+					},
+					"standardManufacturerProductId": {
+						"maxLength": 70,
+						"type": "string",
+						"description": "Manufacturer Standard Product Identifier per commodity - Assigned by a global industry standard body with a barcode when the manufacturer’s product meets global standards from a governing body. The barcode is the same for every retailer selling the exact product.</br>Maximum length is 70.<br> Example: GTIN 00000006\n",
+						"example": "GTIN 00000006"
+					},
+					"nonStandardManufacturerProductId": {
+						"maxLength": 70,
+						"type": "string",
+						"description": "Manufacturer Non-Standard Product Identifier per commodity - A manufacturer or product supplier’s unique product code, provided to sellers who must supply it for customs declaration.</br>Maximum length is 70.<br> Example: SH123456-L\n",
+						"example": "SH123456-L"
+					},
+					"merchantProductId": {
+						"maxLength": 70,
+						"type": "string",
+						"description": "Merchant Product Identifier (shipper SKU/item ID) per commodity - The merchant’s unique code to identify goods, usually the SKU, item code or product code.</br>Maximum length is 70.<br> Example: 12345\n",
+						"example": "12345"
+					}
+				},
+				"description": "Container for regulation-specific filing information submitted.<br> Either disclaimMessageSet or referenceMessageSet or fullMessageSet required to be passed.<br>"
+			},
+			"DisclaimMessageSet": {
+				"type": "object",
+				"properties": {
+					"disclaimCode": {
+						"maxLength": 1,
+						"type": "string",
+						"description": "A = not regulated by CPSC; B = enforcement discretion",
+						"example": "A",
+						"enum": [
+							"A",
+							"B"
+						]
+					},
+					"intendedUseCode": {
+						"maxLength": 16,
+						"type": "string",
+						"description": "Intended use code, required on every disclaimer",
+						"example": "130.006"
+					},
+					"intendedUseDescription": {
+						"maxLength": 22,
+						"type": "string",
+						"description": "Description for intended use code, required only when intendedUseCode = 980.000"
+					}
+				},
+				"description": "Describes the disclaimer information."
+			},
+			"ReferenceMessageSet": {
+				"type": "object",
+				"properties": {
+					"productVersion": {
+						"maxLength": 29,
+						"type": "string",
+						"description": "Product Registry Version ID.",
+						"example": "PRIV-2026-Q1"
+					},
+					"certifierId": {
+						"maxLength": 33,
+						"type": "string",
+						"description": "Certifier ID issued by CPSC Product Registry.",
+						"example": "CERT-ACME-0007"
+					},
+					"registryProductId": {
+						"maxLength": 19,
+						"type": "string",
+						"description": "Certifier Id for the product registry.</br>Maximum length is 19.<br> Example: CPSC-2026-001234",
+						"example": "CPSC-2026-001234"
+					}
+				},
+				"description": "Reference information for registered products."
+			},
+			"FullMessageSet": {
+				"type": "object",
+				"properties": {
+					"productDetails": {
+						"$ref": "#/components/schemas/ProductDetails"
+					},
+					"manufacturerDetails": {
+						"$ref": "#/components/schemas/ManufacturerDetails"
+					},
+					"lotDetails": {
+						"$ref": "#/components/schemas/LotDetails"
+					},
+					"certifierEntity": {
+						"$ref": "#/components/schemas/EntityDetails"
+					},
+					"pointOfContact": {
+						"$ref": "#/components/schemas/EntityDetails"
+					},
+					"citationDetails": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/CitationDetail"
+						}
+					}
+				},
+				"description": "Full Certificate of Conformity data"
+			},
+			"ProductDetails": {
+				"type": "object",
+				"properties": {
+					"childrensProduct": {
+						"type": "boolean",
+						"description": "True drives downstream selection of FCP (CPC); false drives FGC (GCC).",
+						"example": true
+					},
+					"skuProductCode": {
+						"maxLength": 30,
+						"type": "string",
+						"description": "Describes the information of customer's SKU.",
+						"example": "KIDUZ-PZ-001"
+					},
+					"gtinUpcCode": {
+						"maxLength": 14,
+						"type": "integer",
+						"description": "Standard product identifier value.",
+						"example": 12345678905
+					},
+					"gtinUpcQualifierCode": {
+						"maxLength": 3,
+						"type": "string",
+						"description": "Describes the qualifier code.</br>NOTE:SRV = GTIN (14 digits); AI = UPC (12 digits).",
+						"example": "SRV",
+						"enum": [
+							"SRV",
+							"AI"
+						]
+					},
+					"serialNumber": {
+						"maxLength": 30,
+						"type": "string",
+						"description": "Identifier for the serial number."
+					},
+					"registeredNumber": {
+						"maxLength": 30,
+						"type": "string",
+						"description": "Regulator-issued registered number"
+					},
+					"productName": {
+						"maxLength": 15,
+						"type": "string",
+						"description": "Describes the name of the Product.",
+						"example": "KIDUZZLE PUZZLE"
+					},
+					"brandName": {
+						"maxLength": 15,
+						"type": "string",
+						"description": "Describes the name of the brand.",
+						"example": "KIDUZZLE"
+					},
+					"alternateId": {
+						"maxLength": 30,
+						"type": "string",
+						"description": "Describe the alterative identifier."
+					},
+					"previousTestDate": {
+						"type": "string",
+						"description": "Describes the date of the most recent lab testing (also surfaced inside citationDetails).",
+						"format": "date",
+						"example": "2026-02-15"
+					},
+					"modelNumber": {
+						"maxLength": 30,
+						"type": "string",
+						"description": "Describes the model identifier",
+						"example": "KP-2026-A"
+					},
+					"modelColor": {
+						"maxLength": 70,
+						"type": "string",
+						"description": "Describes the xolor text of model",
+						"example": "RED/BLUE/YELLOW"
+					},
+					"modelDescription": {
+						"maxLength": 70,
+						"type": "string",
+						"description": "Free-text description",
+						"example": "48-PIECE WOODEN PUZZLE WITH TRAY"
+					},
+					"modelStyle": {
+						"maxLength": 70,
+						"type": "string",
+						"description": "Describes the style text."
+					},
+					"declarationCode": {
+						"maxLength": 3,
+						"type": "string",
+						"description": "CPY = certificate Yes; CPN = No.",
+						"example": "CPY",
+						"enum": [
+							"CPY",
+							"CPN"
+						]
+					}
+				},
+				"description": "Product information for compliance"
+			},
+			"ManufacturerDetails": {
+				"type": "object",
+				"properties": {
+					"smallBatchManufacturerRegistryId": {
+						"maxLength": 15,
+						"type": "string",
+						"description": "Populated only when the manufacturer is registered with CPSC as a Small Batch Manufacturer. Drives the SBM tag on the manufacturer’s."
+					},
+					"manufactureDate": {
+						"type": "string",
+						"description": "Manufacture date in YYYY-MM format",
+						"example": "2026-03"
+					},
+					"contact": {
+						"$ref": "#/components/schemas/Contact"
+					},
+					"address": {
+						"$ref": "#/components/schemas/Address"
+					}
+				},
+				"description": "Manufacturer information"
+			},
+			"LotDetails": {
+				"type": "object",
+				"properties": {
+					"lotNumber": {
+						"maxLength": 20,
+						"type": "string",
+						"description": "Lot number",
+						"example": "L-2026-0342"
+					},
+					"lotNumberQualifier": {
+						"maxLength": 1,
+						"type": "integer",
+						"description": "1 = Manufacturer, 2 = Seller",
+						"example": 1,
+						"enum": [
+							1,
+							2
+						]
+					},
+					"productionStartDate": {
+						"type": "string",
+						"description": "Production start date in YYYY-MM-DD format",
+						"format": "date",
+						"example": "2026-02-10"
+					},
+					"productionEndDate": {
+						"type": "string",
+						"description": "Production end date in YYYY-MM-DD format",
+						"format": "date",
+						"example": "2026-02-28"
+					}
+				},
+				"description": "Describes the information of Lot."
+			},
+			"EntityDetails": {
+				"type": "object",
+				"properties": {
+					"contact": {
+						"$ref": "#/components/schemas/Contact"
+					},
+					"address": {
+						"$ref": "#/components/schemas/Address"
+					}
+				},
+				"description": "Describes the entity contact and address information"
+			},
+			"Contact": {
+				"type": "object",
+				"properties": {
+					"personName": {
+						"maxLength": 32,
+						"type": "string",
+						"description": "Contact person name",
+						"example": "Jane Doe"
+					},
+					"emailAddress": {
+						"maxLength": 70,
+						"type": "string",
+						"description": "Email address",
+						"format": "email",
+						"example": "qc@acmetoys.example.com"
+					},
+					"phoneExtension": {
+						"maxLength": 5,
+						"type": "integer",
+						"description": "Phone extension",
+						"example": 0
+					},
+					"phoneNumber": {
+						"maxLength": 15,
+						"type": "string",
+						"description": "Phone number with country code",
+						"example": "755-8888-0001"
+					},
+					"companyName": {
+						"maxLength": 32,
+						"type": "string",
+						"description": "Company name",
+						"example": "ACME TOYS LTD"
+					}
+				},
+				"description": "Describes the contact information."
+			},
+			"Address": {
+				"type": "object",
+				"properties": {
+					"streetLines": {
+						"type": "array",
+						"description": "Street address lines",
+						"example": [
+							"123 INDUSTRIAL PKWY"
+						],
+						"items": {
+							"maxLength": 23,
+							"type": "string"
+						}
+					},
+					"city": {
+						"maxLength": 20,
+						"type": "string",
+						"description": "City name",
+						"example": "SHENZHEN"
+					},
+					"stateOrProvinceCode": {
+						"maxLength": 9,
+						"type": "string",
+						"description": "State or province code",
+						"example": "GD"
+					},
+					"postalCode": {
+						"maxLength": 9,
+						"type": "string",
+						"description": "Postal/ZIP code",
+						"example": "518000"
+					},
+					"countryCode": {
+						"maxLength": 2,
+						"type": "string",
+						"description": "2-character country code",
+						"example": "CN"
+					}
+				},
+				"description": "Address information"
+			},
+			"CitationDetail": {
+				"type": "object",
+				"properties": {
+					"testingDetails": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/TestingDetail"
+						}
+					}
+				},
+				"description": "Citation/testing information grouping"
+			},
+			"TestingDetail": {
+				"type": "object",
+				"properties": {
+					"citationCode": {
+						"type": "array",
+						"description": "List of citation codes (e.g., 16CFR1303, ASTMF963)",
+						"example": [
+							"16CFR1303",
+							"16CFR1250",
+							"ASTMF963"
+						],
+						"items": {
+							"maxLength": 9,
+							"type": "string"
+						}
+					},
+					"labType": {
+						"maxLength": 3,
+						"type": "string",
+						"description": "Lab type: ITL = CPSC-Accepted Lab, LAB = Third-party Lab, NOL = No Lab",
+						"example": "ITL",
+						"enum": [
+							"ITL",
+							"LAB",
+							"NOL"
+						]
+					},
+					"labTestDate": {
+						"type": "string",
+						"description": "Lab test date in YYYY-MM-DD format",
+						"format": "date",
+						"example": "2026-02-15"
+					},
+					"labId": {
+						"maxLength": 15,
+						"type": "string",
+						"description": "4-digit CPSC-Accepted Lab ID; required for ITL/LAB",
+						"example": "0112"
+					},
+					"testReportId": {
+						"maxLength": 30,
+						"type": "string",
+						"description": "Test report identifier",
+						"example": "GTL-RPT-2026-00482"
+					},
+					"testReportUrl": {
+						"maxLength": 70,
+						"type": "string",
+						"description": "URL to access the test report",
+						"format": "uri",
+						"example": "https://reports.intertek.com/ITK-2026-04-88821"
+					},
+					"testReportAccessKey": {
+						"maxLength": 30,
+						"type": "string",
+						"description": "Access key for the test report",
+						"example": "ak_XXXXXXX"
+					},
+					"componentPartDescription": {
+						"type": "string",
+						"description": "componentPartDescription",
+						"example": "ak_XXXXXXX"
+					},
+					"contact": {
+						"$ref": "#/components/schemas/Contact"
+					},
+					"address": {
+						"$ref": "#/components/schemas/Address"
+					}
+				},
+				"description": "Individual testing/lab information"
+			},
+			"RegulatoryProfileResponse": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"description": "Unique transaction identifier",
+						"format": "uuid",
+						"example": "6a99da65-2415-44de-8a2b-deed1e458488"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"description": "It is the same customerTransactionId sent as part of the request's header,by the clients calling this endpoint.",
+						"format": "uuid",
+						"example": "0e671149-016f-1000-941f-ef4dbabadd2e"
+					},
+					"output": {
+						"$ref": "#/components/schemas/RegulatoryProfileResponse_output"
+					}
+				}
+			},
+			"CXSError400": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"description": "Unique transaction identifier",
+						"format": "uuid",
+						"example": "624deea6-b709-470c-8c39-4b5511281492"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"description": "Customer-provided transaction ID",
+						"format": "uuid",
+						"example": "0e671149-016f-1000-941f-ef4dbabadd2e"
+					},
+					"errors": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Error"
+						}
+					}
+				}
+			},
+			"CXSError401": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "624deea6-b709-470c-8c39-4b5511281492"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "0e671149-016f-1000-941f-ef4dbabadd2e"
+					},
+					"errors": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Error"
+						}
+					}
+				}
+			},
+			"CXSError403": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "624deea6-b709-470c-8c39-4b5511281492"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "0e671149-016f-1000-941f-ef4dbabadd2e"
+					},
+					"errors": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Error"
+						}
+					}
+				}
+			},
+			"CXSError404": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "624deea6-b709-470c-8c39-4b5511281492"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "0e671149-016f-1000-941f-ef4dbabadd2e"
+					},
+					"errors": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Error"
+						}
+					}
+				}
+			},
+			"CXSError500": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "624deea6-b709-470c-8c39-4b5511281492"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "0e671149-016f-1000-941f-ef4dbabadd2e"
+					},
+					"errors": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Error"
+						}
+					}
+				}
+			},
+			"CXSError503": {
+				"type": "object",
+				"properties": {
+					"transactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "624deea6-b709-470c-8c39-4b5511281492"
+					},
+					"customerTransactionId": {
+						"type": "string",
+						"format": "uuid",
+						"example": "0e671149-016f-1000-941f-ef4dbabadd2e"
+					},
+					"errors": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Error"
+						}
+					}
+				}
+			},
+			"Error": {
+				"type": "object",
+				"properties": {
+					"code": {
+						"type": "string",
+						"description": "Error code",
+						"example": "REGULATORYPROFILE.COUNTRYOFIMPORT.REQUIRED"
+					},
+					"message": {
+						"type": "string",
+						"description": "Error message",
+						"example": "Country of import is required."
+					},
+					"parameterList": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Parameter"
+						}
+					}
+				}
+			},
+			"Parameter": {
+				"type": "object",
+				"properties": {
+					"key": {
+						"type": "string",
+						"description": "Parameter key"
+					},
+					"value": {
+						"type": "string",
+						"description": "Parameter value"
+					}
+				}
+			},
+			"RegulatoryProfileRequest_inner": {
+				"required": [
+					"countryOfImport",
+					"details",
+					"productId",
+					"productIdType",
+					"regulationCode"
+				],
+				"type": "object",
+				"properties": {
+					"regulationCode": {
+						"type": "string",
+						"description": "Regulatory authority governing the product compliance requirement.<br> Accepted values<br> 1) CPSC - U.S. Consumer Product Safety Commission<br> 2) EU_DE_MINIMIS - European Union Commission — de minimis removal <br>",
+						"example": "CPSC",
+						"enum": [
+							"CPSC",
+							"EU_DE_MINIMIS"
+						]
+					},
+					"productId": {
+						"maxLength": 70,
+						"type": "string",
+						"description": "Unique product identifier used in customs and compliance filings.",
+						"example": "KIDUZ-PZ-001"
+					},
+					"productIdType": {
+						"type": "string",
+						"description": "Type of identifier used for the product.",
+						"example": "SKU",
+						"enum": [
+							"SKU",
+							"PART_NUMBER",
+							"REGISTERED_NUMBER",
+							"GTIN",
+							"UPC",
+							"EAN",
+							"MPN",
+							"OTHER"
+						]
+					},
+					"countryOfImport": {
+						"type": "string",
+						"description": "2-character country code for country of import.",
+						"example": "US"
+					},
+					"details": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/RegulatoryDetail"
+						}
+					}
+				}
+			},
+			"RegulatoryProfileResponse_output": {
+				"type": "object",
+				"properties": {
+					"message": {
+						"type": "string",
+						"description": "Indicates that the regulatory compliance information is submitted",
+						"example": "Regulatory compliance information submitted"
+					}
+				},
+				"description": "Response output data"
+			}
+		}
+	}
+}

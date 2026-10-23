@@ -264,7 +264,7 @@ final class ApiLoopbackTest extends LoopbackTestCase
         $validation = self::api(FedexAddressValidation::class, self::$server->port());
 
         $e = self::thrown(function () use ($validation) {
-            $validation->validate(['streetLines' => ['a'], 'postalCode' => '1']);
+            $validation->validate(['postalCode' => '1']);
         });
 
         $this->assertInstanceOf(FedexAddressValidationException::class, $e);
@@ -415,8 +415,7 @@ final class ApiLoopbackTest extends LoopbackTestCase
     {
         $ship = self::api(FedexShip::class, self::$server->port());
         $request = self::request('create.request');
-        $request['requestedShipment']['serviceType'] = 'NOT_A_SERVICE_NEEDED_TO_FAIL';
-        $request['bogus'] = 1;
+        $request['requestedShipment']['totalPackageCount'] = 'many';
 
         $e = self::thrown(function () use ($ship, $request) {
             $ship->create($request);
@@ -773,7 +772,7 @@ final class ApiLoopbackTest extends LoopbackTestCase
     {
         $consolidation = self::api(FedexConsolidation::class, self::$server->port());
         $request = ConsolidationSpec::instance('retrieve.request')[0];
-        $request['notInTheSchema'] = 1;
+        $request['accountNumber'] = 'not an object';
 
         $e = self::thrown(function () use ($consolidation, $request) {
             $consolidation->retrieveConsolidation($request);

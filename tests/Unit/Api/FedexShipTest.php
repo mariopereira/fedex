@@ -17,6 +17,7 @@ use Mariopereira\Fedex\Exception\FedexShipException;
 use Mariopereira\Fedex\Http\FedexClient;
 use Mariopereira\Fedex\Http\FedexTransportResponse;
 use Mariopereira\Fedex\Tests\Support\BatchAssertions;
+use Mariopereira\Fedex\Tests\Support\LooseScalars;
 use Mariopereira\Fedex\Tests\Support\FakeTransport;
 use Mariopereira\Fedex\Tests\Support\Responses;
 use Mariopereira\Fedex\Tests\Support\ShipSpec as Spec;
@@ -31,6 +32,7 @@ use PHPUnit\Framework\TestCase;
 final class FedexShipTest extends TestCase
 {
     use BatchAssertions;
+    use LooseScalars;
 
     /**
      * The transport of the last object made by api()
@@ -288,7 +290,7 @@ final class FedexShipTest extends TestCase
      * @param string $responseLabel Label of the response
      * @param string|null $id The id of the shipment, for cancelTag()
      */
-    public function testAnUnknownKeyIsRefusedBeforeAnythingIsSentNotEvenTheTokenRequest(string $method, string $label, string $responseLabel, ?string $id): void
+    public function testAnUnknownKeyIsSentBecauseFedexDecidesAboutIt(string $method, string $label, string $responseLabel, ?string $id): void
     {
         $request = self::request($label);
         $request['notInTheSchema'] = 1;
@@ -298,11 +300,9 @@ final class FedexShipTest extends TestCase
             self::call($api, $method, $id, $request);
         });
 
-        $this->assertInstanceOf(FedexShipException::class, $e, self::describe($e));
-        $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
-        $this->assertNotEmpty($e->getErrors());
-        $this->assertSame([], $this->transport->calls);
-        $this->assertSame([], $this->auth->forceSeen, 'no token was requested');
+        $this->assertNull($e, self::describe($e));
+        $this->assertCount(1, $this->transport->calls);
+        $this->assertSame(1, $this->transport->bodyOf(0)['notInTheSchema']);
     }
 
     /**
@@ -1012,22 +1012,19 @@ final class FedexShipTest extends TestCase
     }
 
     /**
-     * Any other key that is not in the schema is still refused
+     * Any other key that is not in the schema is sent too
      * @return void
      */
-    public function testAnyOtherKeyThatIsNotInTheSchemaIsStillRefused(): void
+    public function testAnyOtherKeyThatIsNotInTheSchemaIsSentToo(): void
     {
         $request = self::minimumTag();
         $request['requestedShipment']['someOtherKey'] = 1;
         $api = $this->api();
 
-        $e = self::thrown(function () use ($api, $request) {
-            $api->createTag($request);
-        });
+        $api->createTag($request);
 
-        $this->assertInstanceOf(FedexShipException::class, $e);
-        $this->assertStringContainsString('someOtherKey', implode(' ', $e->getErrors()));
-        $this->assertSame([], $this->transport->calls);
+        $this->assertCount(1, $this->transport->calls);
+        $this->assertSame(1, $this->transport->bodyOf(0)['requestedShipment']['someOtherKey']);
     }
 
     // ---------------------------------------------------------------- cancel tag
@@ -1208,19 +1205,17 @@ final class FedexShipTest extends TestCase
     }
 
     /**
-     * The async results by job ID refuses an option that is not in the schema
+     * The async results by job ID sends an option that is not in the schema
      * @return void
      */
-    public function testTheAsyncResultsByJobIdRefusesAnOptionThatIsNotInTheSchema(): void
+    public function testTheAsyncResultsByJobIdSendsAnOptionThatIsNotInTheSchema(): void
     {
         $api = $this->api();
 
-        $e = self::thrown(function () use ($api) {
-            $api->getAsyncResultsByJobId('000000000', 'job', ['notInTheSchema' => 1]);
-        });
+        $api->getAsyncResultsByJobId('000000000', 'job', ['notInTheSchema' => 1]);
 
-        $this->assertInstanceOf(FedexShipException::class, $e);
-        $this->assertSame([], $this->transport->calls);
+        $this->assertCount(1, $this->transport->calls);
+        $this->assertSame(1, $this->transport->bodyOf(0)['notInTheSchema']);
     }
 
     // ---------------------------------------------------------------- the class
@@ -1272,5 +1267,22 @@ final class FedexShipTest extends TestCase
                 $this->assertSame($transport->calls[0]['body'], $transport->calls[1]['body']);
             }
         }
+    }
+
+    /**
+     * The scalars of a looser type than the one of the schema are sent as they are: a number for a text, a text that is a number
+     * for a number, and the text true for a boolean
+     * @return void
+     */
+    public function testTheScalarsOfALooserTypeAreSentAsTheyAre(): void
+    {
+        [$request, $meta] = Spec::instance('create.request');
+
+        $this->assertLooseScalarsAreSent($request, $meta['leaves'], function (array $r) {
+            $api = $this->api();
+            $api->create($r);
+
+            return $this->transport->bodyOf(0);
+        });
     }
 }

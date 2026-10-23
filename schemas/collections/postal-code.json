@@ -1,0 +1,736 @@
+{
+	"info": {
+		"_postman_id": "95735ed2-2ced-4fd6-9ea9-4677e9a38ffa",
+		"name": "Postal Code Vallidation API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "3306035",
+		"_collection_link": "https://apif-qa-collection.postman.co/workspace/API-Factory-QA~33fbded2-b805-408d-b977-7ae5ce703a85/collection/3306035-95735ed2-2ced-4fd6-9ea9-4677e9a38ffa?action=share&source=collection_link&creator=3306035"
+	},
+	"item": [
+		{
+			"name": "US postal validation Minimum Fields",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"carrierCode\": \"FDXE\",\n\"countryCode\": \"US\",\n\"stateOrProvinceCode\": \"TN\",\n\"postalCode\": \"38017\",\n\"shipDate\": \"2016-09-13\"\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "CA Postal Code Validation-Express",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXE\",\n    \"countryCode\": \"CA\",\n    \"postalCode\": \"J4T1S8\",\n    \"shipDate\": \"2023-05-12\",\n    \"stateOrProvinceCode\": \"\"\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "CA Postal Code Validation-Ground",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"shipDate\": \"2023-05-23\",\n    \"carrierCode\": \"FDXG\",\n    \"postalCode\": \"m1m1m1\",\n    \"stateOrProvinceCode\": \"ON\",\n    \"countryCode\": \"CA\"\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "US-FDXG-checkForMismatch-True",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXG\",\n    \"countryCode\": \"US\",\n    \"stateOrProvinceCode\": \"TN\",\n    \"postalCode\": \"38017\",\n    \"shipDate\": \"2023-05-22\",\n    \"checkForMismatch\": true\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "US-FDXE-checkForMismatch-True",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXE\",\n    \"countryCode\": \"US\",\n    \"stateOrProvinceCode\": \"CO\",\n    \"postalCode\": \"80920\",\n    \"shipDate\": \"2023-05-22\",\n    \"checkForMismatch\": true\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "US-FDXG-checkForMismatch-False",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXG\",\n    \"countryCode\": \"US\",\n    \"stateOrProvinceCode\": \"TN\",\n    \"postalCode\": \"38017\",\n    \"shipDate\": \"2023-05-22\",\n    \"checkForMismatch\": false\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "US-FDXE-checkForMismatch-False",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXE\",\n    \"countryCode\": \"US\",\n    \"stateOrProvinceCode\": \"CO\",\n    \"postalCode\": \"80920\",\n    \"shipDate\": \"2023-05-22\",\n    \"checkForMismatch\": false\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "Negative-US FDXE-checkForMismatch-True-WrongPostal Code",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXE\",\n    \"countryCode\": \"US\",\n    \"stateOrProvinceCode\": \"CO\",\n    \"postalCode\": \"89020\",\n    \"shipDate\": \"2023-05-22\",\n    \"checkForMismatch\": true\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "CA_FDXG-checkForMismatch-True",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXG\",\n    \"countryCode\": \"CA\",\n    \"stateOrProvinceCode\": \"ON\",\n    \"postalCode\": \"M4B2J8\",\n    \"shipDate\": \"2023-05-22\",\n    \"checkForMismatch\": true\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "CA_FDXE-checkForMismatch-True",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXE\",\n    \"countryCode\": \"CA\",\n    \"stateOrProvinceCode\": \"ON\",\n    \"postalCode\": \"M3C0E3\",\n    \"shipDate\": \"2023-05-22\",\n    \"checkForMismatch\": true\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "CA_FDXG-checkForMismatch-False",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXG\",\n    \"countryCode\": \"CA\",\n    \"stateOrProvinceCode\": \"ON\",\n    \"postalCode\": \"M4B2J8\",\n    \"shipDate\": \"2023-05-22\",\n    \"checkForMismatch\": false\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "CA_FDXE-checkForMismatch-False",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXE\",\n    \"countryCode\": \"CA\",\n    \"stateOrProvinceCode\": \"ON\",\n    \"postalCode\": \"M3C0E3\",\n    \"shipDate\": \"2023-05-22\",\n    \"checkForMismatch\": false\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "Negative-CA_FDXG-checkForMismatch-True-WrongPostal Code",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXG\",\n    \"countryCode\": \"CA\",\n    \"stateOrProvinceCode\": \"ON\",\n    \"postalCode\": \"L4KM9W\",\n    \"shipDate\": \"2023-05-22\",\n    \"checkForMismatch\": true\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "MX_FDXE-checkForMismatch-False",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXE\",\n    \"countryCode\": \"MX\",\n    \"stateOrProvinceCode\": \"CS\",\n    \"postalCode\": \"30709\",\n    \"shipDate\": \"2023-05-22\",\n    \"checkForMismatch\": false\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "BR_FDXE-checkForMismatch-True",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXE\",\n    \"countryCode\": \"BR\",\n    \"stateOrProvinceCode\": \"AM\",\n    \"postalCode\": \"69036-110\",\n    \"shipDate\": \"2023-05-22\",\n    \"checkForMismatch\": true\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "GB_FDXE-checkForMismatch-False",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXE\",\n    \"countryCode\": \"GB\",\n    \"stateOrProvinceCode\": \"\",\n    \"postalCode\": \"W1A2LQ\",\n    \"shipDate\": \"2023-05-22\",\n    \"checkForMismatch\": false\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "ES_FDXE-checkForMismatch-False",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXE\",\n    \"countryCode\": \"ES\",\n    \"stateOrProvinceCode\": \"\",\n    \"postalCode\": \"47100\",\n    \"shipDate\": \"2023-05-22\",\n    \"checkForMismatch\": false\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "IT_FDXE-checkForMismatch-False",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXE\",\n    \"countryCode\": \"IT\",\n    \"stateOrProvinceCode\": \"\",\n    \"postalCode\": \"14030\",\n    \"shipDate\": \"2023-05-22\",\n    \"checkForMismatch\": false\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "IN_FDXE-checkForMismatch-False",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXE\",\n    \"countryCode\": \"IN\",\n    \"stateOrProvinceCode\": \"TN\",\n    \"postalCode\": \"600018\",\n    \"shipDate\": \"2023-05-22\",\n    \"checkForMismatch\": false\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "JP_FDXE-checkForMismatch-False",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXE\",\n    \"countryCode\": \"JP\",\n    \"stateOrProvinceCode\": \"\",\n    \"postalCode\": \"1000004\",\n    \"shipDate\": \"2023-05-22\",\n    \"checkForMismatch\": false\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "FR_FDXE-checkForMismatch-False",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXE\",\n    \"countryCode\": \"FR\",\n    \"stateOrProvinceCode\": \"\",\n    \"postalCode\": \"25000\",\n    \"shipDate\": \"2023-05-22\",\n    \"checkForMismatch\": false\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "DE_FDXE-checkForMismatch-False",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXE\",\n    \"countryCode\": \"DE\",\n    \"stateOrProvinceCode\": \"\",\n    \"postalCode\": \"96009\",\n    \"shipDate\": \"2023-05-22\",\n    \"checkForMismatch\": false\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "Postal Code Validation for Non–Postal aware country",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"carrierCode\": \"FDXE\",\n  \"countryCode\": \"AE\",\n  \"city\": \"Dubai\",\n  \"postalCode\": \"99999\",\n  \"shipDate\": \"2023-06-12\"\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "Past ShipDate",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXE\",\n    \"countryCode\": \"US\",\n    \"stateOrProvinceCode\": \"AR\",\n    \"postalCode\": \"726016353\",\n    \"shipDate\": \"2023-05-06\"\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		},
+		{
+			"name": "US Postal Code Validation along with routingCode",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-locale",
+						"value": "en_US",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"carrierCode\": \"FDXE\",\n    \"countryCode\": \"US\",\n    \"stateOrProvinceCode\": \"US\",\n    \"postalCode\": \"502267\",\n    \"shipDate\": \"2023-06-12\",\n    \"routingCode\": \"Memphis 38017 - HKA/NQA\"\n}"
+				},
+				"url": "https://apis-sandbox.fedex.com/country/v1/postal/validate"
+			},
+			"response": []
+		}
+	]
+}

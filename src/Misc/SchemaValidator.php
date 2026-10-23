@@ -69,6 +69,12 @@ class SchemaValidator
     private $allowExtra;
 
     /**
+     * Accept scalars of a looser type? (see setLooseScalars())
+     * @var bool
+     */
+    private $looseScalars = false;
+
+    /**
      * Schema definitions
      * @var array
      */
@@ -86,6 +92,25 @@ class SchemaValidator
         foreach ($definitions as $name => $schema) {
             $this->define((string) $name, $schema);
         }
+    }
+
+    /**
+     * Accept scalars of a looser type than the one of the schema. It is meant for the requests that are sent to FedEx, whose own
+     * examples send numbers as text, and the like. When it is on:
+     *  - 'string' also accepts an integer, a float or a boolean
+     *  - 'int' also accepts a float, a text that is a number, and the empty text
+     *  - 'number' also accepts a text that is a number, and the empty text
+     *  - 'bool' also accepts the text 'true' or 'false' in any case, and the integer 0 or 1
+     * Nothing else changes (a list, an object, null, an enum, a pattern, a bound or a check are as strict as ever), and
+     * the value is never converted
+     * @param bool $looseScalars True to accept them
+     * @return self
+     */
+    public function setLooseScalars(bool $looseScalars): self
+    {
+        $this->looseScalars = $looseScalars;
+
+        return $this;
     }
 
     /**
@@ -395,14 +420,14 @@ class SchemaValidator
                     return true;
 
                 case 'string':
-                    if (is_string($value)) {
+                    if (is_string($value) || ($this->looseScalars && (is_int($value) || is_float($value) || is_bool($value)))) {
                         return true;
                     }
 
                     break;
 
                 case 'int':
-                    if (is_int($value)) {
+                    if (is_int($value) || ($this->looseScalars && (is_float($value) || $this->isNumberAsText($value)))) {
                         return true;
                     }
 
@@ -416,13 +441,13 @@ class SchemaValidator
                     break;
 
                 case 'number':
-                    if (is_int($value) || is_float($value)) {
+                    if (is_int($value) || is_float($value) || ($this->looseScalars && $this->isNumberAsText($value))) {
                         return true;
                     }
 
                     break;
                 case 'bool':
-                    if (is_bool($value)) {
+                    if (is_bool($value) || ($this->looseScalars && $this->isBooleanAsOther($value))) {
                         return true;
                     }
 
@@ -455,6 +480,36 @@ class SchemaValidator
         }
 
         return false;
+    }
+
+    /**
+     * Is the value a text that is a number, or the empty text (a number that was left blank)?
+     * @param mixed $value Value to check
+     * @return bool
+     */
+    private function isNumberAsText($value): bool
+    {
+        return $value === '' || $this->isNumericText($value);
+    }
+
+    /**
+     * Is the value the text 'true' or 'false' in any case, or the integer 0 or 1?
+     * @param mixed $value Value to check
+     * @return bool
+     */
+    private function isBooleanAsOther($value): bool
+    {
+        return (is_string($value) && in_array(strtolower($value), ['true', 'false'], true)) || $value === 0 || $value === 1;
+    }
+
+    /**
+     * Is the value a text that is a number? Digits with an optional sign, decimals and exponent, and nothing else, not even spaces
+     * @param mixed $value Value to check
+     * @return bool
+     */
+    private function isNumericText($value): bool
+    {
+        return is_string($value) && preg_match('/^[+-]?(\d+(\.\d+)?|\.\d+)([eE][+-]?\d+)?$/D', $value) === 1;
     }
 
     /**

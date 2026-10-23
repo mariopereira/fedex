@@ -17,6 +17,7 @@ use Mariopereira\Fedex\Exception\FedexException;
 use Mariopereira\Fedex\Http\FedexClient;
 use Mariopereira\Fedex\Http\FedexTransportResponse;
 use Mariopereira\Fedex\Tests\Support\BatchAssertions;
+use Mariopereira\Fedex\Tests\Support\LooseScalars;
 use Mariopereira\Fedex\Tests\Support\FakeTransport;
 use Mariopereira\Fedex\Tests\Support\Responses;
 use Mariopereira\Fedex\Tests\Support\StubAuth;
@@ -30,6 +31,7 @@ use PHPUnit\Framework\TestCase;
 final class FedexBasicTrackingTest extends TestCase
 {
     use BatchAssertions;
+    use LooseScalars;
 
     /**
      * The transport of the last object made by api()
@@ -278,22 +280,16 @@ final class FedexBasicTrackingTest extends TestCase
      * @param string $path The path that has to be called
      * @param bool $sendsEmails True when the operation sends emails
      */
-    public function testAnUnknownKeyIsRefusedBeforeAnythingIsSentNotEvenTheTokenRequest(string $method, string $label, string $responseLabel, string $template, string $path, bool $sendsEmails): void
+    public function testAnUnknownKeyIsSentBecauseFedexDecidesAboutIt(string $method, string $label, string $responseLabel, string $template, string $path, bool $sendsEmails): void
     {
         $request = self::request($label);
         $request['notInTheSchema'] = 1;
         $api = $this->api();
 
-        $e = self::thrown(function () use ($api, $method, $request) {
-            $api->$method($request);
-        });
+        $api->$method($request);
 
-        $this->assertInstanceOf(FedexBasicTrackingException::class, $e, self::describe($e));
-        $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
-        $this->assertSame('Invalid request', $e->getMessage());
-        $this->assertNotEmpty($e->getErrors());
-        $this->assertSame([], $this->transport->calls);
-        $this->assertSame([], $this->auth->forceSeen, 'no token was requested');
+        $this->assertCount(1, $this->transport->calls);
+        $this->assertSame(1, $this->transport->bodyOf(0)['notInTheSchema']);
     }
 
     /**
@@ -329,7 +325,14 @@ final class FedexBasicTrackingTest extends TestCase
      */
     public function testTheEmptyRequestIsTheRequiredKeysOfTheSpecRecursively(string $method, string $label, string $responseLabel, string $template, string $path, bool $sendsEmails): void
     {
-        $this->assertSame(Spec::requiredOnly(Spec::components()[Spec::ROOTS[$label]], [Spec::ROOTS[$label]]), FedexBasicTracking::$template());
+        $expected = Spec::requiredOnly(Spec::components()[Spec::ROOTS[$label]], [Spec::ROOTS[$label]]);
+
+        if ($label === 'references.request') {
+            // the spec requires shipDateEndDate, and the class requires shipDateEnd instead (see FedexBasicTrackingSchemas::definitions())
+            $expected['referencesInformation'] = ['value' => null, 'shipDateBegin' => null, 'shipDateEnd' => null];
+        }
+
+        $this->assertSame($expected, FedexBasicTracking::$template());
     }
 
     /**
@@ -358,6 +361,13 @@ final class FedexBasicTrackingTest extends TestCase
                     $e = self::thrown(function () use ($api, $method, $copy) {
                         $api->$method($copy);
                     });
+
+                    if ($key === 'includeDetailedScans' && $object['path'] === [] && $label === 'trackingnumbers.request') {
+                        // optional in the class: the examples of FedEx leave it out
+                        $results["$method includeDetailedScans (optional)"] = ($e === null && $this->transport->calls !== []) ? true : self::describe($e);
+                        continue;
+                    }
+
                     $results["$method " . implode('.', array_merge($object['path'], [$key]))] = ($e instanceof FedexBasicTrackingException && $this->transport->calls === []) ? true : self::describe($e);
                 }
             }
@@ -389,7 +399,7 @@ final class FedexBasicTrackingTest extends TestCase
                     $node = &$node[$step];
                 }
 
-                $node = ['string' => 12345, 'integer' => 'text', 'number' => 'text', 'boolean' => 'text'][$leaf['type']];
+                $node = ['string' => ['x'], 'integer' => 'text', 'number' => 'text', 'boolean' => 'text'][$leaf['type']];
                 unset($node);
                 $api = $this->api();
                 $e = self::thrown(function () use ($api, $method, $copy) {
@@ -607,30 +617,30 @@ final class FedexBasicTrackingTest extends TestCase
     // ---------------------------------------------------------------- the references
 
     /**
-     * The references accept shipDateEnd as well as the shipDateEndDate that the schema requires
+     * The references take shipDateEnd, and shipDateEndDate, which the schema requires, is accepted too, and sent when it is given
      * @return void
      */
-    public function testTheReferencesAcceptShipDateEndAsWellAsTheShipDateEndDateThatTheSchemaRequires(): void
+    public function testTheReferencesTakeShipDateEndAndAcceptShipDateEndDateToo(): void
     {
-        $base = ['referencesInformation' => ['value' => '56754674567546754', 'accountNumber' => '123456789', 'shipDateBegin' => '2019-02-13', 'shipDateEndDate' => '2019-02-13']];
+        $base = ['referencesInformation' => ['value' => '56754674567546754', 'accountNumber' => '123456789', 'shipDateBegin' => '2019-02-13', 'shipDateEnd' => '2019-02-13']];
         $api = $this->api();
 
         $api->trackByReferences($base);
         $both = $base;
-        $both['referencesInformation']['shipDateEnd'] = '2019-02-14';
+        $both['referencesInformation']['shipDateEndDate'] = '2019-02-14';
         $api->trackByReferences($both);
 
-        $this->assertSame($base, $this->transport->bodyOf(0));
-        $this->assertSame($both, $this->transport->bodyOf(1));
+        $this->assertSame($base, $this->transport->bodyOf(0), 'shipDateEnd alone is enough');
+        $this->assertSame($both, $this->transport->bodyOf(1), 'both are sent as given');
     }
 
     /**
-     * The references without shipDateEndDate are refused, even with shipDateEnd, because the schema requires it
+     * The references without shipDateEnd are refused, even with shipDateEndDate, because shipDateEnd is the required one
      * @return void
      */
-    public function testTheReferencesWithoutShipDateEndDateAreRefusedEvenWithShipDateEnd(): void
+    public function testTheReferencesWithoutShipDateEndAreRefusedEvenWithShipDateEndDate(): void
     {
-        $request = ['referencesInformation' => ['value' => '56754674567546754', 'accountNumber' => '123456789', 'shipDateBegin' => '2019-02-13', 'shipDateEnd' => '2019-02-13']];
+        $request = ['referencesInformation' => ['value' => '56754674567546754', 'accountNumber' => '123456789', 'shipDateBegin' => '2019-02-13', 'shipDateEndDate' => '2019-02-13']];
         $api = $this->api();
 
         $e = self::thrown(function () use ($api, $request) {
@@ -638,8 +648,20 @@ final class FedexBasicTrackingTest extends TestCase
         });
 
         $this->assertInstanceOf(FedexBasicTrackingException::class, $e);
-        $this->assertStringContainsString('shipDateEndDate', implode(' ', $e->getErrors()));
+        $this->assertStringContainsString('shipDateEnd: required key is missing', implode(' ', $e->getErrors()));
         $this->assertSame([], $this->transport->calls);
+    }
+
+    /**
+     * The empty references request has shipDateEnd and not shipDateEndDate
+     * @return void
+     */
+    public function testTheEmptyReferencesRequestHasShipDateEndAndNotShipDateEndDate(): void
+    {
+        $reference = FedexBasicTracking::newReferencesRequest()['referencesInformation'];
+
+        $this->assertArrayHasKey('shipDateEnd', $reference);
+        $this->assertArrayNotHasKey('shipDateEndDate', $reference);
     }
 
     // ---------------------------------------------------------------- the responses
@@ -976,5 +998,22 @@ final class FedexBasicTrackingTest extends TestCase
                 $this->assertSame($decoded, $e->getData(), 'the response is in the exception');
             }
         }
+    }
+
+    /**
+     * The scalars of a looser type than the one of the schema are sent as they are: a number for a text, a text that is a number
+     * for a number, and the text true for a boolean
+     * @return void
+     */
+    public function testTheScalarsOfALooserTypeAreSentAsTheyAre(): void
+    {
+        [$request, $meta] = Spec::instance('trackingnumbers.request');
+
+        $this->assertLooseScalarsAreSent($request, $meta['leaves'], function (array $r) {
+            $api = $this->api();
+            $api->trackByTrackingNumbers($r);
+
+            return $this->transport->bodyOf(0);
+        });
     }
 }

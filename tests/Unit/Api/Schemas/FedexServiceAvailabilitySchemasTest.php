@@ -54,6 +54,23 @@ final class FedexServiceAvailabilitySchemasTest extends TestCase
     private const STRICT_NUMBERS = ['Distance.value', 'LocationDetail_geoPositionalCoordinates.latitude', 'LocationDetail_geoPositionalCoordinates.longitude'];
 
     /**
+     * The fields that the spec requires and the class makes optional, because the examples of FedEx leave them out: definition.field
+     * @var string[]
+     */
+    private const OPTIONAL_BY_DECISION = ['PackageSpecialServicesRequested.codDetail', 'RequestedPackageLineItem.weight', 'TransitTimeRequestedPackageLineItem.weight'];
+
+    /**
+     * Is a key of an object of an instance one of those that the class makes optional (see OPTIONAL_BY_DECISION)?
+     * @param array $path The path of the object
+     * @param string $key The key
+     * @return bool
+     */
+    private static function isOptionalByDecision(array $path, string $key): bool
+    {
+        return $key === 'codDetail' || ($key === 'weight' && in_array('requestedPackageLineItems', $path, true));
+    }
+
+    /**
      * The names that the six roots have in the spec, with the names of the definitions reachable from them
      * @return array
      */
@@ -184,7 +201,7 @@ final class FedexServiceAvailabilitySchemasTest extends TestCase
             $specKeys = [];
 
             foreach ($c['properties'] as $pn => $p) {
-                $specKeys[$pn] = in_array($pn, $required, true);
+                $specKeys[$pn] = in_array($pn, $required, true) && !in_array("$n.$pn", self::OPTIONAL_BY_DECISION, true);
 
                 if (($p['type'] ?? '') === 'object' && isset($p['properties'])) {
                     $expectedDerived[str_replace('.', '_', "$n.$pn")] = true;
@@ -201,7 +218,7 @@ final class FedexServiceAvailabilitySchemasTest extends TestCase
             $res["$n keys and required flags"] = ($classKeys === $specKeys) ? true : 'class=' . json_encode($classKeys) . ' spec=' . json_encode($specKeys);
 
             foreach ($c['properties'] as $pn => $p) {
-                $k = $pn . (in_array($pn, $required, true) ? '' : '?');
+                $k = $pn . ((in_array($pn, $required, true) && !in_array("$n.$pn", self::OPTIONAL_BY_DECISION, true)) ? '' : '?');
 
                 if (!isset($d[$k])) {
                     continue;
@@ -645,6 +662,11 @@ final class FedexServiceAvailabilitySchemasTest extends TestCase
             $key = implode('/', $object['path']) ?: '(root)';
 
             foreach ($object['required'] as $required) {
+                if (self::isOptionalByDecision($object['path'], $required)) {
+                    $res["$key without $required, which the class makes optional"] = self::accepts(SpecInstances::unsetAt($instance, array_merge($object['path'], [$required])), $root, $isRequest) ? true : 'refused';
+                    continue;
+                }
+
                 $res["$key without required $required"] = self::accepts(SpecInstances::unsetAt($instance, array_merge($object['path'], [$required])), $root, $isRequest) ? 'accepted' : true;
             }
 

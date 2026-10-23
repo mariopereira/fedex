@@ -63,6 +63,9 @@ final class FedexServiceAvailabilitySchemas
      *  - HoldAtLocationDetail requires a field called codDelocationContactAndAddress", with a stray quote, which the file never
      *    defines: it is accepted as an optional field of any type, and locationType is required as in the file
      *  - Address.postalCode and Address.countryCode have a description and no type: they accept any value
+     *  - codDetail (of PackageSpecialServicesRequested) and weight (of RequestedPackageLineItem and
+     *    TransitTimeRequestedPackageLineItem) are optional, although the file requires them: the examples of FedEx leave them
+     *    out, and FedEx decides
      * @return array
      */
     public static function definitions() : array
@@ -447,7 +450,7 @@ final class FedexServiceAvailabilitySchemas
             'pieceCountVerificationBoxCount?' => 'int',
             'batteryDetails?' => ['@BatteryDetail'],
             'specialServiceTypes?' => ['string'],
-            'codDetail' => '@PackageSpecialServicesRequestedCodDetail',
+            'codDetail?' => '@PackageSpecialServicesRequestedCodDetail',
             'dryIceWeight?' => '@Weight_Without_Link',
             'standaloneBatteryDetails?' => ['@StandaloneBatteryDetails']
         ];
@@ -523,7 +526,7 @@ final class FedexServiceAvailabilitySchemas
             'customerReferences?' => ['@CustomerReference'],
             'contentRecord?' => '@RequestedPackageLineItemContentRecord',
             'declaredValue?' => '@InsuredValue',
-            'weight' => '@Weight_With_Link',
+            'weight?' => '@Weight_With_Link',
             'dimensions?' => '@Dimensions',
             'packageSpecialServices?' => '@PackageSpecialServicesRequested'
         ];
@@ -687,7 +690,7 @@ final class FedexServiceAvailabilitySchemas
 
         $schemas['TransitTimeRequestedPackageLineItem'] = [
             'declaredValue?' => '@TransitTimeRequestedPackageLineItem_declaredValue',
-            'weight' => '@TransitTimeRequestedPackageLineItem_weight',
+            'weight?' => '@TransitTimeRequestedPackageLineItem_weight',
             'dimensions?' => '@TransitTimeRequestedPackageLineItem_dimensions',
             'packageSpecialServices?' => '@TransitTimeRequestedPackageLineItem_packageSpecialServices'
         ];

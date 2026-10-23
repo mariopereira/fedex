@@ -576,7 +576,7 @@ class FedexConsolidation extends AbstractFedexApi
         [$method, $endpoint, $requestSchema, $responseSchema, $changesData] = self::operation($operation);
         $request = self::asArray($request, 'The request must be an array or an object');
         $request = FedexUtils::pruneEmpty($request) ?? [];
-        $validator = new SchemaValidator(false, self::shallowDefinitions());
+        $validator = (new SchemaValidator(true, self::shallowDefinitions()))->setLooseScalars(true);
 
         if (!$validator->validate($request, '@' . $requestSchema)) {
             throw new FedexConsolidationException(

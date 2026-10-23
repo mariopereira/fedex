@@ -221,6 +221,13 @@
 </dt>
 <dd>List of errors</dd>
 
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#property_looseScalars">$looseScalars</a>
+    <span>
+                        &nbsp;: bool            </span>
+</dt>
+<dd>Accept scalars of a looser type? (see setLooseScalars())</dd>
+
     </dl>
 
 <h4 id="toc-methods">
@@ -249,6 +256,20 @@
                                 &nbsp;: array&lt;string|int, mixed&gt;    </span>
 </dt>
 <dd>Get errors found</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_setLooseScalars">setLooseScalars()</a>
+    <span>
+                                &nbsp;: self    </span>
+</dt>
+<dd>Accept scalars of a looser type than the one of the schema. It is meant for the requests that are sent to FedEx, whose own
+examples send numbers as text, and the like. When it is on:
+ - &#039;string&#039; also accepts an integer, a float or a boolean
+ - &#039;int&#039; also accepts a float, a text that is a number, and the empty text
+ - &#039;number&#039; also accepts a text that is a number, and the empty text
+ - &#039;bool&#039; also accepts the text &#039;true&#039; or &#039;false&#039; in any case, and the integer 0 or 1
+Nothing else changes (a list, an object, null, an enum, a pattern, a bound or a check are as strict as ever), and
+the value is never converted</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_validate">validate()</a>
@@ -307,6 +328,13 @@
 <dd>Return a schema definition by name</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_isBooleanAsOther">isBooleanAsOther()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+<dd>Is the value the text &#039;true&#039; or &#039;false&#039; in any case, or the integer 0 or 1?</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_isList">isList()</a>
     <span>
                                 &nbsp;: bool    </span>
@@ -319,6 +347,20 @@
                                 &nbsp;: bool    </span>
 </dt>
 <dd>Check if a value is a map</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_isNumberAsText">isNumberAsText()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+<dd>Is the value a text that is a number, or the empty text (a number that was left blank)?</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_isNumericText">isNumericText()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+<dd>Is the value a text that is a number? Digits with an optional sign, decimals and exponent, and nothing else, not even spaces</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_isRuleNode">isRuleNode()</a>
@@ -447,7 +489,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">75</span>
+    <span class="phpdocumentor-element-found-in__line">81</span>
 
     </aside>
 
@@ -506,6 +548,44 @@
         
 
 </article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                                    "
+>
+    <h4 class="phpdocumentor-element__name" id="property_looseScalars">
+        $looseScalars
+        <a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#property_looseScalars" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">75</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Accept scalars of a looser type? (see setLooseScalars())</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type">bool</span>
+    <span class="phpdocumentor-signature__name">$looseScalars</span>
+     = <span class="phpdocumentor-signature__default-value">false</span></code>
+
+    
+    
+    
+
+        
+        
+
+</article>
             </section>
 
             <section class="phpdocumentor-methods">
@@ -528,7 +608,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">82</span>
+    <span class="phpdocumentor-element-found-in__line">88</span>
 
     </aside>
 
@@ -584,7 +664,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">99</span>
+    <span class="phpdocumentor-element-found-in__line">124</span>
 
     </aside>
 
@@ -660,7 +740,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">145</span>
+    <span class="phpdocumentor-element-found-in__line">170</span>
 
     </aside>
 
@@ -691,6 +771,64 @@
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_setLooseScalars">
+        setLooseScalars()
+        <a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_setLooseScalars" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">109</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Accept scalars of a looser type than the one of the schema. It is meant for the requests that are sent to FedEx, whose own
+examples send numbers as text, and the like. When it is on:
+ - &#039;string&#039; also accepts an integer, a float or a boolean
+ - &#039;int&#039; also accepts a float, a text that is a number, and the empty text
+ - &#039;number&#039; also accepts a text that is a number, and the empty text
+ - &#039;bool&#039; also accepts the text &#039;true&#039; or &#039;false&#039; in any case, and the integer 0 or 1
+Nothing else changes (a list, an object, null, an enum, a pattern, a bound or a check are as strict as ever), and
+the value is never converted</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">setLooseScalars</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">bool&nbsp;</span><span class="phpdocumentor-signature__argument__name">$looseScalars</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">self</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$looseScalars</span>
+                : <span class="phpdocumentor-argument-list__argument__type">bool</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>True to accept them</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">self</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_validate">
         validate()
         <a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_validate" class="headerlink"><i class="fas fa-link"></i></a>
@@ -699,7 +837,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">116</span>
+    <span class="phpdocumentor-element-found-in__line">141</span>
 
     </aside>
 
@@ -759,7 +897,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">129</span>
+    <span class="phpdocumentor-element-found-in__line">154</span>
 
     </aside>
 
@@ -819,7 +957,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">158</span>
+    <span class="phpdocumentor-element-found-in__line">183</span>
 
     </aside>
 
@@ -898,7 +1036,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">338</span>
+    <span class="phpdocumentor-element-found-in__line">363</span>
 
     </aside>
 
@@ -963,7 +1101,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">228</span>
+    <span class="phpdocumentor-element-found-in__line">253</span>
 
     </aside>
 
@@ -1028,7 +1166,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">268</span>
+    <span class="phpdocumentor-element-found-in__line">293</span>
 
     </aside>
 
@@ -1107,7 +1245,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">199</span>
+    <span class="phpdocumentor-element-found-in__line">224</span>
 
     </aside>
 
@@ -1172,7 +1310,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">466</span>
+    <span class="phpdocumentor-element-found-in__line">521</span>
 
     </aside>
 
@@ -1229,6 +1367,57 @@
             -private
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_isBooleanAsOther">
+        isBooleanAsOther()
+        <a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_isBooleanAsOther" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">500</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Is the value the text &#039;true&#039; or &#039;false&#039; in any case, or the integer 0 or 1?</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">isBooleanAsOther</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$value</span>
+                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Value to check</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_isList">
         isList()
         <a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_isList" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1237,7 +1426,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">507</span>
+    <span class="phpdocumentor-element-found-in__line">562</span>
 
     </aside>
 
@@ -1288,7 +1477,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">496</span>
+    <span class="phpdocumentor-element-found-in__line">551</span>
 
     </aside>
 
@@ -1331,6 +1520,108 @@
             -private
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_isNumberAsText">
+        isNumberAsText()
+        <a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_isNumberAsText" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">490</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Is the value a text that is a number, or the empty text (a number that was left blank)?</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">isNumberAsText</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$value</span>
+                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Value to check</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_isNumericText">
+        isNumericText()
+        <a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_isNumericText" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">510</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Is the value a text that is a number? Digits with an optional sign, decimals and exponent, and nothing else, not even spaces</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">isNumericText</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$value</span>
+                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Value to check</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_isRuleNode">
         isRuleNode()
         <a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_isRuleNode" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1339,7 +1630,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">480</span>
+    <span class="phpdocumentor-element-found-in__line">535</span>
 
     </aside>
 
@@ -1388,7 +1679,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">373</span>
+    <span class="phpdocumentor-element-found-in__line">398</span>
 
     </aside>
 
@@ -1471,7 +1762,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Misc/SchemaValidator.php"><a href="files/src-misc-schemavalidator.html"><abbr title="src/Misc/SchemaValidator.php">SchemaValidator.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">517</span>
+    <span class="phpdocumentor-element-found-in__line">572</span>
 
     </aside>
 
@@ -1544,6 +1835,7 @@
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#property_allowExtra">$allowExtra</a></li>
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#property_definitions">$definitions</a></li>
                                                     <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#property_errors">$errors</a></li>
+                                                    <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#property_looseScalars">$looseScalars</a></li>
                                             </ul>
                 </li>
             
@@ -1553,6 +1845,7 @@
                                             <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method___construct">__construct()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_define">define()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_getErrors">getErrors()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_setLooseScalars">setLooseScalars()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_validate">validate()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_validateJson">validateJson()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_check">check()</a></li>
@@ -1561,8 +1854,11 @@
                                             <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_checkRules">checkRules()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_checkSpec">checkSpec()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_definition">definition()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_isBooleanAsOther">isBooleanAsOther()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_isList">isList()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_isMap">isMap()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_isNumberAsText">isNumberAsText()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_isNumericText">isNumericText()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_isRuleNode">isRuleNode()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_matchesType">matchesType()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_typeOf">typeOf()</a></li>

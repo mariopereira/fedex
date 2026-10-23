@@ -51,11 +51,6 @@ Search.appendIndex(
             "summary": "Validate\u0020and\u0020resolve\u0020several\u0020addresses\u0020\u0028up\u0020to\u0020100\u0029\u0020in\u0020one\u0020request.",
             "url": "classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_validateArray"
         },                {
-            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexAddressValidation\u003A\u003AcheckRequest\u0028\u0029",
-            "name": "checkRequest",
-            "summary": "Check\u0020what\u0020the\u0020schema\u0020cannot\u0020express\u003A\u0020the\u0020street\u0020lines\u0020must\u0020not\u0020be\u0020empty.",
-            "url": "classes/Mariopereira-Fedex-Api-FedexAddressValidation.html#method_checkRequest"
-        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexAddressValidation\u003A\u003AvalidateAndParse\u0028\u0029",
             "name": "validateAndParse",
             "summary": "Validate\u0020the\u0020response\u0020received\u0020from\u0020FedEx",
@@ -586,6 +581,126 @@ Search.appendIndex(
             "summary": "API\u0020patch\u0020number,\u0020or\u0020null\u0020to\u0020leave\u0020it\u0020out\u0020of\u0020the\u0020request",
             "url": "classes/Mariopereira-Fedex-Api-FedexPostalCodeValidation.html#property_patch"
         },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexRateTransitTimes",
+            "name": "FedexRateTransitTimes",
+            "summary": "Rates\u0020and\u0020Transit\u0020Times\u0020API\u003A\u0020retrieves\u0020the\u0020rates,\u0020and\u0020the\u0020transit\u0020times,\u0020of\u0020the\u0020services\u0020that\u0020are\u0020available\u0020for\u0020a\u0020shipment\n\u0028rate\/v1\/rates\/quotes\u0029.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexRateTransitTimes.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexRateTransitTimes\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020object",
+            "url": "classes/Mariopereira-Fedex-Api-FedexRateTransitTimes.html#method___construct"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexRateTransitTimes\u003A\u003AnewRatesRequest\u0028\u0029",
+            "name": "newRatesRequest",
+            "summary": "Create\u0020an\u0020empty\u0020rates\u0020request\u003A\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires,\u0020named\u0020as\u0020in\u0020schemas\/rate.json.\u0020The\u0020account\u0020number\u0020is\nan\u0020array\u0020with\u0020its\u0020value,\u0020the\u0020lists\u0020\u0028requestedPackageLineItems\u0029\u0020are\u0020empty\u003A\u0020a\u0020package\u0020is\u0020an\u0020array\u0020with\u0020its\u0020weight.\u0020Any\u0020other\nfield\u0020of\u0020the\u0020schema\u0020can\u0020be\u0020added.\u0020Fields\u0020set\u0020to\u0020null\u0020and\u0020empty\u0020lists\u0020are\u0020left\u0020out\u0020when\u0020the\u0020request\u0020is\u0020sent",
+            "url": "classes/Mariopereira-Fedex-Api-FedexRateTransitTimes.html#method_newRatesRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexRateTransitTimes\u003A\u003AgetRates\u0028\u0029",
+            "name": "getRates",
+            "summary": "Retrieve\u0020the\u0020rates,\u0020and\u0020the\u0020transit\u0020times,\u0020of\u0020the\u0020services\u0020that\u0020are\u0020available\u0020for\u0020a\u0020shipment.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexRateTransitTimes.html#method_getRates"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexRateTransitTimes\u003A\u003AgetRatesBetween\u0028\u0029",
+            "name": "getRatesBetween",
+            "summary": "Retrieve\u0020the\u0020rates,\u0020and\u0020the\u0020transit\u0020times,\u0020for\u0020a\u0020shipment\u0020between\u0020two\u0020addresses,\u0020with\u0020one\u0020package",
+            "url": "classes/Mariopereira-Fedex-Api-FedexRateTransitTimes.html#method_getRatesBetween"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexRateTransitTimes\u003A\u003AvalidateAndParse\u0028\u0029",
+            "name": "validateAndParse",
+            "summary": "Validate\u0020the\u0020response\u0020received\u0020from\u0020FedEx.\u0020The\u0020response\u0020is\u0020given\u0020to\u0020the\u0020exception,\u0020so\u0020that\u0020nothing\u0020that\u0020FedEx\u0020answered\u0020is\nlost",
+            "url": "classes/Mariopereira-Fedex-Api-FedexRateTransitTimes.html#method_validateAndParse"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexRateTransitTimes\u003A\u003AENDPOINT",
+            "name": "ENDPOINT",
+            "summary": "Retrieve\u0020Rates\u0020and\u0020Transit\u0020Times\u0020endpoint\u0020\u0028POST\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexRateTransitTimes.html#constant_ENDPOINT"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexServiceAvailability",
+            "name": "FedexServiceAvailability",
+            "summary": "Service\u0020Availability\u0020API\u003A\u0020retrieves\u0020the\u0020services\u0020and\u0020the\u0020transit\u0020times,\u0020the\u0020services\u0020and\u0020the\u0020packaging\u0020options,\u0020and\u0020the\nspecial\u0020service\u0020options\u0020that\u0020are\u0020available\u0020for\u0020a\u0020shipment\u0020\u0028availability\/v1\u0029.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexServiceAvailability.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexServiceAvailability\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020object",
+            "url": "classes/Mariopereira-Fedex-Api-FedexServiceAvailability.html#method___construct"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexServiceAvailability\u003A\u003AnewTransitTimesRequest\u0028\u0029",
+            "name": "newTransitTimesRequest",
+            "summary": "Create\u0020an\u0020empty\u0020Retrieve\u0020Services\u0020and\u0020Transit\u0020Times\u0020request\u003A\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires\u0020of\u0020the\u0020shipment,\u0020named\u0020as\nin\u0020schemas\/service\u002Davailability.json.\u0020The\u0020schema\u0020does\u0020not\u0020require\u0020requestedShipment\u0020at\u0020the\u0020top,\u0020but\u0020every\u0020sample\u0020payload\nhas\u0020it,\u0020so\u0020it\u0020is\u0020in\u0020place.\u0020The\u0020lists\u0020\u0028recipients,\u0020requestedPackageLineItems\u0029\u0020are\u0020empty\u003A\u0020a\u0020recipient\u0020is\u0020an\u0020array\u0020with\u0020an\naddress,\u0020a\u0020package\u0020an\u0020array\u0020with\u0020its\u0020weight.\u0020Any\u0020other\u0020field\u0020of\u0020the\u0020schema\u0020can\u0020be\u0020added.\u0020Fields\u0020set\u0020to\u0020null\u0020and\u0020empty\nlists\u0020are\u0020left\u0020out\u0020when\u0020the\u0020request\u0020is\u0020sent",
+            "url": "classes/Mariopereira-Fedex-Api-FedexServiceAvailability.html#method_newTransitTimesRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexServiceAvailability\u003A\u003AnewPackageAndServiceOptionsRequest\u0028\u0029",
+            "name": "newPackageAndServiceOptionsRequest",
+            "summary": "Create\u0020an\u0020empty\u0020Retrieve\u0020Services\u0020and\u0020Packaging\u0020Options\u0020request\u003A\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires,\u0020named\u0020as\u0020in\nschemas\/service\u002Davailability.json.\u0020The\u0020list\u0020recipients\u0020is\u0020empty\u003A\u0020a\u0020recipient\u0020is\u0020an\u0020array\u0020with\u0020an\u0020address.\u0020Any\u0020other\u0020field\u0020of\nthe\u0020schema\u0020can\u0020be\u0020added.\u0020Fields\u0020set\u0020to\u0020null\u0020and\u0020empty\u0020lists\u0020are\u0020left\u0020out\u0020when\u0020the\u0020request\u0020is\u0020sent",
+            "url": "classes/Mariopereira-Fedex-Api-FedexServiceAvailability.html#method_newPackageAndServiceOptionsRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexServiceAvailability\u003A\u003AnewSpecialServiceOptionsRequest\u0028\u0029",
+            "name": "newSpecialServiceOptionsRequest",
+            "summary": "Create\u0020an\u0020empty\u0020Retrieve\u0020Special\u0020Service\u0020Options\u0020request\u003A\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires,\u0020named\u0020as\u0020in\nschemas\/service\u002Davailability.json\u0020\u0028note\u0020that\u0020here\u0020the\u0020recipient\u0020is\u0020one\u0020object,\u0020and\u0020in\u0020the\u0020other\u0020two\u0020requests\u0020it\u0020is\u0020a\u0020list\u0029.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexServiceAvailability.html#method_newSpecialServiceOptionsRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexServiceAvailability\u003A\u003AgetTransitTimes\u0028\u0029",
+            "name": "getTransitTimes",
+            "summary": "Retrieve\u0020the\u0020services\u0020and\u0020the\u0020transit\u0020times\u0020that\u0020are\u0020available\u0020for\u0020a\u0020shipment.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexServiceAvailability.html#method_getTransitTimes"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexServiceAvailability\u003A\u003AgetTransitTimesBetween\u0028\u0029",
+            "name": "getTransitTimesBetween",
+            "summary": "Retrieve\u0020the\u0020services\u0020and\u0020the\u0020transit\u0020times\u0020for\u0020a\u0020shipment\u0020between\u0020two\u0020addresses,\u0020with\u0020one\u0020package",
+            "url": "classes/Mariopereira-Fedex-Api-FedexServiceAvailability.html#method_getTransitTimesBetween"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexServiceAvailability\u003A\u003AgetPackageAndServiceOptions\u0028\u0029",
+            "name": "getPackageAndServiceOptions",
+            "summary": "Retrieve\u0020the\u0020services\u0020and\u0020the\u0020packaging\u0020options\u0020that\u0020are\u0020available\u0020for\u0020a\u0020shipment.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexServiceAvailability.html#method_getPackageAndServiceOptions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexServiceAvailability\u003A\u003AgetPackageAndServiceOptionsBetween\u0028\u0029",
+            "name": "getPackageAndServiceOptionsBetween",
+            "summary": "Retrieve\u0020the\u0020services\u0020and\u0020the\u0020packaging\u0020options\u0020for\u0020a\u0020shipment\u0020between\u0020two\u0020addresses",
+            "url": "classes/Mariopereira-Fedex-Api-FedexServiceAvailability.html#method_getPackageAndServiceOptionsBetween"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexServiceAvailability\u003A\u003AgetSpecialServiceOptions\u0028\u0029",
+            "name": "getSpecialServiceOptions",
+            "summary": "Retrieve\u0020the\u0020special\u0020service\u0020options\u0020that\u0020are\u0020available\u0020for\u0020a\u0020shipment.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexServiceAvailability.html#method_getSpecialServiceOptions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexServiceAvailability\u003A\u003AgetSpecialServiceOptionsBetween\u0028\u0029",
+            "name": "getSpecialServiceOptionsBetween",
+            "summary": "Retrieve\u0020the\u0020special\u0020service\u0020options\u0020for\u0020a\u0020shipment\u0020between\u0020two\u0020addresses,\u0020with\u0020one\u0020package",
+            "url": "classes/Mariopereira-Fedex-Api-FedexServiceAvailability.html#method_getSpecialServiceOptionsBetween"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexServiceAvailability\u003A\u003Abetween\u0028\u0029",
+            "name": "between",
+            "summary": "Make\u0020the\u0020request\u0020of\u0020one\u0020of\u0020the\u0020methods\u0020that\u0020take\u0020two\u0020addresses",
+            "url": "classes/Mariopereira-Fedex-Api-FedexServiceAvailability.html#method_between"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexServiceAvailability\u003A\u003Asend\u0028\u0029",
+            "name": "send",
+            "summary": "Check\u0020a\u0020request,\u0020send\u0020it\u0020and\u0020check\u0020the\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-FedexServiceAvailability.html#method_send"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexServiceAvailability\u003A\u003AvalidateAndParse\u0028\u0029",
+            "name": "validateAndParse",
+            "summary": "Validate\u0020the\u0020response\u0020received\u0020from\u0020FedEx.\u0020The\u0020response\u0020is\u0020given\u0020to\u0020the\u0020exception,\u0020so\u0020that\u0020nothing\u0020that\u0020FedEx\u0020answered\u0020is\nlost",
+            "url": "classes/Mariopereira-Fedex-Api-FedexServiceAvailability.html#method_validateAndParse"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexServiceAvailability\u003A\u003AENDPOINT_TRANSIT_TIMES",
+            "name": "ENDPOINT_TRANSIT_TIMES",
+            "summary": "Retrieve\u0020Services\u0020and\u0020Transit\u0020Times\u0020endpoint\u0020\u0028POST\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexServiceAvailability.html#constant_ENDPOINT_TRANSIT_TIMES"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexServiceAvailability\u003A\u003AENDPOINT_PACKAGE_OPTIONS",
+            "name": "ENDPOINT_PACKAGE_OPTIONS",
+            "summary": "Retrieve\u0020Services\u0020and\u0020Packaging\u0020Options\u0020endpoint\u0020\u0028POST\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexServiceAvailability.html#constant_ENDPOINT_PACKAGE_OPTIONS"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexServiceAvailability\u003A\u003AENDPOINT_SPECIAL_OPTIONS",
+            "name": "ENDPOINT_SPECIAL_OPTIONS",
+            "summary": "Retrieve\u0020Special\u0020Service\u0020Options\u0020endpoint\u0020\u0028POST\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexServiceAvailability.html#constant_ENDPOINT_SPECIAL_OPTIONS"
+        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexShip",
             "name": "FedexShip",
             "summary": "Ship\u0020API\u003A\u0020creates,\u0020validates\u0020and\u0020cancels\u0020shipments,\u0020creates\u0020and\u0020cancels\u0020tags,\u0020and\u0020retrieves\u0020the\u0020results\u0020of\nasynchronous\u0020shipments\u0020\u0028ship\/v1\/shipments\u0029.",
@@ -738,7 +853,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexBasicTrackingSchemas\u003A\u003Adefinitions\u0028\u0029",
             "name": "definitions",
-            "summary": "Get\u0020the\u0020definitions\u0020of\u0020all\u0020the\u0020requests\u0020and\u0020responses.\u0020The\u0020names\u0020of\u0020the\u0020definitions,\u0020and\u0020of\u0020their\u0020fields,\u0020are\u0020the\nones\u0020of\u0020schemas\/track.json,\u0020with\u0020these\u0020differences,\u0020all\u0020of\u0020them\u0020decided\u0020with\u0020the\u0020owner\u003A\n\u0020\u002D\u0020ReferenceInformation\u0020requires\u0020shipDateEndDate,\u0020and\u0020its\u0020example\u0020writes\u0020shipDateEnd,\u0020as\u0020every\u0020other\u0020schema\u0020does\u003A\n\u0020\u0020\u0020shipDateEnd\u0020is\u0020accepted\u0020too,\u0020as\u0020an\u0020optional\u0020field\n\u0020\u002D\u0020AddressVO\u0020requires\u0020the\u0020field\u0020addressVerificationId,\u0020which\u0020the\u0020file\u0020never\u0020defines,\u0020so\u0020FedEx\u0020can\u0020never\u0020send\u0020it\u003A\n\u0020\u0020\u0020it\u0020is\u0020accepted\u0020as\u0020an\u0020optional\u0020field\u0020of\u0020any\u0020type\n\u0020\u002D\u0020DelayDetail.subType\u0020\u0028an\u0020enum\u0020with\u0020the\u0020values\u0020SNOW,\u0020TORNADO\u0020and\u0020\u0022EARTHQUAKE\u0020etc\u0022\u0029\u0020and\u0020ServiceCommitMessage.type\n\u0020\u0020\u0020\u0028an\u0020enum\u0020with\u0020a\u0020stray\u0020quote\u0020in\u0020USPS_DELIVERING\u0022\u0029\u0020are\u0020defective\u0020in\u0020the\u0020file\u003A\u0020they\u0020are\u0020checked\u0020as\u0020text",
+            "summary": "Get\u0020the\u0020definitions\u0020of\u0020all\u0020the\u0020requests\u0020and\u0020responses.\u0020The\u0020names\u0020of\u0020the\u0020definitions,\u0020and\u0020of\u0020their\u0020fields,\u0020are\u0020the\nones\u0020of\u0020schemas\/track.json,\u0020with\u0020these\u0020differences,\u0020all\u0020of\u0020them\u0020decided\u0020with\u0020the\u0020owner\u003A\n\u0020\u002D\u0020ReferenceInformation\u0020requires\u0020shipDateEndDate,\u0020and\u0020its\u0020example,\u0020the\u0020other\u0020schemas\u0020and\u0020the\u0020documentation\u0020of\u0020the\u0020API\n\u0020\u0020\u0020write\u0020shipDateEnd\u003A\u0020shipDateEnd\u0020is\u0020the\u0020required\u0020field,\u0020and\u0020shipDateEndDate\u0020is\u0020accepted\u0020too,\u0020as\u0020an\u0020optional\u0020field\n\u0020\u002D\u0020AddressVO\u0020requires\u0020the\u0020field\u0020addressVerificationId,\u0020which\u0020the\u0020file\u0020never\u0020defines,\u0020so\u0020FedEx\u0020can\u0020never\u0020send\u0020it\u003A\n\u0020\u0020\u0020it\u0020is\u0020accepted\u0020as\u0020an\u0020optional\u0020field\u0020of\u0020any\u0020type\n\u0020\u002D\u0020includeDetailedScans\u0020\u0028of\u0020Full_Schema_Tracking_Numbers\u0029\u0020is\u0020optional,\u0020although\u0020the\u0020file\u0020requires\u0020it\u003A\u0020the\u0020examples\u0020of\u0020FedEx\n\u0020\u0020\u0020leave\u0020it\u0020out,\u0020and\u0020FedEx\u0020decides\n\u0020\u002D\u0020DelayDetail.subType\u0020\u0028an\u0020enum\u0020with\u0020the\u0020values\u0020SNOW,\u0020TORNADO\u0020and\u0020\u0022EARTHQUAKE\u0020etc\u0022\u0029\u0020and\u0020ServiceCommitMessage.type\n\u0020\u0020\u0020\u0028an\u0020enum\u0020with\u0020a\u0020stray\u0020quote\u0020in\u0020USPS_DELIVERING\u0022\u0029\u0020are\u0020defective\u0020in\u0020the\u0020file\u003A\u0020they\u0020are\u0020checked\u0020as\u0020text",
             "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexBasicTrackingSchemas.html#method_definitions"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexBasicTrackingSchemas\u003A\u003ATRACKING_NUMBERS_REQUEST",
@@ -970,6 +1085,76 @@ Search.appendIndex(
             "name": "RESPONSE",
             "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020response",
             "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexPostalCodeValidationSchemas.html#constant_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexRateTransitTimesSchemas",
+            "name": "FedexRateTransitTimesSchemas",
+            "summary": "Definitions\u0020of\u0020the\u0020request\u0020and\u0020the\u0020response\u0020of\u0020the\u0020Rates\u0020and\u0020Transit\u0020Times\u0020API\u0020operation\u0020that\u0020FedexRateTransitTimes\nimplements,\u0020generated\u0020from\u0020schemas\/rate.json\u0020and\u0020written\u0020for\u0020SchemaValidator",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexRateTransitTimesSchemas.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexRateTransitTimesSchemas\u003A\u003Adefinitions\u0028\u0029",
+            "name": "definitions",
+            "summary": "Get\u0020the\u0020definitions\u0020of\u0020the\u0020request\u0020and\u0020the\u0020response.\u0020The\u0020names\u0020of\u0020the\u0020definitions,\u0020and\u0020of\u0020their\u0020fields,\u0020are\u0020the\u0020ones\u0020of\nschemas\/rate.json,\u0020with\u0020these\u0020differences\u003A\n\u0020\u002D\u0020what\u0020the\u0020file\u0020writes\u0020as\u0020an\u0020allOf\u0020of\u0020a\u0020definition\u0020and\u0020an\u0020overlay\u0020that\u0020adds\u0020required\u0020keys\u0020\u0028Money,\u0020Weight,\u0020Dimensions,\n\u0020\u0020\u0020RateAddress,\u0020BrokerDetailBroker,\u0020BrokerDetailBroker_RateReply\u0020and\u0020DeliveryOnInvoiceAcceptanceDetailRecipient\u0029\u0020is\u0020a\n\u0020\u0020\u0020definition\u0020with\u0020the\u0020fields\u0020of\u0020the\u0020base\u0020and\u0020the\u0020required\u0020keys\u0020of\u0020both.\u0020BrokerDetailBroker.contact\u0020exists\u0020only\u0020in\u0020the\n\u0020\u0020\u0020overlay\u0020of\u0020the\u0020file,\u0020with\u0020a\u0020description\u0020and\u0020no\u0020type\u003A\u0020it\u0020accepts\u0020any\u0020value.\u0020The\u0020address\u0020and\u0020the\u0020contact\u0020of\n\u0020\u0020\u0020DeliveryOnInvoiceAcceptanceDetailRecipient\u0020are\u0020tightened\u0020by\u0020the\u0020overlay,\u0020and\u0020are\u0020definitions\u0020of\u0020their\u0020own,\u0020with\u0020the\n\u0020\u0020\u0020suffix\u0020_overlay\u0020\u0028the\u0020overlay\u0020defines\u0020streetLines,\u0020which\u0020the\u0020base\u0020address\u0020does\u0020not\u0020have\u003A\u0020it\u0020is\u0020a\u0020field\u0020of\u0020the\u0020address\u0029\n\u0020\u002D\u0020in\u0020the\u0020definitions\u0020that\u0020the\u0020request\u0020reaches\u0020\u0028and\u0020so\u0020in\u0020Money\u0020and\u0020the\u0020other\u0020definitions\u0020that\u0020the\u0020response\u0020shares\u0020with\u0020the\n\u0020\u0020\u0020request\u0029,\u0020a\u0020number\u0020is\u0020a\u0020number\u0020or\u0020a\u0020text\u0020that\u0020is\u0020a\u0020number\u003A\u0020the\u0020samples\u0020of\u0020the\u0020file\u0020send\u0020weight.value\u0020as\u0020text\n\u0020\u002D\u0020in\u0020the\u0020definitions\u0020that\u0020the\u0020request\u0020reaches,\u0020postalCode\u0020is\u0020a\u0020text\u0020or\u0020an\u0020integer\u003A\u0020fifteen\u0020samples\u0020of\u0020the\u0020file\u0020send\u0020it\u0020as\n\u0020\u0020\u0020an\u0020integer\n\u0020\u002D\u0020the\u0020request\u0020allows\u0020keys\u0020that\u0020the\u0020file\u0020does\u0020not\u0020define\u0020\u0028see\u0020FedexRateTransitTimes\u003A\u003AgetRates\u0028\u0029\u0029\u003A\u0020the\u0020schema\u0020of\u0020the\u0020file\u0020does\n\u0020\u0020\u0020not\u0020list\u0020the\u0020keys\u0020of\u0020the\u0020samples\u0020for\u0020Freight\u0020and\u0020for\u0020Intra\u0020Europe\n\u0020\u002D\u0020commodities\u0020\u0028of\u0020CustomsClearanceDetail\u0029\u0020and\u0020accountNumber\u0020\u0028of\u0020Full_Schema_Quote_Rate\u0029\u0020are\u0020optional,\u0020although\u0020the\u0020file\n\u0020\u0020\u0020requires\u0020them\u003A\u0020the\u0020samples\u0020of\u0020FedEx\u0020leave\u0020them\u0020out,\u0020and\u0020FedEx\u0020decides",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexRateTransitTimesSchemas.html#method_definitions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexRateTransitTimesSchemas\u003A\u003AnumberOrNumericText\u0028\u0029",
+            "name": "numberOrNumericText",
+            "summary": "Check\u0020that\u0020a\u0020value\u0020is\u0020a\u0020number\u0020or\u0020a\u0020text\u0020that\u0020is\u0020a\u0020number\u0020\u0028the\u0020check\u0020of\u0020the\u0020number\u0020fields\u0020of\u0020the\u0020request\u0029\u003A\u0020digits\u0020with\u0020an\noptional\u0020sign,\u0020decimals\u0020and\u0020exponent,\u0020and\u0020nothing\u0020else,\u0020not\u0020even\u0020spaces",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexRateTransitTimesSchemas.html#method_numberOrNumericText"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexRateTransitTimesSchemas\u003A\u003AREQUEST",
+            "name": "REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexRateTransitTimesSchemas.html#constant_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexRateTransitTimesSchemas\u003A\u003ARESPONSE",
+            "name": "RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexRateTransitTimesSchemas.html#constant_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexServiceAvailabilitySchemas",
+            "name": "FedexServiceAvailabilitySchemas",
+            "summary": "Definitions\u0020of\u0020the\u0020requests\u0020and\u0020responses\u0020of\u0020the\u0020Service\u0020Availability\u0020API\u0020operations\u0020that\u0020FedexServiceAvailability\nimplements,\u0020generated\u0020from\u0020schemas\/service\u002Davailability.json\u0020and\u0020written\u0020for\u0020SchemaValidator",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexServiceAvailabilitySchemas.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexServiceAvailabilitySchemas\u003A\u003Adefinitions\u0028\u0029",
+            "name": "definitions",
+            "summary": "Get\u0020the\u0020definitions\u0020of\u0020all\u0020the\u0020requests\u0020and\u0020responses.\u0020The\u0020names\u0020of\u0020the\u0020definitions,\u0020and\u0020of\u0020their\u0020fields,\u0020are\u0020the\u0020ones\nof\u0020schemas\/service\u002Davailability.json,\u0020with\u0020these\u0020differences\u003A\n\u0020\u002D\u0020what\u0020the\u0020file\u0020writes\u0020as\u0020an\u0020allOf\u0020of\u0020a\u0020definition\u0020and\u0020an\u0020overlay\u0020that\u0020adds\u0020required\u0020keys\u0020\u0028Weight,\u0020Dimensions,\u0020CodDetail,\n\u0020\u0020\u0020ShipmentDimensions,\u0020ShipmentDryIceDetail,\u0020KeyDisplayTextVO,\u0020FedExFreightBillingContactAndAddress\u0020and\n\u0020\u0020\u0020PackageAndOptionsRequestedShipment\u0029\u0020is\u0020a\u0020definition\u0020with\u0020the\u0020fields\u0020of\u0020the\u0020base\u0020and\u0020the\u0020required\u0020keys\u0020of\u0020both,\u0020and\u0020what\n\u0020\u0020\u0020the\u0020file\u0020writes\u0020inline\u0020or\u0020as\u0020an\u0020overlay\u0020of\u0020a\u0020field\u0020is\u0020a\u0020definition\u0020of\u0020its\u0020own,\u0020named\u0020after\u0020the\u0020definition\u0020and\u0020the\u0020field\n\u0020\u0020\u0020that\u0020contain\u0020it\u0020\u0028a\u0020tightened\u0020field\u0020has\u0020the\u0020suffix\u0020_overlay\u0029\n\u0020\u002D\u0020in\u0020the\u0020definitions\u0020that\u0020a\u0020request\u0020reaches\u0020\u0028and\u0020so\u0020in\u0020Weight,\u0020Weight1\u0020and\u0020Money,\u0020which\u0020the\u0020responses\u0020share\u0029,\u0020a\u0020number\u0020is\n\u0020\u0020\u0020a\u0020number\u0020or\u0020a\u0020text\u0020that\u0020is\u0020a\u0020number\u003A\u0020the\u0020sample\u0020payloads\u0020of\u0020the\u0020file\u0020send\u0020weight.value\u0020and\u0020customsValue.amount\u0020as\u0020text\n\u0020\u002D\u0020HoldAtLocationDetail\u0020requires\u0020a\u0020field\u0020called\u0020codDelocationContactAndAddress\u0022,\u0020with\u0020a\u0020stray\u0020quote,\u0020which\u0020the\u0020file\u0020never\n\u0020\u0020\u0020defines\u003A\u0020it\u0020is\u0020accepted\u0020as\u0020an\u0020optional\u0020field\u0020of\u0020any\u0020type,\u0020and\u0020locationType\u0020is\u0020required\u0020as\u0020in\u0020the\u0020file\n\u0020\u002D\u0020Address.postalCode\u0020and\u0020Address.countryCode\u0020have\u0020a\u0020description\u0020and\u0020no\u0020type\u003A\u0020they\u0020accept\u0020any\u0020value\n\u0020\u002D\u0020codDetail\u0020\u0028of\u0020PackageSpecialServicesRequested\u0029\u0020and\u0020weight\u0020\u0028of\u0020RequestedPackageLineItem\u0020and\n\u0020\u0020\u0020TransitTimeRequestedPackageLineItem\u0029\u0020are\u0020optional,\u0020although\u0020the\u0020file\u0020requires\u0020them\u003A\u0020the\u0020examples\u0020of\u0020FedEx\u0020leave\u0020them\n\u0020\u0020\u0020out,\u0020and\u0020FedEx\u0020decides",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexServiceAvailabilitySchemas.html#method_definitions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexServiceAvailabilitySchemas\u003A\u003AnumberOrNumericText\u0028\u0029",
+            "name": "numberOrNumericText",
+            "summary": "Check\u0020that\u0020a\u0020value\u0020is\u0020a\u0020number\u0020or\u0020a\u0020text\u0020that\u0020is\u0020a\u0020number\u0020\u0028the\u0020check\u0020of\u0020the\u0020number\u0020fields\u0020of\u0020the\u0020requests\u0029\u003A\u0020digits\u0020with\u0020an\noptional\u0020sign,\u0020decimals\u0020and\u0020exponent,\u0020and\u0020nothing\u0020else,\u0020not\u0020even\u0020spaces",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexServiceAvailabilitySchemas.html#method_numberOrNumericText"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexServiceAvailabilitySchemas\u003A\u003ATRANSIT_TIMES_REQUEST",
+            "name": "TRANSIT_TIMES_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Retrieve\u0020Services\u0020and\u0020Transit\u0020Times\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexServiceAvailabilitySchemas.html#constant_TRANSIT_TIMES_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexServiceAvailabilitySchemas\u003A\u003ATRANSIT_TIMES_RESPONSE",
+            "name": "TRANSIT_TIMES_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Retrieve\u0020Services\u0020and\u0020Transit\u0020Times\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexServiceAvailabilitySchemas.html#constant_TRANSIT_TIMES_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexServiceAvailabilitySchemas\u003A\u003APACKAGE_OPTIONS_REQUEST",
+            "name": "PACKAGE_OPTIONS_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Retrieve\u0020Services\u0020and\u0020Packaging\u0020Options\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexServiceAvailabilitySchemas.html#constant_PACKAGE_OPTIONS_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexServiceAvailabilitySchemas\u003A\u003APACKAGE_OPTIONS_RESPONSE",
+            "name": "PACKAGE_OPTIONS_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Retrieve\u0020Services\u0020and\u0020Packaging\u0020Options\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexServiceAvailabilitySchemas.html#constant_PACKAGE_OPTIONS_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexServiceAvailabilitySchemas\u003A\u003ASPECIAL_OPTIONS_REQUEST",
+            "name": "SPECIAL_OPTIONS_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Retrieve\u0020Special\u0020Service\u0020Options\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexServiceAvailabilitySchemas.html#constant_SPECIAL_OPTIONS_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexServiceAvailabilitySchemas\u003A\u003ASPECIAL_OPTIONS_RESPONSE",
+            "name": "SPECIAL_OPTIONS_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Retrieve\u0020Special\u0020Service\u0020Options\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexServiceAvailabilitySchemas.html#constant_SPECIAL_OPTIONS_RESPONSE"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexShipSchemas",
             "name": "FedexShipSchemas",
@@ -1521,6 +1706,26 @@ Search.appendIndex(
             "summary": "Initialize\u0020the\u0020exception",
             "url": "classes/Mariopereira-Fedex-Exception-FedexPostalCodeValidationException.html#method___construct"
         },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexRateTransitTimesException",
+            "name": "FedexRateTransitTimesException",
+            "summary": "Exception\u0020thrown\u0020by\u0020the\u0020Rates\u0020and\u0020Transit\u0020Times\u0020API",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexRateTransitTimesException.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexRateTransitTimesException\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020exception",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexRateTransitTimesException.html#method___construct"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexServiceAvailabilityException",
+            "name": "FedexServiceAvailabilityException",
+            "summary": "Exception\u0020thrown\u0020by\u0020the\u0020Service\u0020Availability\u0020API",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexServiceAvailabilityException.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexServiceAvailabilityException\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020exception",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexServiceAvailabilityException.html#method___construct"
+        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexShipException",
             "name": "FedexShipException",
             "summary": "Exception\u0020thrown\u0020by\u0020the\u0020Ship\u0020API",
@@ -1966,6 +2171,11 @@ Search.appendIndex(
             "summary": "Initialize\u0020the\u0020instance",
             "url": "classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method___construct"
         },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Misc\\SchemaValidator\u003A\u003AsetLooseScalars\u0028\u0029",
+            "name": "setLooseScalars",
+            "summary": "Accept\u0020scalars\u0020of\u0020a\u0020looser\u0020type\u0020than\u0020the\u0020one\u0020of\u0020the\u0020schema.\u0020It\u0020is\u0020meant\u0020for\u0020the\u0020requests\u0020that\u0020are\u0020sent\u0020to\u0020FedEx,\u0020whose\u0020own\nexamples\u0020send\u0020numbers\u0020as\u0020text,\u0020and\u0020the\u0020like.\u0020When\u0020it\u0020is\u0020on\u003A\n\u0020\u002D\u0020\u0027string\u0027\u0020also\u0020accepts\u0020an\u0020integer,\u0020a\u0020float\u0020or\u0020a\u0020boolean\n\u0020\u002D\u0020\u0027int\u0027\u0020also\u0020accepts\u0020a\u0020float,\u0020a\u0020text\u0020that\u0020is\u0020a\u0020number,\u0020and\u0020the\u0020empty\u0020text\n\u0020\u002D\u0020\u0027number\u0027\u0020also\u0020accepts\u0020a\u0020text\u0020that\u0020is\u0020a\u0020number,\u0020and\u0020the\u0020empty\u0020text\n\u0020\u002D\u0020\u0027bool\u0027\u0020also\u0020accepts\u0020the\u0020text\u0020\u0027true\u0027\u0020or\u0020\u0027false\u0027\u0020in\u0020any\u0020case,\u0020and\u0020the\u0020integer\u00200\u0020or\u00201\nNothing\u0020else\u0020changes\u0020\u0028a\u0020list,\u0020an\u0020object,\u0020null,\u0020an\u0020enum,\u0020a\u0020pattern,\u0020a\u0020bound\u0020or\u0020a\u0020check\u0020are\u0020as\u0020strict\u0020as\u0020ever\u0029,\u0020and\nthe\u0020value\u0020is\u0020never\u0020converted",
+            "url": "classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_setLooseScalars"
+        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Misc\\SchemaValidator\u003A\u003Adefine\u0028\u0029",
             "name": "define",
             "summary": "Register\u0020a\u0020named\u0020schema,\u0020usable\u0020anywhere\u0020as\u0020\u0027\u0040Name\u0027.",
@@ -2016,6 +2226,21 @@ Search.appendIndex(
             "summary": "Check\u0020if\u0020the\u0020value\u0020has\u0020the\u0020specified\u0020type",
             "url": "classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_matchesType"
         },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Misc\\SchemaValidator\u003A\u003AisNumberAsText\u0028\u0029",
+            "name": "isNumberAsText",
+            "summary": "Is\u0020the\u0020value\u0020a\u0020text\u0020that\u0020is\u0020a\u0020number,\u0020or\u0020the\u0020empty\u0020text\u0020\u0028a\u0020number\u0020that\u0020was\u0020left\u0020blank\u0029\u003F",
+            "url": "classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_isNumberAsText"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Misc\\SchemaValidator\u003A\u003AisBooleanAsOther\u0028\u0029",
+            "name": "isBooleanAsOther",
+            "summary": "Is\u0020the\u0020value\u0020the\u0020text\u0020\u0027true\u0027\u0020or\u0020\u0027false\u0027\u0020in\u0020any\u0020case,\u0020or\u0020the\u0020integer\u00200\u0020or\u00201\u003F",
+            "url": "classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_isBooleanAsOther"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Misc\\SchemaValidator\u003A\u003AisNumericText\u0028\u0029",
+            "name": "isNumericText",
+            "summary": "Is\u0020the\u0020value\u0020a\u0020text\u0020that\u0020is\u0020a\u0020number\u003F\u0020Digits\u0020with\u0020an\u0020optional\u0020sign,\u0020decimals\u0020and\u0020exponent,\u0020and\u0020nothing\u0020else,\u0020not\u0020even\u0020spaces",
+            "url": "classes/Mariopereira-Fedex-Misc-SchemaValidator.html#method_isNumericText"
+        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Misc\\SchemaValidator\u003A\u003Adefinition\u0028\u0029",
             "name": "definition",
             "summary": "Return\u0020a\u0020schema\u0020definition\u0020by\u0020name",
@@ -2055,6 +2280,11 @@ Search.appendIndex(
             "name": "allowExtra",
             "summary": "Allow\u0020properties\u0020not\u0020in\u0020the\u0020schema\u003F",
             "url": "classes/Mariopereira-Fedex-Misc-SchemaValidator.html#property_allowExtra"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Misc\\SchemaValidator\u003A\u003A\u0024looseScalars",
+            "name": "looseScalars",
+            "summary": "Accept\u0020scalars\u0020of\u0020a\u0020looser\u0020type\u003F\u0020\u0028see\u0020setLooseScalars\u0028\u0029\u0029",
+            "url": "classes/Mariopereira-Fedex-Misc-SchemaValidator.html#property_looseScalars"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Misc\\SchemaValidator\u003A\u003A\u0024definitions",
             "name": "definitions",

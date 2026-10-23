@@ -340,7 +340,7 @@ final class FedexLocationsSearchTest extends TestCase
         $res = [];
 
         foreach ($meta['leaves'] as $leaf) {
-            $bad = ($leaf['type'] === 'string') ? 12345 : 'x';
+            $bad = ($leaf['type'] === 'string') ? ['x'] : 'x';
             [$e, $sent] = $this->outcome(Spec::setAt($request, $leaf['path'], $bad));
             $res['wrong type at ' . Spec::pathName($leaf['path'])] = self::refused($e, $sent) ? true : self::describe($e, 'accepted');
         }
@@ -370,10 +370,10 @@ final class FedexLocationsSearchTest extends TestCase
     }
 
     /**
-     * An unknown key in any object of the request is rejected
+     * An unknown key in any object of the request is sent, because FedEx decides about it
      * @return void
      */
-    public function testAnUnknownKeyInAnyObjectOfTheRequestIsRejected(): void
+    public function testAnUnknownKeyInAnyObjectOfTheRequestIsSent(): void
     {
         [$request, $meta] = self::generatedRequest();
         $res = [];
@@ -381,7 +381,7 @@ final class FedexLocationsSearchTest extends TestCase
         foreach ($meta['objects'] as $o) {
             $mutated = $o['path'] ? Spec::setAt($request, $o['path'], array_merge(Spec::getAt($request, $o['path']), ['maxresults' => 5])) : array_merge($request, ['maxresults' => 5]);
             [$e, $sent] = $this->outcome($mutated);
-            $res['unknown key in ' . ($o['path'] ? Spec::pathName($o['path']) : 'the request') . ' (' . $o['name'] . ')'] = (self::refused($e, $sent) && strpos(implode(' ', $e->getErrors()), 'maxresults: unexpected key') !== false) ? true : self::describe($e, 'accepted');
+            $res['unknown key in ' . ($o['path'] ? Spec::pathName($o['path']) : 'the request') . ' (' . $o['name'] . ')'] = ($e === null && $sent === 1) ? true : self::describe($e, 'refused');
         }
 
         $this->assertAll('an unknown key in every object of the request, root and nested', $res);
@@ -730,18 +730,22 @@ final class FedexLocationsSearchTest extends TestCase
             'dropOffTimeNeeded with a leading space' => [$time(' 16:30:00'), false],
             'dropOffTimeNeeded with a trailing newline' => [$time("16:30:00\n"), false],
             'maxResults 5' => [['locationsSummaryRequestControlParameters' => ['maxResults' => 5]], true],
-            'maxResults "5" (a string)' => [['locationsSummaryRequestControlParameters' => ['maxResults' => '5']], false],
-            'maxResults 5.0 (a float)' => [['locationsSummaryRequestControlParameters' => ['maxResults' => 5.0]], false],
+            'maxResults "5" (a number as text)' => [['locationsSummaryRequestControlParameters' => ['maxResults' => '5']], true],
+            'maxResults "five" (text that is not a number)' => [['locationsSummaryRequestControlParameters' => ['maxResults' => 'five']], false],
+            'maxResults 5.0 (a float)' => [['locationsSummaryRequestControlParameters' => ['maxResults' => 5.0]], true],
             'distance 3.5 MI' => [['locationsSummaryRequestControlParameters' => ['distance' => ['units' => 'MI', 'value' => 3.5]]], true],
             'distance 10 KM (an integer is a number)' => [['locationsSummaryRequestControlParameters' => ['distance' => ['units' => 'KM', 'value' => 10]]], true],
             'distance units in lower case' => [['locationsSummaryRequestControlParameters' => ['distance' => ['units' => 'km']]], false],
-            'distance value as a string' => [['locationsSummaryRequestControlParameters' => ['distance' => ['value' => '3.5']]], false],
+            'distance value as a number as text' => [['locationsSummaryRequestControlParameters' => ['distance' => ['value' => '3.5']]], true],
+            'distance value as text that is not a number' => [['locationsSummaryRequestControlParameters' => ['distance' => ['value' => 'far']]], false],
             'sameState true' => [['sameState' => true], true],
             'sameState false' => [['sameState' => false], true],
-            'sameState "true" (a string)' => [['sameState' => 'true'], false],
-            'sameState 1' => [['sameState' => 1], false],
+            'sameState "true" (the text)' => [['sameState' => 'true'], true],
+            'sameState "yes" (other text)' => [['sameState' => 'yes'], false],
+            'sameState 1' => [['sameState' => 1], true],
+            'sameState 2' => [['sameState' => 2], false],
             'excludeUnavailableLocations "true" (a string, as in the spec)' => [['constraints' => ['excludeUnavailableLocations' => 'true']], true],
-            'excludeUnavailableLocations true (a boolean)' => [['constraints' => ['excludeUnavailableLocations' => true]], false],
+            'excludeUnavailableLocations true (a boolean)' => [['constraints' => ['excludeUnavailableLocations' => true]], true],
             'carrierCodes FDXE and FDXG' => [['carrierCodes' => ['FDXE', 'FDXG']], true],
             'carrierCodes with FXSP (not in this spec)' => [['carrierCodes' => ['FXSP']], false],
             'carrierCodes as a string' => [['carrierCodes' => 'FDXE'], false],
@@ -755,11 +759,12 @@ final class FedexLocationsSearchTest extends TestCase
             'multipleMatchesAction RETURN_FIRST' => [['multipleMatchesAction' => 'RETURN_FIRST'], true],
             'multipleMatchesAction RETURN_NONE' => [['multipleMatchesAction' => 'RETURN_NONE'], false],
             'packageAttributes with weight, dimensions and options' => [['packageAttributes' => [['weight' => ['units' => 'LB', 'value' => 10.5], 'dimensions' => ['length' => 20, 'width' => 10, 'height' => 5, 'units' => 'IN'], 'serviceOptions' => ['DRY_ICE']]]], true],
-            'packageAttributes dimension as a float' => [['packageAttributes' => [['dimensions' => ['length' => 20.5]]]], false],
+            'packageAttributes dimension as a float' => [['packageAttributes' => [['dimensions' => ['length' => 20.5]]]], true],
             'locationCapabilities one item' => [['locationCapabilities' => [['carrierCode' => 'FDXE', 'serviceType' => 'PRIORITY_OVERNIGHT', 'transferOfPossessionType' => 'DROPOFF', 'serviceCategory' => 'EXPRESS_PARCEL', 'daysOfWeek' => ['MON', 'TUE']]]], true],
             'locationCapabilities item that is a string' => [['locationCapabilities' => ['FDXE']], false],
             'totalDeclaredValue 100 USD' => [['totalDeclaredValue' => ['amount' => 100, 'currency' => 'USD']], true],
-            'totalCustomsValue amount as a string' => [['totalCustomsValue' => ['amount' => '100']], false],
+            'totalCustomsValue amount as a number as text' => [['totalCustomsValue' => ['amount' => '100']], true],
+            'totalCustomsValue amount as text that is not a number' => [['totalCustomsValue' => ['amount' => 'a lot']], false],
             'paymentType SENDER' => [['paymentType' => 'SENDER'], true],
             'paymentType sender' => [['paymentType' => 'sender'], false],
             'trackingInfo with the three fields' => [['trackingInfo' => ['uniqueTrackingId' => '789645', 'trackingNumber' => '123456789012', 'shipDate' => '2030-01-15']], true],
@@ -857,11 +862,11 @@ final class FedexLocationsSearchTest extends TestCase
      */
     public function testTheErrorsNameEachProblemAndCarryNoRequestData(): void
     {
-        [$e] = $this->outcome(['maxresults' => 5, 'location' => ['address' => ['countryCode' => 'US', 'postalCode' => '1', 'zip' => '2']]]);
+        [$e] = $this->outcome(['locationsSummaryRequestControlParameters' => ['maxResults' => 'five'], 'location' => ['address' => ['countryCode' => 'US', 'postalCode' => ['1']]]]);
 
         $this->assertCount(2, $e->getErrors());
-        $this->assertStringContainsString('$.maxresults: unexpected key', $e->getErrorsAsString());
-        $this->assertStringContainsString('$.location.address.zip: unexpected key', $e->getErrorsAsString());
+        $this->assertStringContainsString('$.locationsSummaryRequestControlParameters.maxResults: expected int', $e->getErrorsAsString());
+        $this->assertStringContainsString('$.location.address.postalCode: expected string', $e->getErrorsAsString());
         $this->assertNull($e->getData(), 'the request may hold personal data: it is not kept in the exception');
     }
 
@@ -932,7 +937,7 @@ final class FedexLocationsSearchTest extends TestCase
         return [
             'without city or postal code' => [['countryCode' => 'US'], FedexException::EC_MISSING_PARAMETER],
             'without a country code' => [['postalCode' => '38017'], FedexException::EC_BAD_PARAMETER],
-            'with an unknown field' => [['postalCode' => '38017', 'countryCode' => 'US', 'zip' => 'x'], FedexException::EC_BAD_PARAMETER],
+            'with a field that is not text' => [['postalCode' => '38017', 'countryCode' => 'US', 'city' => ['x']], FedexException::EC_BAD_PARAMETER],
         ];
     }
 
@@ -1165,19 +1170,16 @@ final class FedexLocationsSearchTest extends TestCase
     }
 
     /**
-     * An option that is not a field of the request is refused
+     * An option that is not a field of the request is sent, because FedEx decides about it
      * @return void
      */
-    public function testAnOptionThatIsNotAFieldOfTheRequestIsRefused(): void
+    public function testAnOptionThatIsNotAFieldOfTheRequestIsSent(): void
     {
         $api = $this->api();
 
-        $e = self::thrown(function () use ($api) {
-            $api->searchByPhoneNumber('9015551234', 'US', ['maxResults' => 3]);
-        });
+        $api->searchByPhoneNumber('9015551234', 'US', ['maxResults' => 3]);
 
-        $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
-        $this->assertStringContainsString('$.maxResults: unexpected key', $e->getErrorsAsString(), 'maxResults belongs inside locationsSummaryRequestControlParameters');
+        $this->assertSame(3, $this->transport->bodyOf(0)['maxResults'], 'it belongs inside locationsSummaryRequestControlParameters, and is sent where it was put');
     }
 
     // ---------------------------------------------------------------- 6. newRequest()
