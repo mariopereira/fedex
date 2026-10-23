@@ -15,6 +15,7 @@ A PHP interface to the FedEx APIs.
 | Consolidation: Create (`/ship/v1/consolidations`), Modify (`PUT /ship/v1/consolidations`), Create Consolidation Shipment (`/ship/v1/consolidations/shipments`), Shipment Results (`/ship/v1/consolidations/results`), Confirm (`/ship/v1/consolidations/confirmations`), Confirm Results (`/ship/v1/consolidations/confirmationresults`), Retrieve (`/ship/v1/consolidations/retrieve`), Delete Shipments (`PUT /ship/v1/consolidations/shipments/delete`) and Delete (`PUT /ship/v1/consolidations/delete`) | `FedexConsolidation` | Implemented. Checked against the FedEx schema in `schemas/` (the top level of each request; the schema contradicts its own samples below that), never called against the live API |
 | Estimated Duty and Tax: Duties Taxes Estimates (`/dutytax/v1/estimate`) | `FedexDutyAndTax` | Implemented. Checked against the FedEx schema in `schemas/`, never called against the live API |
 | Service Availability: Retrieve Services and Transit Times (`/availability/v1/transittimes`), Retrieve Services and Packaging Options (`/availability/v1/packageandserviceoptions`) and Retrieve Special Service Options (`/availability/v1/specialserviceoptions`) | `FedexServiceAvailability` | Implemented. Checked against the FedEx schema in `schemas/` (a number may also be given as a text that is a number, as the samples of the schema do), never called against the live API |
+| Rates and Transit Times: Retrieve Rates and Transit Times (`/rate/v1/rates/quotes`) | `FedexRateTransitTimes` | Implemented. Checked against the FedEx schema in `schemas/` (a number may also be a text that is a number and a postal code an integer, and keys that the schema does not define are accepted, because the samples of the schema do all that), never called against the live API |
 
 ## Requirements
 
@@ -449,6 +450,43 @@ $result = $availability->getTransitTimes($request);
 * The methods `...Between()` take the addresses as arrays, with the fields of the address in the schema. `requestedShipment` and `carrierCodes` cannot be given in their `$options`: they are set by the method.
 * The response is checked against the schema too, and an invalid response throws a `FedexServiceAvailabilityException` with the response in `getData()`. A field that FedEx adds is accepted.
 * The samples of the schema (eight requests) are all accepted by these checks. The schema has no sample of a response.
+* Never called against the live FedEx API: the schema is the only reference.
+
+### Rates and transit times
+
+`FedexRateTransitTimes` asks FedEx for the rates, and the transit times, of the services that are available for a shipment (Rates and Transit Times API, `schemas/rate.json`). A quote changes nothing in FedEx, so a request that failed with a timeout or a busy server can be retried (see [Retries](#retries)).
+
+```php
+use Mariopereira\Fedex\Api\FedexRateTransitTimes;
+
+$rates = new FedexRateTransitTimes($auth);
+
+// between two addresses, with one package (a weight of 10.5 pounds here)
+$from = ['postalCode' => '38117', 'countryCode' => 'US'];
+$to = ['postalCode' => '75201', 'countryCode' => 'US'];
+
+$result = $rates->getRatesBetween('123456789', $from, $to, 10.5);
+
+foreach ($result->output->rateReplyDetails as $reply) {
+    echo $reply->serviceType, ' ', $reply->serviceName, "\n";
+}
+
+// or with the whole request, to use any field of the schema
+$request = FedexRateTransitTimes::newRatesRequest();
+$request['accountNumber']['value'] = '123456789';
+$request['requestedShipment']['shipper']['address'] = $from;
+$request['requestedShipment']['recipient']['address'] = $to;
+$request['requestedShipment']['pickupType'] = 'DROPOFF_AT_FEDEX_LOCATION';
+$request['requestedShipment']['requestedPackageLineItems'][] = ['weight' => ['units' => 'LB', 'value' => 10.5]];
+
+$result = $rates->getRates($request);
+```
+
+* The request is checked before it is sent, as in the other APIs: the types and the allowed values of the fields are the ones of the schema, and the required fields must be present: the account number, and in the shipment the shipper and the recipient (each with the postal code and the country code of its address), the pickup type and the packages (each with the weight and its unit). Nothing is sent when the request is not valid.
+* The samples of the schema contradict the schema, and the checks follow the samples: a number can be given as a number or as a text that is a number (`'10.5'`), as the samples do for the weight; a postal code can be a text or an integer (`75063`); and a field that the schema does not define is accepted and sent, so FedEx decides about it. This also applies to the weight and the money of a response.
+* Two samples of the schema, the one for Freight and the one for Intra Europe, are still refused: the first sends `groupPackageCount` as a text where the schema says integer, and the second has no account number, which the schema requires. The other twenty are accepted (a `null` is left out of the request, as for the other APIs).
+* `getRatesBetween()` takes the addresses as arrays, with the fields of the address in the schema. `accountNumber` and `requestedShipment` cannot be given in its `$options`: they are set by the method.
+* The response is checked against the schema too, and an invalid response throws a `FedexRateTransitTimesException` with the response in `getData()`. A field that FedEx adds is accepted. The schema has no sample of a response.
 * Never called against the live FedEx API: the schema is the only reference.
 
 ### Parent/child credentials

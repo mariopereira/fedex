@@ -13,6 +13,7 @@ use Mariopereira\Fedex\Api\FedexBasicTracking;
 use Mariopereira\Fedex\Api\FedexConsolidation;
 use Mariopereira\Fedex\Api\FedexDutyAndTax;
 use Mariopereira\Fedex\Api\FedexLocationsSearch;
+use Mariopereira\Fedex\Api\FedexRateTransitTimes;
 use Mariopereira\Fedex\Api\FedexServiceAvailability;
 use Mariopereira\Fedex\Api\FedexShip;
 use Mariopereira\Fedex\Exception\FedexAddressValidationException;
@@ -23,6 +24,7 @@ use Mariopereira\Fedex\Exception\FedexDutyAndTaxException;
 use Mariopereira\Fedex\Exception\FedexClientException;
 use Mariopereira\Fedex\Exception\FedexException;
 use Mariopereira\Fedex\Exception\FedexLocationsSearchException;
+use Mariopereira\Fedex\Exception\FedexRateTransitTimesException;
 use Mariopereira\Fedex\Exception\FedexServiceAvailabilityException;
 use Mariopereira\Fedex\Exception\FedexShipException;
 use Mariopereira\Fedex\Tests\Support\ConsolidationSpec;
@@ -900,6 +902,57 @@ final class ApiLoopbackTest extends LoopbackTestCase
         });
 
         $this->assertInstanceOf(FedexServiceAvailabilityException::class, $e);
+        $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
+        $this->assertSame([], self::$server->seen());
+    }
+
+    // ---------------------------------------------------------------- rates and transit times
+
+    /**
+     * A rates request on the wire has the body, the length and the content type, with the postal code and the weight as they were given
+     * @return void
+     */
+    public function testARatesRequestOnTheWireHasTheBodyTheLengthAndTheContentType(): void
+    {
+        $api = self::api(FedexRateTransitTimes::class, self::$server->port());
+
+        $result = $api->getRatesBetween('123456789', ['postalCode' => '38117', 'countryCode' => 'US'], ['postalCode' => 75201, 'countryCode' => 'US'], '10.5', 'KG', 'FEDEX_BOX', 'USE_SCHEDULED_PICKUP', ['carrierCodes' => ['FDXE']]);
+        $requests = self::$server->requests();
+        $headers = LoopbackServer::headerLines($requests[1]);
+
+        $this->assertSame(['POST /token-ok', 'POST /rate/v1/rates/quotes'], self::$server->seen());
+        $this->assertContains('Authorization: Bearer TOK', $headers);
+        $this->assertContains('X-locale: pt_PT', $headers);
+        $this->assertContains('Content-Type: application/json', $headers);
+        $this->assertNotEmpty(preg_grep(self::UUID_HEADER, $headers));
+        $this->assertContains('Content-Length: ' . strlen($requests[1]['body']), $headers);
+        $this->assertSame([
+            'carrierCodes' => ['FDXE'],
+            'accountNumber' => ['value' => '123456789'],
+            'requestedShipment' => [
+                'shipper' => ['address' => ['postalCode' => '38117', 'countryCode' => 'US']],
+                'recipient' => ['address' => ['postalCode' => 75201, 'countryCode' => 'US']],
+                'pickupType' => 'USE_SCHEDULED_PICKUP',
+                'packagingType' => 'FEDEX_BOX',
+                'requestedPackageLineItems' => [['weight' => ['units' => 'KG', 'value' => '10.5']]],
+            ],
+        ], json_decode($requests[1]['body'], true));
+        $this->assertSame('/rate/v1/rates/quotes', $result->target);
+    }
+
+    /**
+     * An invalid rates request never reaches the network, not even the token request
+     * @return void
+     */
+    public function testAnInvalidRatesRequestNeverReachesTheNetworkNotEvenTheTokenRequest(): void
+    {
+        $api = self::api(FedexRateTransitTimes::class, self::$server->port());
+
+        $e = self::thrown(function () use ($api) {
+            $api->getRatesBetween('123456789', ['postalCode' => '38117', 'countryCode' => 'US'], ['postalCode' => '75201', 'countryCode' => 'US'], 'heavy');
+        });
+
+        $this->assertInstanceOf(FedexRateTransitTimesException::class, $e);
         $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
         $this->assertSame([], self::$server->seen());
     }
