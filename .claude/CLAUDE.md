@@ -129,6 +129,7 @@ Creating files outside the project folder for examining what is needed to do or 
 Also executing scripts to examine what must be done or to run tests is allowed, as long as they do not change any file inside the project folder.
 All changes to files in the project folder must be approved first.
 Tools that write caches into the project folder (for example PHPUnit's result cache) may run without approval if, and only if, they do not create or change any other kind of file inside the project folder.
+The commands that rebuild the documentation (clearing `docs/` and running PhpDocumentor) may be executed without approval, but only when I request a rebuild of the documentation.
 
 ## 5. Strict Git restrictions
 

@@ -521,6 +521,86 @@ Search.appendIndex(
             "summary": "Search\u0020criterion\u003A\u0020search\u0020by\u0020\u0028landline\u0029\u0020phone\u0020number",
             "url": "classes/Mariopereira-Fedex-Api-FedexLocationsSearch.html#constant_CRITERION_PHONE_NUMBER"
         },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexPickup",
+            "name": "FedexPickup",
+            "summary": "Pickup\u0020Request\u0020API\u003A\u0020checks\u0020when\u0020a\u0020pickup\u0020is\u0020available,\u0020schedules\u0020a\u0020FedEx\u0020Express\u0020or\u0020Ground\u0020pickup,\u0020and\u0020cancels\u0020it\u0020\u0028pickup\/v1\u0029.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexPickup.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexPickup\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020object",
+            "url": "classes/Mariopereira-Fedex-Api-FedexPickup.html#method___construct"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexPickup\u003A\u003AnewCreateRequest\u0028\u0029",
+            "name": "newCreateRequest",
+            "summary": "Create\u0020an\u0020empty\u0020Create\u0020Pickup\u0020request\u003A\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires,\u0020named\u0020as\u0020in\u0020schemas\/pickup.json.\u0020The\u0020account\nnumber\u0020is\u0020an\u0020array\u0020with\u0020its\u0020value,\u0020the\u0020street\u0020lines\u0020are\u0020an\u0020empty\u0020list\u0020and\u0020the\u0020contact\u0020is\u0020empty.\u0020Any\u0020other\u0020field\u0020of\u0020the\nschema\u0020can\u0020be\u0020added.\u0020Fields\u0020set\u0020to\u0020null\u0020and\u0020empty\u0020lists\u0020are\u0020left\u0020out\u0020when\u0020the\u0020request\u0020is\u0020sent",
+            "url": "classes/Mariopereira-Fedex-Api-FedexPickup.html#method_newCreateRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexPickup\u003A\u003AnewAvailabilityRequest\u0028\u0029",
+            "name": "newAvailabilityRequest",
+            "summary": "Create\u0020an\u0020empty\u0020Check\u0020Pickup\u0020Availability\u0020request\u003A\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires,\u0020named\u0020as\u0020in\u0020schemas\/pickup.json.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexPickup.html#method_newAvailabilityRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexPickup\u003A\u003AnewCancelRequest\u0028\u0029",
+            "name": "newCancelRequest",
+            "summary": "Create\u0020an\u0020empty\u0020Cancel\u0020Pickup\u0020request\u003A\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires,\u0020named\u0020as\u0020in\u0020schemas\/pickup.json.\u0020The\u0020account\nnumber\u0020is\u0020an\u0020array\u0020with\u0020its\u0020value.\u0020Any\u0020other\u0020field\u0020of\u0020the\u0020schema\u0020can\u0020be\u0020added.\u0020Fields\u0020set\u0020to\u0020null\u0020and\u0020empty\u0020lists\u0020are\u0020left\nout\u0020when\u0020the\u0020request\u0020is\u0020sent",
+            "url": "classes/Mariopereira-Fedex-Api-FedexPickup.html#method_newCancelRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexPickup\u003A\u003AcreatePickup\u0028\u0029",
+            "name": "createPickup",
+            "summary": "Schedule\u0020a\u0020pickup.\u0020THIS\u0020ASKS\u0020FEDEX\u0020TO\u0020SEND\u0020A\u0020DRIVER\u003A\u0020it\u0020is\u0020a\u0020real\u0020operation.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexPickup.html#method_createPickup"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexPickup\u003A\u003AcheckPickupAvailability\u0028\u0029",
+            "name": "checkPickupAvailability",
+            "summary": "Check\u0020when\u0020a\u0020pickup\u0020is\u0020available.\u0020The\u0020request\u0020is\u0020checked\u0020before\u0020it\u0020is\u0020sent,\u0020as\u0020in\u0020createPickup\u0028\u0029.\u0020Nothing\u0020is\u0020changed\u0020in\nFedEx,\u0020so\u0020the\u0020request\u0020can\u0020be\u0020repeated",
+            "url": "classes/Mariopereira-Fedex-Api-FedexPickup.html#method_checkPickupAvailability"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexPickup\u003A\u003AcheckAvailabilityAt\u0028\u0029",
+            "name": "checkAvailabilityAt",
+            "summary": "Check\u0020when\u0020a\u0020pickup\u0020is\u0020available\u0020at\u0020an\u0020address",
+            "url": "classes/Mariopereira-Fedex-Api-FedexPickup.html#method_checkAvailabilityAt"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexPickup\u003A\u003AcancelPickup\u0028\u0029",
+            "name": "cancelPickup",
+            "summary": "Cancel\u0020a\u0020pickup.\u0020The\u0020request\u0020is\u0020checked\u0020before\u0020it\u0020is\u0020sent,\u0020as\u0020in\u0020createPickup\u0028\u0029.\u0020The\u0020request\u0020is\u0020never\u0020repeated\u0020by\u0020this\nlibrary,\u0020except\u0020when\u0020FedEx\u0020answers\u0020that\u0020the\u0020token\u0020is\u0020not\u0020valid.\u0020If\u0020an\u0020exception\u0020is\u0020thrown\u0020after\u0020it\u0020was\u0020sent\u0020\u0028a\u0020timeout,\u0020a\nnetwork\u0020failure\u0029,\u0020the\u0020pickup\u0020may\u0020have\u0020been\u0020cancelled\u003A\u0020check\u0020it\u0020before\u0020sending\u0020the\u0020request\u0020again",
+            "url": "classes/Mariopereira-Fedex-Api-FedexPickup.html#method_cancelPickup"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexPickup\u003A\u003AcancelByConfirmation\u0028\u0029",
+            "name": "cancelByConfirmation",
+            "summary": "Cancel\u0020a\u0020pickup\u0020with\u0020the\u0020confirmation\u0020code\u0020that\u0020FedEx\u0020gave\u0020when\u0020it\u0020was\u0020scheduled",
+            "url": "classes/Mariopereira-Fedex-Api-FedexPickup.html#method_cancelByConfirmation"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexPickup\u003A\u003ArefuseReserved\u0028\u0029",
+            "name": "refuseReserved",
+            "summary": "Refuse\u0020the\u0020options\u0020that\u0020a\u0020method\u0020sets\u0020itself",
+            "url": "classes/Mariopereira-Fedex-Api-FedexPickup.html#method_refuseReserved"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexPickup\u003A\u003Asend\u0028\u0029",
+            "name": "send",
+            "summary": "Check\u0020a\u0020request,\u0020send\u0020it\u0020and\u0020check\u0020the\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-FedexPickup.html#method_send"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexPickup\u003A\u003AvalidateAndParse\u0028\u0029",
+            "name": "validateAndParse",
+            "summary": "Validate\u0020the\u0020response\u0020received\u0020from\u0020FedEx.\u0020The\u0020response\u0020is\u0020given\u0020to\u0020the\u0020exception,\u0020so\u0020that\u0020nothing\u0020that\u0020FedEx\u0020answered\u0020is\nlost",
+            "url": "classes/Mariopereira-Fedex-Api-FedexPickup.html#method_validateAndParse"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexPickup\u003A\u003AENDPOINT_CREATE",
+            "name": "ENDPOINT_CREATE",
+            "summary": "Create\u0020Pickup\u0020endpoint\u0020\u0028POST\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexPickup.html#constant_ENDPOINT_CREATE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexPickup\u003A\u003AENDPOINT_AVAILABILITY",
+            "name": "ENDPOINT_AVAILABILITY",
+            "summary": "Check\u0020Pickup\u0020Availability\u0020endpoint\u0020\u0028POST\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexPickup.html#constant_ENDPOINT_AVAILABILITY"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexPickup\u003A\u003AENDPOINT_CANCEL",
+            "name": "ENDPOINT_CANCEL",
+            "summary": "Cancel\u0020Pickup\u0020endpoint\u0020\u0028PUT\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexPickup.html#constant_ENDPOINT_CANCEL"
+        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexPostalCodeValidation",
             "name": "FedexPostalCodeValidation",
             "summary": "Postal\u0020Code\u0020Validation\u0020API\u003A\u0020validates\u0020postal\u0020codes\u0020and\u0020service\u0020commitments\u0020\u0028country\/v1\/postal\/validate\u0029",
@@ -1070,6 +1150,46 @@ Search.appendIndex(
             "name": "RESPONSE",
             "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020response",
             "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexLocationsSearchSchemas.html#constant_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexPickupSchemas",
+            "name": "FedexPickupSchemas",
+            "summary": "Definitions\u0020of\u0020the\u0020requests\u0020and\u0020responses\u0020of\u0020the\u0020Pickup\u0020Request\u0020API\u0020operations\u0020that\u0020FedexPickup\u0020implements,\u0020generated\u0020from\nschemas\/pickup.json\u0020and\u0020written\u0020for\u0020SchemaValidator",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexPickupSchemas.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexPickupSchemas\u003A\u003Adefinitions\u0028\u0029",
+            "name": "definitions",
+            "summary": "Get\u0020the\u0020definitions\u0020of\u0020all\u0020the\u0020requests\u0020and\u0020responses.\u0020The\u0020names\u0020of\u0020the\u0020definitions,\u0020and\u0020of\u0020their\u0020fields,\u0020are\u0020the\u0020ones\u0020of\nschemas\/pickup.json,\u0020with\u0020these\u0020differences\u003A\n\u0020\u002D\u0020what\u0020the\u0020file\u0020writes\u0020as\u0020an\u0020allOf\u0020of\u0020a\u0020definition\u0020and\u0020an\u0020overlay\u0020that\u0020adds\u0020required\u0020keys\u0020\u0028PickupAddress\u0020and\n\u0020\u0020\u0020PickupLocationParty\u0029\u0020is\u0020a\u0020definition\u0020with\u0020the\u0020fields\u0020of\u0020the\u0020base\u0020and\u0020the\u0020required\u0020keys\u0020of\u0020both.\u0020The\u0020address\u0020and\u0020the\n\u0020\u0020\u0020contact\u0020of\u0020PickupLocationParty\u0020are\u0020tightened\u0020by\u0020the\u0020overlay,\u0020and\u0020are\u0020definitions\u0020of\u0020their\u0020own,\u0020with\u0020the\u0020suffix\u0020_overlay\n\u0020\u002D\u0020the\u0020minimum\u0020length\u0020of\u0020the\u0020street\u0020lines\u0020of\u0020an\u0020address\u0020is\u0020not\u0020checked\u003A\u0020FedEx\u0020decides\n\u0020\u002D\u0020the\u0020postal\u0020code\u0020of\u0020PickupAddress\u0020and\u0020the\u0020state\u0020or\u0020province\u0020code\u0020of\u0020PickupLocationParty_address_overlay\u0020are\u0020optional,\n\u0020\u0020\u0020although\u0020the\u0020file\u0020requires\u0020them\u003A\u0020the\u0020minimum\u0020fields\u0020of\u0020an\u0020address\u0020vary\u0020among\u0020countries,\u0020and\u0020the\u0020examples\u0020of\u0020FedEx\u0020leave\n\u0020\u0020\u0020them\u0020out\u0020for\u0020some\u0020countries.\u0020FedEx\u0020decides\n\u0020\u002D\u0020PickupScheduleOption.defaultLatestTimeOptions\u0020has\u0020no\u0020type\u0020in\u0020the\u0020file\u003A\u0020it\u0020accepts\u0020any\u0020value\n\u0020\u002D\u0020Full_Schema_Pickup_Availability.shipmentAttributes\u0020is\u0020an\u0020object\u0020in\u0020the\u0020file,\u0020and\u0020two\u0020of\u0020its\u0020sample\u0020payloads\u0020send\u0020a\u0020list\n\u0020\u0020\u0020with\u0020one\u0020object\u003A\u0020it\u0020accepts\u0020an\u0020object,\u0020or\u0020a\u0020list\u0020\u0028the\u0020content\u0020of\u0020the\u0020list\u0020is\u0020not\u0020checked,\u0020FedEx\u0020decides\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexPickupSchemas.html#method_definitions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexPickupSchemas\u003A\u003ACREATE_REQUEST",
+            "name": "CREATE_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Create\u0020Pickup\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexPickupSchemas.html#constant_CREATE_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexPickupSchemas\u003A\u003ACREATE_RESPONSE",
+            "name": "CREATE_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Create\u0020Pickup\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexPickupSchemas.html#constant_CREATE_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexPickupSchemas\u003A\u003AAVAILABILITY_REQUEST",
+            "name": "AVAILABILITY_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Check\u0020Pickup\u0020Availability\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexPickupSchemas.html#constant_AVAILABILITY_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexPickupSchemas\u003A\u003AAVAILABILITY_RESPONSE",
+            "name": "AVAILABILITY_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Check\u0020Pickup\u0020Availability\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexPickupSchemas.html#constant_AVAILABILITY_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexPickupSchemas\u003A\u003ACANCEL_REQUEST",
+            "name": "CANCEL_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Cancel\u0020Pickup\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexPickupSchemas.html#constant_CANCEL_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexPickupSchemas\u003A\u003ACANCEL_RESPONSE",
+            "name": "CANCEL_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Cancel\u0020Pickup\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexPickupSchemas.html#constant_CANCEL_RESPONSE"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexPostalCodeValidationSchemas",
             "name": "FedexPostalCodeValidationSchemas",
@@ -1695,6 +1815,16 @@ Search.appendIndex(
             "name": "__construct",
             "summary": "Initialize\u0020the\u0020exception",
             "url": "classes/Mariopereira-Fedex-Exception-FedexLocationsSearchException.html#method___construct"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexPickupException",
+            "name": "FedexPickupException",
+            "summary": "Exception\u0020thrown\u0020by\u0020the\u0020Pickup\u0020Request\u0020API",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexPickupException.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexPickupException\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020exception",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexPickupException.html#method___construct"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexPostalCodeValidationException",
             "name": "FedexPostalCodeValidationException",
