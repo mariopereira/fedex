@@ -16,6 +16,7 @@ A PHP interface to the FedEx APIs.
 | Estimated Duty and Tax: Duties Taxes Estimates (`/dutytax/v1/estimate`) | `FedexDutyAndTax` | Implemented. Checked against the FedEx schema in `schemas/`, never called against the live API |
 | Service Availability: Retrieve Services and Transit Times (`/availability/v1/transittimes`), Retrieve Services and Packaging Options (`/availability/v1/packageandserviceoptions`) and Retrieve Special Service Options (`/availability/v1/specialserviceoptions`) | `FedexServiceAvailability` | Implemented. Checked against the FedEx schema in `schemas/` (a number may also be given as a text that is a number, as the samples of the schema do), never called against the live API |
 | Rates and Transit Times: Retrieve Rates and Transit Times (`/rate/v1/rates/quotes`) | `FedexRateTransitTimes` | Implemented. Checked against the FedEx schema in `schemas/` (a number may also be a text that is a number and a postal code an integer, and keys that the schema does not define are accepted, because the samples of the schema do all that), never called against the live API |
+| Pickup: Create Pickup (`/pickup/v1/pickups`), Check Pickup Availability (`/pickup/v1/pickups/availabilities`) and Cancel Pickup (`PUT /pickup/v1/pickups/cancel`) | `FedexPickup` | Implemented. Checked against the FedEx schema in `schemas/`, never called against the live API |
 
 ## Requirements
 
@@ -489,6 +490,44 @@ $result = $rates->getRates($request);
 * The response is checked against the schema too, and an invalid response throws a `FedexRateTransitTimesException` with the response in `getData()`. A field that FedEx adds is accepted. The schema has no sample of a response.
 * Never called against the live FedEx API: the schema is the only reference.
 
+### Pickup
+
+`FedexPickup` checks when FedEx can pick up a package, schedules a FedEx Express or Ground pickup, and cancels it (Pickup Request API, `schemas/pickup.json`).
+
+```php
+use Mariopereira\Fedex\Api\FedexPickup;
+
+$pickup = new FedexPickup($auth);
+
+// when can FedEx come? (this only asks, and can be repeated)
+$result = $pickup->checkAvailabilityAt(['postalCode' => '38117', 'countryCode' => 'US'], ['FDXE', 'FDXG']);
+
+// schedule a pickup
+$request = FedexPickup::newCreateRequest();
+$request['associatedAccountNumber']['value'] = '123456789';
+$request['originDetail']['pickupLocation']['contact'] = ['personName' => 'John Taylor', 'phoneNumber' => '9013577890'];
+$request['originDetail']['pickupLocation']['address'] = [
+    'streetLines' => ['10 FedEx Parkway'], 'city' => 'Beverly Hills', 'stateOrProvinceCode' => 'CA', 'postalCode' => '90210', 'countryCode' => 'US',
+];
+$request['originDetail']['readyDateTimestamp'] = '2026-11-03T09:00:00Z';
+$request['originDetail']['customerCloseTime'] = '17:00:00';
+$request['carrierCode'] = 'FDXE';
+
+$result = $pickup->createPickup($request);
+$code = $result->output->pickupConfirmationCode;
+
+// cancel it with the confirmation code
+$pickup->cancelByConfirmation('123456789', $code, '2026-11-03');
+```
+
+* **`createPickup()` asks FedEx to send a driver, and `cancelPickup()` cancels one.** They are never retried (see [Retries](#retries)), except when FedEx answers 401 and the request is sent again with a fresh token, because repeating them could schedule or cancel twice. If one of them fails after it was sent (a timeout, a network failure, or a response that is not valid), the exception says so: the pickup may or may not have been scheduled, so check it before trying again. Checking the availability changes nothing, so it is retried like the other read-only operations.
+* The request is checked before it is sent, as in the other APIs (see [Request validation](#request-validation)): the types and the allowed values of the fields are the ones of the schema, and the required fields must be present. Nothing is sent when the request is not valid. The required fields are the account number, the carrier (`FDXE` or `FDXG`) and the origin detail for a pickup; the pickup address, the carriers, the country relationship and the request type for the availability; and the confirmation code, the date and the account number to cancel.
+* `shipmentAttributes` of the availability is an object in the schema, but two of its samples send a list with one object: both are accepted (the content of the list is not checked).
+* The minimum length of the street lines is not checked, and the state of the pickup location and the postal code of the address of the availability are optional, although the schema requires them, because the minimum fields of an address vary among countries (the examples of FedEx leave them out for some countries): FedEx decides.
+* The response is checked against the schema too, and an invalid response throws a `FedexPickupException` with the response in `getData()`. A field that FedEx adds is accepted. The schema has no sample of a response.
+* The eight samples of the schema are all accepted by these checks.
+* Never called against the live FedEx API: the schema is the only reference.
+
 ### Request validation
 
 Every API checks its request before sending it, against the schema of FedEx, and sends nothing when the request is not valid. FedEx's own examples contradict its schemas in many places, so the checks of the requests are looser than the schemas, in the same way for every API:
@@ -534,7 +573,7 @@ $locations = new FedexLocationsSearch($auth, 'en_US', 30, 10, $client);
 
 * A request is retried when FedEx answers 429, 503 or 504, or when it could not be completed (network failure, timeout, ...). Any other failure is thrown at once.
 * The wait before the attempt *n* is a random number of milliseconds between 0 and `min(longest delay, base delay * 2^(n-1))`. When the attempts are over, the last failure is thrown as usual.
-* Only the operations that do not change data in FedEx are retried: postal code validation, locations search, address validation, `FedexShip::validate()` and the async results of `FedexShip`. `create()`, `cancel()`, `createTag()` and `cancelTag()` are never retried, because repeating them could create or cancel a shipment twice.
+* Only the operations that do not change data in FedEx are retried: postal code validation, locations search, address validation, the availability of a pickup (`FedexPickup::checkPickupAvailability()`), `FedexShip::validate()` and the async results of `FedexShip`. `create()`, `cancel()`, `createTag()` and `cancelTag()` of `FedexShip`, and `createPickup()` and `cancelPickup()` of `FedexPickup`, are never retried, because repeating them could create or cancel a shipment, a tag or a pickup twice.
 * When the failure comes with a valid `Retry-After` header (a number of seconds, or an HTTP date), the wait is the longer of the header and the backoff, so that a retry is never sent before FedEx asked. If the header asks for more than the fourth argument of `setRetryPolicy()` (30 seconds by default), the retries stop and the failure is thrown, instead of holding the request for that long. With `0` the header is ignored and only the backoff is used. A header that is not valid is ignored. This is the behaviour of the HTTP standard (RFC 9110): the FedEx schemas that came with the package do not mention the header, so it has not been confirmed that FedEx sends it.
 * The failure keeps the header, so that your code can use it too: `FedexClientException::getRetryAfter()` gives the seconds that FedEx asked to wait, or `null`.
 * To retry your own calls to `FedexClient::request()`, pass `true` as its last argument, and only for requests that are safe to repeat.

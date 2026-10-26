@@ -69,6 +69,8 @@ This rule applies to every project file, including:
 - Scripts and automation.
 - Generated files and caches within the project.
 
+The only files that can be created and executed without permission are the ones needed to examine what changes need to be made or to run tests on generated code.
+
 Do not interpret my request to implement a feature, fix a bug, or improve the code as permission to modify files.
 
 A request to investigate, review, analyze, explain, or propose a solution authorizes investigation only, not modification.
@@ -123,6 +125,10 @@ If an additional file change becomes necessary, stop and obtain approval before 
 - If you accidentally modify an unapproved file, stop immediately and report exactly what happened. Do not attempt an automatic rollback or further modification.
 
 Reading files and presenting proposed changes are allowed without modification approval.
+Creating files outside the project folder for examining what is needed to do or to run tests is allowed, if they don't change anything inside the project folder.
+Also executing scripts to examine what must be done or to run tests is allowed, as long as they do not change any file inside the project folder.
+All changes to files in the project folder must be approved first.
+Tools that write caches into the project folder (for example PHPUnit's result cache) may run without approval if, and only if, they do not create or change any other kind of file inside the project folder.
 
 ## 5. Strict Git restrictions
 

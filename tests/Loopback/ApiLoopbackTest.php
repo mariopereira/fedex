@@ -13,6 +13,7 @@ use Mariopereira\Fedex\Api\FedexBasicTracking;
 use Mariopereira\Fedex\Api\FedexConsolidation;
 use Mariopereira\Fedex\Api\FedexDutyAndTax;
 use Mariopereira\Fedex\Api\FedexLocationsSearch;
+use Mariopereira\Fedex\Api\FedexPickup;
 use Mariopereira\Fedex\Api\FedexRateTransitTimes;
 use Mariopereira\Fedex\Api\FedexServiceAvailability;
 use Mariopereira\Fedex\Api\FedexShip;
@@ -24,6 +25,7 @@ use Mariopereira\Fedex\Exception\FedexDutyAndTaxException;
 use Mariopereira\Fedex\Exception\FedexClientException;
 use Mariopereira\Fedex\Exception\FedexException;
 use Mariopereira\Fedex\Exception\FedexLocationsSearchException;
+use Mariopereira\Fedex\Exception\FedexPickupException;
 use Mariopereira\Fedex\Exception\FedexRateTransitTimesException;
 use Mariopereira\Fedex\Exception\FedexServiceAvailabilityException;
 use Mariopereira\Fedex\Exception\FedexShipException;
@@ -952,6 +954,72 @@ final class ApiLoopbackTest extends LoopbackTestCase
         });
 
         $this->assertInstanceOf(FedexRateTransitTimesException::class, $e);
+        $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
+        $this->assertSame([], self::$server->seen());
+    }
+
+    // ---------------------------------------------------------------- pickup
+
+    /**
+     * The three pickup operations on the wire have the method, the path, the body, the length and the content type
+     * @return void
+     */
+    public function testThePickupOperationsOnTheWireHaveTheMethodThePathTheBodyTheLengthAndTheContentType(): void
+    {
+        $us = ['postalCode' => '38117', 'countryCode' => 'US'];
+        $calls = [
+            'POST /pickup/v1/pickups/availabilities' => function (FedexPickup $api) use ($us) {
+                return $api->checkAvailabilityAt($us, ['FDXE']);
+            },
+            'PUT /pickup/v1/pickups/cancel' => function (FedexPickup $api) {
+                return $api->cancelByConfirmation('123456789', '0123456789', '2026-11-03');
+            },
+            'POST /pickup/v1/pickups' => function (FedexPickup $api) use ($us) {
+                $request = FedexPickup::newCreateRequest();
+                $request['associatedAccountNumber']['value'] = '123456789';
+                $request['originDetail']['pickupLocation']['contact'] = ['personName' => 'John Taylor'];
+                $request['originDetail']['pickupLocation']['address'] = $us + ['streetLines' => ['1 Main St'], 'city' => 'Memphis', 'stateOrProvinceCode' => 'TN'];
+                $request['originDetail']['readyDateTimestamp'] = '2026-11-03T09:00:00Z';
+                $request['originDetail']['customerCloseTime'] = '17:00:00';
+                $request['carrierCode'] = 'FDXE';
+
+                return $api->createPickup($request);
+            },
+        ];
+
+        foreach ($calls as $line => $call) {
+            $api = self::api(FedexPickup::class, self::$server->port());
+
+            $result = $call($api);
+            $requests = self::$server->requests();
+            $request = end($requests);
+            $headers = LoopbackServer::headerLines($request);
+            [$verb, $path] = explode(' ', $line);
+
+            $this->assertSame($path, $result->target, $line);
+            $this->assertSame($verb, $result->method, $line);
+            $this->assertContains('Authorization: Bearer TOK', $headers, $line);
+            $this->assertContains('X-locale: pt_PT', $headers, $line);
+            $this->assertContains('Content-Type: application/json', $headers, $line);
+            $this->assertNotEmpty(preg_grep(self::UUID_HEADER, $headers), $line);
+            $this->assertContains('Content-Length: ' . strlen($request['body']), $headers, $line);
+            $this->assertNotSame([], json_decode($request['body'], true), $line);
+        }
+    }
+
+    /**
+     * An invalid pickup request never reaches the network, not even the token request
+     * @return void
+     */
+    public function testAnInvalidPickupRequestNeverReachesTheNetworkNotEvenTheTokenRequest(): void
+    {
+        $api = self::api(FedexPickup::class, self::$server->port());
+
+        $e = self::thrown(function () use ($api) {
+            $api->checkAvailabilityAt(['postalCode' => '38117', 'countryCode' => 'US'], ['UPS']);
+        });
+
+        $this->assertInstanceOf(FedexPickupException::class, $e);
         $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
         $this->assertSame([], self::$server->seen());
     }
