@@ -132,13 +132,16 @@ class FedexClient
 
     /**
      * Generate the url to call
-     * @param string $path Path to call
+     * @param string $path Path to call, or an absolute url (https://...) for an API that has its own host, which is used as it is
      * @param array $query Query parameters
      * @return string
      */
     protected function buildUrl(string $path, array $query) : string
     {
-        $url = FedexUtils::getUrl($this->auth->inSandbox()) . ltrim($path, '/');
+        // an absolute url (an API with its own host, as the document upload) is used as it is
+        $url = (strpos($path, 'https://') === 0)
+            ? $path
+            : FedexUtils::getUrl($this->auth->inSandbox()) . ltrim($path, '/');
 
         if (count($query)) {
             $url .= '?' . \http_build_query($query);
@@ -211,6 +214,126 @@ class FedexClient
             $headers
         );
 
+        return $this->dispatch($method, $url, $headers, $postFields, $customerTransactionId, $safeToRetry);
+    }
+
+    /**
+     * Send a multipart/form-data request (text fields and files) to FedEx's API, as the document upload API needs
+     * @param string $method GET, POST, ...
+     * @param string $path Endpoint to call, or an absolute url (https://...)
+     * @param array $fields Text parts: name => value
+     * @param array $files File parts: a list of ['name' => part name, 'filename' => file name, 'contentType' => media type,
+     * 'content' => the bytes]
+     * @param array $headers Headers to send
+     * @param string|null $customerTransactionId Customer transaction id to send
+     * @param bool $safeToRetry True when repeating the request cannot do any harm (it does not change data in FedEx),
+     * so that it may be retried according to setRetryPolicy()
+     * @return mixed
+     * @throws FedexClientException When a part is not valid, or the request fails
+     * @throws FedexAuthException
+     */
+    public function requestMultipart(
+        string $method,
+        string $path,
+        array $fields,
+        array $files,
+        array $headers = [],
+        ?string $customerTransactionId = null,
+        bool $safeToRetry = false
+    )
+    {
+        $boundary = '----FedexBoundary' . bin2hex(random_bytes(16));
+        $body = self::multipartBody($boundary, $fields, $files);
+        $headers = array_merge(
+            ['Content-Type' => 'multipart/form-data; boundary=' . $boundary],
+            $headers
+        );
+
+        return $this->dispatch($method, $this->buildUrl($path, []), $headers, $body, $customerTransactionId, $safeToRetry);
+    }
+
+    /**
+     * Build a multipart/form-data body (RFC 7578): the text fields first, then the files
+     * @param string $boundary The boundary, which must not appear in the content
+     * @param array $fields Text parts: name => value
+     * @param array $files File parts: a list of ['name' => part name, 'filename' => file name, 'contentType' => media type,
+     * 'content' => the bytes]
+     * @return string
+     * @throws FedexClientException When a name, a file name or a media type is not valid (empty, or with a quote, a carriage
+     * return or a line feed, which would break the headers of the part), or a file lacks one of its keys
+     */
+    public static function multipartBody(string $boundary, array $fields, array $files) : string
+    {
+        $body = '';
+
+        foreach ($fields as $name => $value) {
+            self::checkPartText('name', (string) $name);
+            $body .= '--' . $boundary . "\r\n"
+                . 'Content-Disposition: form-data; name="' . $name . '"' . "\r\n\r\n"
+                . $value . "\r\n";
+        }
+
+        foreach ($files as $file) {
+            foreach (['name', 'filename', 'contentType', 'content'] as $key) {
+                if (!is_array($file) || !array_key_exists($key, $file) || !is_string($file[$key])) {
+                    throw new FedexClientException(
+                        "Each file of a multipart request must have the text '{$key}'",
+                        FedexException::EC_BAD_PARAMETER
+                    );
+                }
+            }
+
+            self::checkPartText('name', $file['name']);
+            self::checkPartText('filename', $file['filename']);
+            self::checkPartText('contentType', $file['contentType']);
+            $body .= '--' . $boundary . "\r\n"
+                . 'Content-Disposition: form-data; name="' . $file['name'] . '"; filename="' . $file['filename'] . '"' . "\r\n"
+                . 'Content-Type: ' . $file['contentType'] . "\r\n\r\n"
+                . $file['content'] . "\r\n";
+        }
+
+        return $body . '--' . $boundary . "--\r\n";
+    }
+
+    /**
+     * Check a text that goes into the headers of a part of a multipart body
+     * @param string $what What the text is, for the message
+     * @param string $text The text
+     * @return void
+     * @throws FedexClientException When the text is empty or has a quote, a carriage return or a line feed
+     */
+    protected static function checkPartText(string $what, string $text) : void
+    {
+        if ($text === '' || strpbrk($text, "\"\r\n") !== false) {
+            throw new FedexClientException(
+                "The {$what} of a part of a multipart request must not be empty, nor have a quote or a line break",
+                FedexException::EC_BAD_PARAMETER
+            );
+        }
+    }
+
+    /**
+     * Send a request that is ready (the url, the headers and the body), retrying once on auth failure, and with the retry
+     * policy when it is safe to repeat
+     * @param string $method HTTP method
+     * @param string $url Url to call
+     * @param array $headers Headers to send
+     * @param string|null $postFields The body, null if none
+     * @param string|null $customerTransactionId Customer transaction id to send
+     * @param bool $safeToRetry True when repeating the request cannot do any harm
+     * @return mixed
+     * @throws FedexClientException
+     * @throws FedexAuthException
+     */
+    protected function dispatch(
+        string $method,
+        string $url,
+        array $headers,
+        ?string $postFields,
+        ?string $customerTransactionId,
+        bool $safeToRetry
+    )
+    {
         $call = function () use ($method, $url, $headers, $postFields, $customerTransactionId) {
             return $this->retryOnAuth(function (bool $refresh) use ($method, $url, $headers, $postFields, $customerTransactionId) {
                 return $this->perform($method, $url, $headers, $postFields, $refresh, $customerTransactionId);

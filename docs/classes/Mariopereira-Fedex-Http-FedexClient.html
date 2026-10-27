@@ -216,11 +216,25 @@ the Retry-After header asks</p>
 <dd>Initialize the object</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_multipartBody">multipartBody()</a>
+    <span>
+                                &nbsp;: string    </span>
+</dt>
+<dd>Build a multipart/form-data body (RFC 7578): the text fields first, then the files</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_request">request()</a>
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
 <dd>Send a JSON request to FedEx&#039;s API</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_requestMultipart">requestMultipart()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Send a multipart/form-data request (text fields and files) to FedEx&#039;s API, as the document upload API needs</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_setRetryHooks">setRetryHooks()</a>
@@ -243,6 +257,21 @@ backoff can be tested without waiting</dd>
                                 &nbsp;: string    </span>
 </dt>
 <dd>Generate the url to call</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -protected">
+    <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_checkPartText">checkPartText()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Check a text that goes into the headers of a part of a multipart body</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -protected">
+    <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_dispatch">dispatch()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Send a request that is ready (the url, the headers and the body), retrying once on auth failure, and with the retry
+policy when it is safe to repeat</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_parse">parse()</a>
@@ -601,6 +630,93 @@ backoff can be tested without waiting</dd>
         class="phpdocumentor-element
             -method
             -public
+                                    -static                    "
+>
+    <h4 class="phpdocumentor-element__name" id="method_multipartBody">
+        multipartBody()
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_multipartBody" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">265</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Build a multipart/form-data body (RFC 7578): the text fields first, then the files</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">multipartBody</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$boundary</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$fields</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$files</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$boundary</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The boundary, which must not appear in the content</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$fields</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Text parts: name =&gt; value</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$files</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>File parts: a list of ['name' =&gt; part name, 'filename' =&gt; file name, 'contentType' =&gt; media type,
+'content' =&gt; the bytes]</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_multipartBody_tags">
+        Tags
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_multipartBody_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">throws</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><a href="classes/Mariopereira-Fedex-Exception-FedexClientException.html"><abbr title="\Mariopereira\Fedex\Exception\FedexClientException">FedexClientException</abbr></a></span>
+                                                                                        <section class="phpdocumentor-description"><p>When a name, a file name or a media type is not valid (empty, or with a quote, a carriage
+return or a line feed, which would break the headers of the part), or a file lacks one of its keys</p>
+</section>
+
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
                                                         "
 >
     <h4 class="phpdocumentor-element__name" id="method_request">
@@ -611,7 +727,7 @@ backoff can be tested without waiting</dd>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">185</span>
+    <span class="phpdocumentor-element-found-in__line">188</span>
 
     </aside>
 
@@ -706,6 +822,129 @@ so that it may be retried according to setRetryPolicy()</p>
                             <dd class="phpdocumentor-tag-list__definition">
                                                                 <span class="phpdocumentor-tag-link"><a href="classes/Mariopereira-Fedex-Exception-FedexClientException.html"><abbr title="\Mariopereira\Fedex\Exception\FedexClientException">FedexClientException</abbr></a></span>
                                                                                     
+                                    </dd>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><a href="classes/Mariopereira-Fedex-Exception-FedexAuthException.html"><abbr title="\Mariopereira\Fedex\Exception\FedexAuthException">FedexAuthException</abbr></a></span>
+                                                                                    
+                                    </dd>
+                        </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_requestMultipart">
+        requestMultipart()
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_requestMultipart" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">235</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Send a multipart/form-data request (text fields and files) to FedEx&#039;s API, as the document upload API needs</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">requestMultipart</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$method</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$path</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$fields</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$files</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$headers</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">[]</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">string|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$customerTransactionId</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">bool&nbsp;</span><span class="phpdocumentor-signature__argument__name">$safeToRetry</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">false</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$method</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>GET, POST, ...</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$path</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Endpoint to call, or an absolute url (https://...)</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$fields</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Text parts: name =&gt; value</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$files</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>File parts: a list of ['name' =&gt; part name, 'filename' =&gt; file name, 'contentType' =&gt; media type,
+'content' =&gt; the bytes]</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$headers</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">[]</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Headers to send</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$customerTransactionId</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string|null</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">null</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Customer transaction id to send</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$safeToRetry</span>
+                : <span class="phpdocumentor-argument-list__argument__type">bool</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">false</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>True when repeating the request cannot do any harm (it does not change data in FedEx),
+so that it may be retried according to setRetryPolicy()</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_requestMultipart_tags">
+        Tags
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_requestMultipart_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">throws</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><a href="classes/Mariopereira-Fedex-Exception-FedexClientException.html"><abbr title="\Mariopereira\Fedex\Exception\FedexClientException">FedexClientException</abbr></a></span>
+                                                                                        <section class="phpdocumentor-description"><p>When a part is not valid, or the request fails</p>
+</section>
+
                                     </dd>
                             <dd class="phpdocumentor-tag-list__definition">
                                                                 <span class="phpdocumentor-tag-link"><a href="classes/Mariopereira-Fedex-Exception-FedexAuthException.html"><abbr title="\Mariopereira\Fedex\Exception\FedexAuthException">FedexAuthException</abbr></a></span>
@@ -916,7 +1155,7 @@ header and uses only the backoff</p>
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Path to call</p>
+                    <section class="phpdocumentor-description"><p>Path to call, or an absolute url (https://...) for an API that has its own host, which is used as it is</p>
 </section>
 
             </dd>
@@ -945,6 +1184,189 @@ header and uses only the backoff</p>
         class="phpdocumentor-element
             -method
             -protected
+                                    -static                    "
+>
+    <h4 class="phpdocumentor-element__name" id="method_checkPartText">
+        checkPartText()
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_checkPartText" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">305</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Check a text that goes into the headers of a part of a multipart body</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">checkPartText</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$what</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$text</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$what</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>What the text is, for the message</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$text</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The text</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_checkPartText_tags">
+        Tags
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_checkPartText_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">throws</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><a href="classes/Mariopereira-Fedex-Exception-FedexClientException.html"><abbr title="\Mariopereira\Fedex\Exception\FedexClientException">FedexClientException</abbr></a></span>
+                                                                                        <section class="phpdocumentor-description"><p>When the text is empty or has a quote, a carriage return or a line feed</p>
+</section>
+
+                                    </dd>
+                        </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -protected
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_dispatch">
+        dispatch()
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_dispatch" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">328</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Send a request that is ready (the url, the headers and the body), retrying once on auth failure, and with the retry
+policy when it is safe to repeat</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+                    <span class="phpdocumentor-signature__name">dispatch</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$method</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$url</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$headers</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$postFields</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$customerTransactionId</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">bool&nbsp;</span><span class="phpdocumentor-signature__argument__name">$safeToRetry</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$method</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>HTTP method</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$url</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Url to call</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$headers</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Headers to send</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$postFields</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string|null</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The body, null if none</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$customerTransactionId</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string|null</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Customer transaction id to send</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$safeToRetry</span>
+                : <span class="phpdocumentor-argument-list__argument__type">bool</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>True when repeating the request cannot do any harm</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_dispatch_tags">
+        Tags
+        <a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_dispatch_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">throws</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><a href="classes/Mariopereira-Fedex-Exception-FedexClientException.html"><abbr title="\Mariopereira\Fedex\Exception\FedexClientException">FedexClientException</abbr></a></span>
+                                                                                    
+                                    </dd>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><a href="classes/Mariopereira-Fedex-Exception-FedexAuthException.html"><abbr title="\Mariopereira\Fedex\Exception\FedexAuthException">FedexAuthException</abbr></a></span>
+                                                                                    
+                                    </dd>
+                        </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -protected
                                                         "
 >
     <h4 class="phpdocumentor-element__name" id="method_parse">
@@ -955,7 +1377,7 @@ header and uses only the backoff</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">301</span>
+    <span class="phpdocumentor-element-found-in__line">424</span>
 
     </aside>
 
@@ -1035,7 +1457,7 @@ exception of a response that is not a success</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">239</span>
+    <span class="phpdocumentor-element-found-in__line">362</span>
 
     </aside>
 
@@ -1145,7 +1567,7 @@ exception of a response that is not a success</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Http/FedexClient.php"><a href="files/src-http-fedexclient.html"><abbr title="src/Http/FedexClient.php">FedexClient.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">156</span>
+    <span class="phpdocumentor-element-found-in__line">159</span>
 
     </aside>
 
@@ -1227,10 +1649,14 @@ exception of a response that is not a success</p>
             <li>
                 <ul class="phpdocumentor-list -clean">
                                             <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method___construct">__construct()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_multipartBody">multipartBody()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_request">request()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_requestMultipart">requestMultipart()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_setRetryHooks">setRetryHooks()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_setRetryPolicy">setRetryPolicy()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_buildUrl">buildUrl()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_checkPartText">checkPartText()</a></li>
+                                            <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_dispatch">dispatch()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_parse">parse()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_perform">perform()</a></li>
                                             <li class=""><a href="classes/Mariopereira-Fedex-Http-FedexClient.html#method_retryOnAuth">retryOnAuth()</a></li>

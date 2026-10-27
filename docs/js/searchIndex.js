@@ -446,6 +446,151 @@ Search.appendIndex(
             "summary": "Duties\u0020Taxes\u0020Estimates\u0020endpoint\u0020\u0028POST\u0029",
             "url": "classes/Mariopereira-Fedex-Api-FedexDutyAndTax.html#constant_ENDPOINT"
         },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexEndOfDayClose",
+            "name": "FedexEndOfDayClose",
+            "summary": "Ship\u0020End\u0020of\u0020Day\u0020Close\u0020API\u003A\u0020closes\u0020the\u0020FedEx\u0020Ground\u0020shipments\u0020of\u0020the\u0020day,\u0020which\u0020returns\u0020the\u0020Ground\u0020Manifest\u0020that\u0020has\u0020to\u0020be\nprinted\u0020before\u0020the\u0020shipments\u0020are\u0020tendered\u0020to\u0020FedEx,\u0020and\u0020reprints\u0020the\u0020reports\u0020of\u0020a\u0020close\u0020\u0028ship\/v1\/endofday\u0029.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexEndOfDayClose.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexEndOfDayClose\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020object",
+            "url": "classes/Mariopereira-Fedex-Api-FedexEndOfDayClose.html#method___construct"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexEndOfDayClose\u003A\u003AnewCloseRequest\u0028\u0029",
+            "name": "newCloseRequest",
+            "summary": "Create\u0020a\u0020Ground\u0020End\u0020of\u0020Day\u0020Close\u0020request\u0020with\u0020the\u0020key\u0020inputs\u0020that\u0020the\u0020documentation\u0020lists\u003A\u0020the\u0020request\u0020type\u0020\u0028GCDR\u0029\u0020and\u0020the\nground\u0020service\u0020category\u0020\u0028GROUND\u0029\u0020are\u0020filled\u0020in,\u0020the\u0020account\u0020number\u0020and\u0020the\u0020close\u0020date\u0020\u0028YYYY\u002DMM\u002DDD\u0029\u0020are\u0020to\u0020be\u0020filled\u0020in.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexEndOfDayClose.html#method_newCloseRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexEndOfDayClose\u003A\u003AnewReprintRequest\u0028\u0029",
+            "name": "newReprintRequest",
+            "summary": "Create\u0020a\u0020Reprint\u0020End\u0020of\u0020the\u0020day\u0020request\u0020with\u0020the\u0020key\u0020inputs\u0020that\u0020the\u0020documentation\u0020lists\u003A\u0020the\u0020request\u0020type\u0020\u0028RGCDR\u0029,\u0020the\nground\u0020service\u0020category\u0020\u0028GROUND\u0029\u0020and\u0020the\u0020reprint\u0020option\u0020\u0028BY_SHIP_DATE\u0029\u0020are\u0020filled\u0020in,\u0020the\u0020account\u0020number\u0020and\u0020the\u0020close\u0020date\n\u0028YYYY\u002DMM\u002DDD\u0029\u0020are\u0020to\u0020be\u0020filled\u0020in.\u0020To\u0020reprint\u0020by\u0020tracking\u0020number,\u0020set\u0020reprintOption\u0020to\u0020BY_TRACKING_NUMBER\u0020and\u0020add\ntrackingNumber.\u0020The\u0020schema\u0020requires\u0020none\u0020of\u0020them.\u0020Fields\u0020set\u0020to\u0020null\u0020and\u0020empty\u0020lists\u0020are\u0020left\u0020out\u0020when\u0020the\u0020request\u0020is\u0020sent",
+            "url": "classes/Mariopereira-Fedex-Api-FedexEndOfDayClose.html#method_newReprintRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexEndOfDayClose\u003A\u003AcloseGround\u0028\u0029",
+            "name": "closeGround",
+            "summary": "Close\u0020the\u0020FedEx\u0020Ground\u0020shipments\u0020of\u0020the\u0020day.\u0020THIS\u0020CLOSES\u0020THE\u0020SHIPMENTS\u0020IN\u0020FEDEX\u003A\u0020it\u0020is\u0020a\u0020real\u0020operation.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexEndOfDayClose.html#method_closeGround"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexEndOfDayClose\u003A\u003AcloseGroundFor\u0028\u0029",
+            "name": "closeGroundFor",
+            "summary": "Close\u0020the\u0020FedEx\u0020Ground\u0020shipments\u0020of\u0020the\u0020day\u0020for\u0020an\u0020account",
+            "url": "classes/Mariopereira-Fedex-Api-FedexEndOfDayClose.html#method_closeGroundFor"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexEndOfDayClose\u003A\u003AreprintReports\u0028\u0029",
+            "name": "reprintReports",
+            "summary": "Reprint\u0020the\u0020reports\u0020of\u0020a\u0020close\u0020\u0028FedEx\u0020keeps\u0020them\u0020for\u0020three\u0020days\u0029.\u0020The\u0020request\u0020is\u0020checked\u0020before\u0020it\u0020is\u0020sent,\u0020as\u0020in\ncloseGround\u0028\u0029.\u0020Nothing\u0020is\u0020changed\u0020in\u0020FedEx,\u0020so\u0020the\u0020request\u0020can\u0020be\u0020repeated",
+            "url": "classes/Mariopereira-Fedex-Api-FedexEndOfDayClose.html#method_reprintReports"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexEndOfDayClose\u003A\u003AreprintReportsFor\u0028\u0029",
+            "name": "reprintReportsFor",
+            "summary": "Reprint\u0020the\u0020reports\u0020of\u0020the\u0020closes\u0020of\u0020a\u0020day,\u0020for\u0020an\u0020account",
+            "url": "classes/Mariopereira-Fedex-Api-FedexEndOfDayClose.html#method_reprintReportsFor"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexEndOfDayClose\u003A\u003ArefuseReserved\u0028\u0029",
+            "name": "refuseReserved",
+            "summary": "Refuse\u0020the\u0020options\u0020that\u0020a\u0020method\u0020sets\u0020itself",
+            "url": "classes/Mariopereira-Fedex-Api-FedexEndOfDayClose.html#method_refuseReserved"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexEndOfDayClose\u003A\u003Asend\u0028\u0029",
+            "name": "send",
+            "summary": "Check\u0020a\u0020request,\u0020send\u0020it\u0020and\u0020check\u0020the\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-FedexEndOfDayClose.html#method_send"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexEndOfDayClose\u003A\u003AvalidateAndParse\u0028\u0029",
+            "name": "validateAndParse",
+            "summary": "Validate\u0020the\u0020response\u0020received\u0020from\u0020FedEx.\u0020The\u0020response\u0020is\u0020given\u0020to\u0020the\u0020exception,\u0020so\u0020that\u0020nothing\u0020that\u0020FedEx\u0020answered\u0020is\nlost",
+            "url": "classes/Mariopereira-Fedex-Api-FedexEndOfDayClose.html#method_validateAndParse"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexEndOfDayClose\u003A\u003AENDPOINT",
+            "name": "ENDPOINT",
+            "summary": "Ground\u0020End\u0020of\u0020Day\u0020Close\u0020\u0028PUT\u0029\u0020and\u0020Reprint\u0020End\u0020of\u0020the\u0020day\u0020\u0028POST\u0029\u0020endpoint.\u0020The\u0020trailing\u0020slash\u0020is\u0020in\u0020the\u0020path\u0020of\u0020the\u0020schema",
+            "url": "classes/Mariopereira-Fedex-Api-FedexEndOfDayClose.html#constant_ENDPOINT"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexEndOfDayClose\u003A\u003ACLOSE_REQUEST_TYPE",
+            "name": "CLOSE_REQUEST_TYPE",
+            "summary": "The\u0020request\u0020type\u0020of\u0020a\u0020close",
+            "url": "classes/Mariopereira-Fedex-Api-FedexEndOfDayClose.html#constant_CLOSE_REQUEST_TYPE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexEndOfDayClose\u003A\u003AREPRINT_REQUEST_TYPE",
+            "name": "REPRINT_REQUEST_TYPE",
+            "summary": "The\u0020request\u0020type\u0020of\u0020a\u0020reprint",
+            "url": "classes/Mariopereira-Fedex-Api-FedexEndOfDayClose.html#constant_REPRINT_REQUEST_TYPE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexGlobalTrade",
+            "name": "FedexGlobalTrade",
+            "summary": "Global\u0020Trade\u0020API\u003A\u0020retrieves\u0020the\u0020regulatory\u0020documents\u0020that\u0020a\u0020shipment\u0020needs,\u0020and\u0020the\u0020advisories\u0020that\u0020apply\u0020to\u0020it,\u0020before\u0020it\u0020is\nshipped\u0020\u0028globaltrade\/v1\u0029.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexGlobalTrade.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexGlobalTrade\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020object",
+            "url": "classes/Mariopereira-Fedex-Api-FedexGlobalTrade.html#method___construct"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexGlobalTrade\u003A\u003AnewRequest\u0028\u0029",
+            "name": "newRequest",
+            "summary": "Create\u0020an\u0020empty\u0020Retrieve\u0020Regulatory\u0020Details\u0020request\u003A\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires,\u0020named\u0020as\u0020in\nschemas\/global\u002Dtrade.json\u0020\u0028the\u0020country\u0020codes\u0020of\u0020the\u0020origin\u0020and\u0020the\u0020destination,\u0020and\u0020the\u0020carrier\u0029.\u0020Any\u0020other\u0020field\u0020of\u0020the\nschema\u0020can\u0020be\u0020added\u0020\u0028serviceType,\u0020shipDate,\u0020totalWeight,\u0020totalCommodityValue,\u0020customsClearanceDetail,\u0020...\u0029.\u0020Fields\u0020set\u0020to\nnull\u0020and\u0020empty\u0020lists\u0020are\u0020left\u0020out\u0020when\u0020the\u0020request\u0020is\u0020sent",
+            "url": "classes/Mariopereira-Fedex-Api-FedexGlobalTrade.html#method_newRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexGlobalTrade\u003A\u003AretrieveRegulatoryDetails\u0028\u0029",
+            "name": "retrieveRegulatoryDetails",
+            "summary": "Retrieve\u0020the\u0020regulatory\u0020documents\u0020and\u0020the\u0020advisories\u0020that\u0020apply\u0020to\u0020a\u0020shipment.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexGlobalTrade.html#method_retrieveRegulatoryDetails"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexGlobalTrade\u003A\u003AretrieveRegulatoryDetailsFor\u0028\u0029",
+            "name": "retrieveRegulatoryDetailsFor",
+            "summary": "Retrieve\u0020the\u0020regulatory\u0020documents\u0020and\u0020the\u0020advisories\u0020for\u0020a\u0020shipment\u0020between\u0020two\u0020addresses",
+            "url": "classes/Mariopereira-Fedex-Api-FedexGlobalTrade.html#method_retrieveRegulatoryDetailsFor"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexGlobalTrade\u003A\u003AvalidateAndParse\u0028\u0029",
+            "name": "validateAndParse",
+            "summary": "Validate\u0020the\u0020response\u0020received\u0020from\u0020FedEx.\u0020The\u0020response\u0020is\u0020given\u0020to\u0020the\u0020exception,\u0020so\u0020that\u0020nothing\u0020that\u0020FedEx\u0020answered\u0020is\nlost",
+            "url": "classes/Mariopereira-Fedex-Api-FedexGlobalTrade.html#method_validateAndParse"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexGlobalTrade\u003A\u003AENDPOINT",
+            "name": "ENDPOINT",
+            "summary": "Retrieve\u0020Regulatory\u0020Details\u0020endpoint\u0020\u0028POST\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexGlobalTrade.html#constant_ENDPOINT"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexHarmonizedCode",
+            "name": "FedexHarmonizedCode",
+            "summary": "Harmonized\u0020System\u0020\u0028HS\u0029\u0020Code\u0020Classification\u0020API\u003A\u0020suggests\u0020the\u0020HS\u0020codes\u0020of\u0020commodities,\u0020from\u0020their\u0020description\u0020and\u0020their\ndestination\u0020or\u0020origin\u0020country\u0020\u0028commodity\/v2\/hscodes\u0029.\u0020The\u0020search\u0020is\u0020powered\u0020by\u0020artificial\u0020intelligence,\u0020and\u0020its\u0020results\u0020are\nsuggestions\u0020only.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexHarmonizedCode.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexHarmonizedCode\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020object",
+            "url": "classes/Mariopereira-Fedex-Api-FedexHarmonizedCode.html#method___construct"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexHarmonizedCode\u003A\u003AnewRequest\u0028\u0029",
+            "name": "newRequest",
+            "summary": "Create\u0020an\u0020empty\u0020Search\u0020Harmonized\u0020Code\u0020Data\u0020request\u003A\u0020the\u0020list\u0020of\u0020the\u0020commodities\u0020\u0028hsClassify\u0029\u0020is\u0020empty,\u0020and\u0020each\u0020commodity\nis\u0020an\u0020array\u0020as\u0020returned\u0020by\u0020newClassification\u0028\u0029.\u0020At\u0020least\u0020one\u0020commodity\u0020is\u0020required",
+            "url": "classes/Mariopereira-Fedex-Api-FedexHarmonizedCode.html#method_newRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexHarmonizedCode\u003A\u003AnewClassification\u0028\u0029",
+            "name": "newClassification",
+            "summary": "Create\u0020an\u0020empty\u0020commodity\u0020of\u0020the\u0020request\u003A\u0020its\u0020description,\u0020and\u0020its\u0020destination\u0020countries\u0020and\u0020its\u0020origin\u0020country\u0020\u0028at\u0020least\none\u0020of\u0020the\u0020two\u0020is\u0020required\u003A\u0020the\u0020empty\u0020one\u0020is\u0020left\u0020out\u0020when\u0020the\u0020request\u0020is\u0020sent\u0029.\u0020Any\u0020other\u0020field\u0020of\u0020the\u0020schema\u0020can\u0020be\u0020added\n\u0028commodityName,\u0020countryOfManufacture,\u0020productId,\u0020categories,\u0020material,\u0020unitPrice\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexHarmonizedCode.html#method_newClassification"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexHarmonizedCode\u003A\u003AsearchHarmonizedCodes\u0028\u0029",
+            "name": "searchHarmonizedCodes",
+            "summary": "Search\u0020the\u0020HS\u0020codes\u0020of\u0020commodities.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexHarmonizedCode.html#method_searchHarmonizedCodes"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexHarmonizedCode\u003A\u003AsearchFor\u0028\u0029",
+            "name": "searchFor",
+            "summary": "Search\u0020the\u0020HS\u0020codes\u0020of\u0020one\u0020commodity",
+            "url": "classes/Mariopereira-Fedex-Api-FedexHarmonizedCode.html#method_searchFor"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexHarmonizedCode\u003A\u003AvalidateAndParse\u0028\u0029",
+            "name": "validateAndParse",
+            "summary": "Validate\u0020the\u0020response\u0020received\u0020from\u0020FedEx.\u0020The\u0020response\u0020is\u0020given\u0020to\u0020the\u0020exception,\u0020so\u0020that\u0020nothing\u0020that\u0020FedEx\u0020answered\u0020is\nlost",
+            "url": "classes/Mariopereira-Fedex-Api-FedexHarmonizedCode.html#method_validateAndParse"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexHarmonizedCode\u003A\u003AENDPOINT",
+            "name": "ENDPOINT",
+            "summary": "Search\u0020Harmonized\u0020Code\u0020Data\u0020endpoint\u0020\u0028POST\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexHarmonizedCode.html#constant_ENDPOINT"
+        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexLocationsSearch",
             "name": "FedexLocationsSearch",
             "summary": "Locations\u0020Search\u0020API\u003A\u0020finds\u0020FedEx\u0020locations\u0020by\u0020address,\u0020geographic\u0020coordinates\u0020or\u0020phone\u0020number\u0020\u0028location\/v1\/locations\u0029",
@@ -520,6 +665,226 @@ Search.appendIndex(
             "name": "CRITERION_PHONE_NUMBER",
             "summary": "Search\u0020criterion\u003A\u0020search\u0020by\u0020\u0028landline\u0029\u0020phone\u0020number",
             "url": "classes/Mariopereira-Fedex-Api-FedexLocationsSearch.html#constant_CRITERION_PHONE_NUMBER"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip",
+            "name": "FedexOpenShip",
+            "summary": "Open\u0020Ship\u0020API\u003A\u0020creates\u0020a\u0020shipment\u0020that\u0020stays\u0020open\u0020while\u0020its\u0020packages\u0020are\u0020added,\u0020modified\u0020or\u0020deleted,\u0020over\u0020several\nrequests,\u0020and\u0020confirms\u0020it\u0020when\u0020it\u0020is\u0020complete,\u0020which\u0020generates\u0020its\u0020labels\u003B\u0020retrieves\u0020an\u0020open\u0020shipment\u0020or\u0020one\u0020of\u0020its\npackages,\u0020deletes\u0020an\u0020open\u0020shipment,\u0020and\u0020gets\u0020the\u0020results\u0020of\u0020the\u0020operations\u0020that\u0020FedEx\u0020processes\u0020asynchronously\n\u0028ship\/v1\/openshipments\u0029.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020object",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method___construct"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AnewCreateRequest\u0028\u0029",
+            "name": "newCreateRequest",
+            "summary": "Create\u0020an\u0020empty\u0020Create\u0020Open\u0020Shipment\u0020request\u003A\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires\u0020at\u0020the\u0020top\u0020level,\u0020named\u0020as\u0020in\nschemas\/open\u002Dship.json.\u0020requestedShipment\u0020is\u0020empty\u0020and\u0020has\u0020to\u0020be\u0020filled\u0020in\u0020\u0028see\u0020the\u0020schema\u0029.\u0020index,\u0020the\u0020id\u0020of\u0020the\u0020open\nshipment\u0020in\u0020the\u0020other\u0020requests,\u0020can\u0020be\u0020added\u003A\u0020when\u0020it\u0020is\u0020not\u0020given,\u0020the\u0020master\u0020tracking\u0020number\u0020is\u0020the\u0020index.\u0020Any\nother\u0020field\u0020of\u0020the\u0020schema\u0020can\u0020be\u0020added.\u0020Fields\u0020set\u0020to\u0020null\u0020and\u0020empty\u0020lists\u0020and\u0020objects\u0020are\u0020left\u0020out\u0020when\u0020the\u0020request\nis\u0020sent",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_newCreateRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AnewModifyRequest\u0028\u0029",
+            "name": "newModifyRequest",
+            "summary": "Create\u0020an\u0020empty\u0020Modify\u0020Open\u0020Shipment\u0020request\u003A\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires\u0020at\u0020the\u0020top\u0020level.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_newModifyRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AnewConfirmRequest\u0028\u0029",
+            "name": "newConfirmRequest",
+            "summary": "Create\u0020an\u0020empty\u0020Confirm\u0020Open\u0020Shipment\u0020request\u003A\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires\u0020at\u0020the\u0020top\u0020level.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_newConfirmRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AnewModifyPackageRequest\u0028\u0029",
+            "name": "newModifyPackageRequest",
+            "summary": "Create\u0020an\u0020empty\u0020Modify\u0020Open\u0020Shipment\u0020Packages\u0020request\u003A\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires\u0020at\u0020the\u0020top\u0020level.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_newModifyPackageRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AnewAddPackagesRequest\u0028\u0029",
+            "name": "newAddPackagesRequest",
+            "summary": "Create\u0020an\u0020empty\u0020Add\u0020Open\u0020Shipment\u0020Packages\u0020request\u003A\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires\u0020at\u0020the\u0020top\u0020level.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_newAddPackagesRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AnewDeletePackagesRequest\u0028\u0029",
+            "name": "newDeletePackagesRequest",
+            "summary": "Create\u0020an\u0020empty\u0020Delete\u0020Open\u0020Shipment\u0020Packages\u0020request\u003A\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires\u0020at\u0020the\u0020top\u0020level.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_newDeletePackagesRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AnewRetrievePackageRequest\u0028\u0029",
+            "name": "newRetrievePackageRequest",
+            "summary": "Create\u0020an\u0020empty\u0020Retrieve\u0020Open\u0020Shipment\u0020Packages\u0020request\u003A\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires\u0020at\u0020the\u0020top\u0020level.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_newRetrievePackageRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AnewDeleteRequest\u0028\u0029",
+            "name": "newDeleteRequest",
+            "summary": "Create\u0020an\u0020empty\u0020Delete\u0020Open\u0020Shipment\u0020request\u003A\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires\u0020at\u0020the\u0020top\u0020level.\u0020Any\u0020other\u0020field\nof\u0020the\u0020schema\u0020can\u0020be\u0020added.\u0020Fields\u0020set\u0020to\u0020null\u0020and\u0020empty\u0020lists\u0020and\u0020objects\u0020are\u0020left\u0020out\u0020when\u0020the\u0020request\u0020is\u0020sent",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_newDeleteRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AnewRetrieveRequest\u0028\u0029",
+            "name": "newRetrieveRequest",
+            "summary": "Create\u0020an\u0020empty\u0020Retrieve\u0020Open\u0020Shipment\u0020request\u003A\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires\u0020at\u0020the\u0020top\u0020level.\u0020The\u0020schema\nalso\u0020requires\u0020trackingId,\u0020which\u0020it\u0020never\u0020defines\u003A\u0020it\u0020is\u0020optional,\u0020of\u0020any\u0020type.\u0020Any\u0020other\u0020field\u0020of\u0020the\u0020schema\u0020can\u0020be\nadded.\u0020Fields\u0020set\u0020to\u0020null\u0020and\u0020empty\u0020lists\u0020and\u0020objects\u0020are\u0020left\u0020out\u0020when\u0020the\u0020request\u0020is\u0020sent",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_newRetrieveRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AnewResultsRequest\u0028\u0029",
+            "name": "newResultsRequest",
+            "summary": "Create\u0020an\u0020empty\u0020Get\u0020Open\u0020Shipment\u0020Results\u0020request\u003A\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires\u0020at\u0020the\u0020top\u0020level.\u0020jobId\u0020is\nthe\u0020one\u0020that\u0020FedEx\u0020gave,\u0020and\u0020resultMethodType\u0020is\u0020the\u0020operation\u0020that\u0020gave\u0020it\u003A\u0020CREATE,\u0020MODIFY\u0020or\u0020CONFIRM.\u0020Any\u0020other\u0020field\nof\u0020the\u0020schema\u0020can\u0020be\u0020added.\u0020Fields\u0020set\u0020to\u0020null\u0020and\u0020empty\u0020lists\u0020and\u0020objects\u0020are\u0020left\u0020out\u0020when\u0020the\u0020request\u0020is\u0020sent",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_newResultsRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AcreateOpenShipment\u0028\u0029",
+            "name": "createOpenShipment",
+            "summary": "Create\u0020an\u0020open\u0020shipment.\u0020THIS\u0020CHANGES\u0020DATA\u0020IN\u0020FEDEX.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_createOpenShipment"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AmodifyOpenShipment\u0028\u0029",
+            "name": "modifyOpenShipment",
+            "summary": "Modify\u0020an\u0020open\u0020shipment.\u0020THIS\u0020CHANGES\u0020DATA\u0020IN\u0020FEDEX.\u0020The\u0020request\u0020is\u0020checked\u0020at\u0020its\u0020top\u0020level\u0020before\u0020it\u0020is\u0020sent,\u0020and\nit\u0020is\u0020never\u0020repeated,\u0020as\u0020in\u0020createOpenShipment\u0028\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_modifyOpenShipment"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AconfirmOpenShipment\u0028\u0029",
+            "name": "confirmOpenShipment",
+            "summary": "Confirm\u0020an\u0020open\u0020shipment\u0020once\u0020all\u0020its\u0020packages\u0020are\u0020added\u003A\u0020FedEx\u0020generates\u0020its\u0020labels.\u0020THIS\u0020CHANGES\u0020DATA\u0020IN\u0020FEDEX.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_confirmOpenShipment"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AmodifyPackage\u0028\u0029",
+            "name": "modifyPackage",
+            "summary": "Modify\u0020a\u0020package\u0020of\u0020an\u0020open\u0020shipment.\u0020THIS\u0020CHANGES\u0020DATA\u0020IN\u0020FEDEX.\u0020The\u0020request\u0020is\u0020checked\u0020at\u0020its\u0020top\u0020level\u0020before\u0020it\nis\u0020sent,\u0020and\u0020it\u0020is\u0020never\u0020repeated,\u0020as\u0020in\u0020createOpenShipment\u0028\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_modifyPackage"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AaddPackages\u0028\u0029",
+            "name": "addPackages",
+            "summary": "Add\u0020packages\u0020to\u0020an\u0020open\u0020shipment.\u0020THIS\u0020CHANGES\u0020DATA\u0020IN\u0020FEDEX.\u0020The\u0020request\u0020is\u0020checked\u0020at\u0020its\u0020top\u0020level\u0020before\u0020it\u0020is\nsent,\u0020and\u0020it\u0020is\u0020never\u0020repeated,\u0020as\u0020in\u0020createOpenShipment\u0028\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_addPackages"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AdeletePackages\u0028\u0029",
+            "name": "deletePackages",
+            "summary": "Delete\u0020packages\u0020of\u0020an\u0020open\u0020shipment,\u0020before\u0020it\u0020is\u0020confirmed.\u0020THIS\u0020CHANGES\u0020DATA\u0020IN\u0020FEDEX.\u0020The\u0020request\u0020is\u0020checked\u0020at\nits\u0020top\u0020level\u0020before\u0020it\u0020is\u0020sent,\u0020and\u0020it\u0020is\u0020never\u0020repeated,\u0020as\u0020in\u0020createOpenShipment\u0028\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_deletePackages"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AretrievePackage\u0028\u0029",
+            "name": "retrievePackage",
+            "summary": "Retrieve\u0020a\u0020package\u0020of\u0020an\u0020open\u0020shipment.\u0020This\u0020changes\u0020nothing,\u0020so\u0020it\u0020can\u0020be\u0020repeated.\u0020The\u0020request\u0020is\u0020checked\u0020at\u0020its\ntop\u0020level\u0020before\u0020it\u0020is\u0020sent",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_retrievePackage"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AdeleteOpenShipment\u0028\u0029",
+            "name": "deleteOpenShipment",
+            "summary": "Delete\u0020an\u0020open\u0020shipment\u0020and\u0020all\u0020its\u0020packages,\u0020before\u0020it\u0020is\u0020confirmed.\u0020THIS\u0020CHANGES\u0020DATA\u0020IN\u0020FEDEX.\u0020The\u0020request\u0020is\nchecked\u0020at\u0020its\u0020top\u0020level\u0020before\u0020it\u0020is\u0020sent,\u0020and\u0020it\u0020is\u0020never\u0020repeated,\u0020as\u0020in\u0020createOpenShipment\u0028\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_deleteOpenShipment"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AdeleteByIndex\u0028\u0029",
+            "name": "deleteByIndex",
+            "summary": "Delete\u0020an\u0020open\u0020shipment,\u0020from\u0020its\u0020index",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_deleteByIndex"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AretrieveOpenShipment\u0028\u0029",
+            "name": "retrieveOpenShipment",
+            "summary": "Retrieve\u0020an\u0020open\u0020shipment.\u0020This\u0020changes\u0020nothing,\u0020so\u0020it\u0020can\u0020be\u0020repeated.\u0020The\u0020request\u0020is\u0020checked\u0020at\u0020its\u0020top\u0020level\nbefore\u0020it\u0020is\u0020sent",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_retrieveOpenShipment"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AretrieveByIndex\u0028\u0029",
+            "name": "retrieveByIndex",
+            "summary": "Retrieve\u0020an\u0020open\u0020shipment,\u0020from\u0020its\u0020index.\u0020This\u0020changes\u0020nothing",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_retrieveByIndex"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AgetResults\u0028\u0029",
+            "name": "getResults",
+            "summary": "Get\u0020the\u0020result\u0020of\u0020an\u0020operation\u0020that\u0020FedEx\u0020processed\u0020asynchronously\u0020\u0028a\u0020create,\u0020a\u0020modification\u0020or\u0020a\u0020confirmation\u0020of\u0020a\nshipment\u0020of\u0020many\u0020packages\u0029\u003A\u0020its\u0020labels\u0020and\u0020documents,\u0020or\u0020its\u0020errors.\u0020This\u0020changes\u0020nothing,\u0020so\u0020it\u0020can\u0020be\u0020repeated\u0020until\nthe\u0020result\u0020is\u0020ready.\u0020The\u0020request\u0020is\u0020checked\u0020at\u0020its\u0020top\u0020level\u0020before\u0020it\u0020is\u0020sent",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_getResults"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AgetResultsByJobId\u0028\u0029",
+            "name": "getResultsByJobId",
+            "summary": "Get\u0020the\u0020result\u0020of\u0020an\u0020operation\u0020that\u0020FedEx\u0020processed\u0020asynchronously,\u0020from\u0020the\u0020job\u0020id\u0020that\u0020FedEx\u0020gave.\u0020This\u0020changes\nnothing",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_getResultsByJobId"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AcheckRequest\u0028\u0029",
+            "name": "checkRequest",
+            "summary": "Check\u0020a\u0020request\u0020against\u0020the\u0020whole\u0020of\u0020the\u0020schema\u0020and\u0020say\u0020what\u0020does\u0020not\u0020match.\u0020Nothing\u0020is\u0020sent\u0020and\u0020nothing\u0020stops\u003A\u0020the\nrequests\u0020of\u0020FedEx\u0027s\u0020collection\u0020contradict\u0020the\u0020schema\u0020in\u0020the\u0020nested\u0020objects,\u0020so\u0020a\u0020problem\u0020that\u0020is\u0020reported\u0020here\u0020is\u0020not\nnecessarily\u0020one\u0020that\u0020FedEx\u0020refuses",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_checkRequest"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AcheckResponse\u0028\u0029",
+            "name": "checkResponse",
+            "summary": "Check\u0020a\u0020response\u0020against\u0020the\u0020whole\u0020of\u0020the\u0020schema\u0020and\u0020say\u0020what\u0020does\u0020not\u0020match.\u0020A\u0020field\u0020that\u0020FedEx\u0020adds\u0020is\u0020not\u0020a\nproblem",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_checkResponse"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003Aoperation\u0028\u0029",
+            "name": "operation",
+            "summary": "The\u0020description\u0020of\u0020an\u0020operation",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_operation"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AasArray\u0028\u0029",
+            "name": "asArray",
+            "summary": "Give\u0020an\u0020array\u0020or\u0020an\u0020object\u0020as\u0020an\u0020array",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_asArray"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AwithFields\u0028\u0029",
+            "name": "withFields",
+            "summary": "Add\u0020the\u0020fields\u0020that\u0020a\u0020method\u0020sets\u0020to\u0020the\u0020options\u0020that\u0020the\u0020caller\u0020gave,\u0020refusing\u0020the\u0020options\u0020that\u0020would\u0020replace\u0020them",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_withFields"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AshallowDefinitions\u0028\u0029",
+            "name": "shallowDefinitions",
+            "summary": "The\u0020definitions\u0020of\u0020the\u0020top\u0020level\u0020of\u0020the\u0020requests\u0020and\u0020responses",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_shallowDefinitions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003Asend\u0028\u0029",
+            "name": "send",
+            "summary": "Check\u0020a\u0020request\u0020at\u0020its\u0020top\u0020level,\u0020send\u0020it\u0020and\u0020check\u0020the\u0020response\u0020at\u0020its\u0020top\u0020level",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_send"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AvalidateAndParse\u0028\u0029",
+            "name": "validateAndParse",
+            "summary": "Validate\u0020the\u0020top\u0020level\u0020of\u0020the\u0020response\u0020received\u0020from\u0020FedEx.\u0020The\u0020response\u0020is\u0020given\u0020to\u0020the\u0020exception,\u0020so\u0020that\u0020nothing\nthat\u0020FedEx\u0020answered\u0020is\u0020lost",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#method_validateAndParse"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AENDPOINT_CREATE",
+            "name": "ENDPOINT_CREATE",
+            "summary": "Create\u0020Open\u0020Shipment\u0020endpoint\u0020\u0028POST\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#constant_ENDPOINT_CREATE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AENDPOINT_MODIFY",
+            "name": "ENDPOINT_MODIFY",
+            "summary": "Modify\u0020Open\u0020Shipment\u0020endpoint\u0020\u0028PUT\u0029.\u0020The\u0020trailing\u0020slash\u0020is\u0020in\u0020the\u0020path\u0020of\u0020the\u0020schema\u0020and\u0020of\u0020the\u0020documentation",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#constant_ENDPOINT_MODIFY"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AENDPOINT_CONFIRM",
+            "name": "ENDPOINT_CONFIRM",
+            "summary": "Confirm\u0020Open\u0020Shipment\u0020endpoint\u0020\u0028POST\u0029.\u0020The\u0020trailing\u0020slash\u0020is\u0020in\u0020the\u0020path\u0020of\u0020the\u0020schema\u0020and\u0020of\u0020the\u0020documentation",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#constant_ENDPOINT_CONFIRM"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AENDPOINT_PACKAGES",
+            "name": "ENDPOINT_PACKAGES",
+            "summary": "Modify\u0020Open\u0020Shipment\u0020Packages\u0020\u0028PUT\u0029\u0020and\u0020Add\u0020Open\u0020Shipment\u0020Packages\u0020\u0028POST\u0029\u0020endpoint",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#constant_ENDPOINT_PACKAGES"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AENDPOINT_DELETE_PACKAGES",
+            "name": "ENDPOINT_DELETE_PACKAGES",
+            "summary": "Delete\u0020Open\u0020Shipment\u0020Packages\u0020endpoint\u0020\u0028PUT\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#constant_ENDPOINT_DELETE_PACKAGES"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AENDPOINT_RETRIEVE_PACKAGE",
+            "name": "ENDPOINT_RETRIEVE_PACKAGE",
+            "summary": "Retrieve\u0020Open\u0020Shipment\u0020Packages\u0020endpoint\u0020\u0028POST\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#constant_ENDPOINT_RETRIEVE_PACKAGE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AENDPOINT_DELETE",
+            "name": "ENDPOINT_DELETE",
+            "summary": "Delete\u0020Open\u0020Shipment\u0020endpoint\u0020\u0028PUT\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#constant_ENDPOINT_DELETE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AENDPOINT_RETRIEVE",
+            "name": "ENDPOINT_RETRIEVE",
+            "summary": "Retrieve\u0020Open\u0020Shipment\u0020endpoint\u0020\u0028POST\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#constant_ENDPOINT_RETRIEVE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AENDPOINT_RESULTS",
+            "name": "ENDPOINT_RESULTS",
+            "summary": "Get\u0020Open\u0020Shipment\u0020Results\u0020endpoint\u0020\u0028POST\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#constant_ENDPOINT_RESULTS"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003AOPERATIONS",
+            "name": "OPERATIONS",
+            "summary": "The\u0020operations,\u0020by\u0020the\u0020name\u0020that\u0020checkRequest\u0028\u0029\u0020and\u0020checkResponse\u0028\u0029\u0020take\u003A\u0020the\u0020HTTP\u0020method,\u0020the\u0020endpoint,\u0020the\ndefinition\u0020of\u0020the\u0020request,\u0020the\u0020definition\u0020of\u0020the\u0020response\u0020and\u0020whether\u0020the\u0020operation\u0020changes\u0020data\u0020in\u0020FedEx\n\u0028which\u0020also\u0020means\u0020that\u0020it\u0020is\u0020never\u0020repeated\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#constant_OPERATIONS"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexOpenShip\u003A\u003A\u0024shallow",
+            "name": "shallow",
+            "summary": "The\u0020definitions\u0020of\u0020the\u0020top\u0020level\u0020of\u0020the\u0020requests\u0020and\u0020responses,\u0020which\u0020are\u0020made\u0020once",
+            "url": "classes/Mariopereira-Fedex-Api-FedexOpenShip.html#property_shallow"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexPickup",
             "name": "FedexPickup",
@@ -695,6 +1060,46 @@ Search.appendIndex(
             "name": "ENDPOINT",
             "summary": "Retrieve\u0020Rates\u0020and\u0020Transit\u0020Times\u0020endpoint\u0020\u0028POST\u0029",
             "url": "classes/Mariopereira-Fedex-Api-FedexRateTransitTimes.html#constant_ENDPOINT"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexRegulatory",
+            "name": "FedexRegulatory",
+            "summary": "Regulatory\u0020API\u003A\u0020stores\u0020the\u0020regulatory\u0020compliance\u0020data\u0020of\u0020products\u0020\u0028CPSC\u0020certificates\u0020of\u0020compliance,\u0020EU\u0020de\u0020minimis\u0020product\nidentifiers\u0029,\u0020which\u0020shipments\u0020can\u0020then\u0020reference\u0020in\u0020commodities\u005B\u005D.regulatoryDetails\u005B\u005D\u0020\u0028regulatory\/v1\/profiles\u0029.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexRegulatory.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexRegulatory\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020object",
+            "url": "classes/Mariopereira-Fedex-Api-FedexRegulatory.html#method___construct"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexRegulatory\u003A\u003AnewProfile\u0028\u0029",
+            "name": "newProfile",
+            "summary": "Create\u0020an\u0020empty\u0020profile\u003A\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires,\u0020named\u0020as\u0020in\u0020schemas\/regulatory.json.\u0020The\u0020regulation\u0020\u0028CPSC\u0020or\nEU_DE_MINIMIS\u0029,\u0020the\u0020product\u0020id,\u0020its\u0020type\u0020\u0028SKU,\u0020PART_NUMBER,\u0020REGISTERED_NUMBER,\u0020GTIN,\u0020UPC,\u0020EAN,\u0020MPN\u0020or\u0020OTHER\u0029\u0020and\u0020the\ncountry\u0020of\u0020import\u0020are\u0020to\u0020be\u0020filled\u0020in,\u0020and\u0020details\u0020is\u0020a\u0020list\u0020of\u0020at\u0020least\u0020one\u0020detail\u003A\u0020for\u0020CPSC\u0020a\u0020disclaimMessageSet,\u0020a\nreferenceMessageSet\u0020or\u0020a\u0020fullMessageSet\u003B\u0020for\u0020EU_DE_MINIMIS\u0020the\u0020manufacturer\u0020and\u0020merchant\u0020product\u0020ids.\u0020Fields\u0020set\u0020to\u0020null\nand\u0020empty\u0020lists\u0020are\u0020left\u0020out\u0020when\u0020the\u0020request\u0020is\u0020sent",
+            "url": "classes/Mariopereira-Fedex-Api-FedexRegulatory.html#method_newProfile"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexRegulatory\u003A\u003AcreateProfiles\u0028\u0029",
+            "name": "createProfiles",
+            "summary": "Store\u0020the\u0020regulatory\u0020profiles\u0020of\u0020products.\u0020THIS\u0020STORES\u0020DATA\u0020IN\u0020FEDEX.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexRegulatory.html#method_createProfiles"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexRegulatory\u003A\u003AcreateProfile\u0028\u0029",
+            "name": "createProfile",
+            "summary": "Store\u0020the\u0020regulatory\u0020profile\u0020of\u0020one\u0020product,\u0020as\u0020createProfiles\u0028\u0029\u0020does",
+            "url": "classes/Mariopereira-Fedex-Api-FedexRegulatory.html#method_createProfile"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexRegulatory\u003A\u003AvalidateAndParse\u0028\u0029",
+            "name": "validateAndParse",
+            "summary": "Validate\u0020the\u0020response\u0020received\u0020from\u0020FedEx.\u0020The\u0020response\u0020is\u0020given\u0020to\u0020the\u0020exception,\u0020so\u0020that\u0020nothing\u0020that\u0020FedEx\u0020answered\u0020is\nlost,\u0020and\u0020the\u0020message\u0020says\u0020that\u0020the\u0020profiles\u0020may\u0020have\u0020been\u0020stored",
+            "url": "classes/Mariopereira-Fedex-Api-FedexRegulatory.html#method_validateAndParse"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexRegulatory\u003A\u003AENDPOINT",
+            "name": "ENDPOINT",
+            "summary": "Regulatory\u0020Profile\u0020endpoint\u0020\u0028POST\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexRegulatory.html#constant_ENDPOINT"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexRegulatory\u003A\u003AMAX_PROFILES",
+            "name": "MAX_PROFILES",
+            "summary": "The\u0020maximum\u0020number\u0020of\u0020profiles\u0020in\u0020one\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-FedexRegulatory.html#constant_MAX_PROFILES"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexServiceAvailability",
             "name": "FedexServiceAvailability",
@@ -900,6 +1305,126 @@ Search.appendIndex(
             "name": "ENDPOINT_RESULTS",
             "summary": "Retrieve\u0020Async\u0020Ship\u0020endpoint\u0020\u0028POST\u0029",
             "url": "classes/Mariopereira-Fedex-Api-FedexShip.html#constant_ENDPOINT_RESULTS"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments",
+            "name": "FedexTradeDocuments",
+            "summary": "Trade\u0020Documents\u0020Upload\u0020API\u003A\u0020uploads\u0020the\u0020customs\u0020documents\u0020of\u0020an\u0020electronic\u0020trade\u0020documents\u0020\u0028ETD\u0029\u0020shipment,\u0020before\u0020or\u0020after\nit\u0020is\u0020shipped,\u0020and\u0020the\u0020images\u0020\u0028letterhead\u0020and\u0020signature\u0029\u0020used\u0020in\u0020the\u0020documents\u0020that\u0020FedEx\u0020generates\n\u0028schemas\/upload\u002Ddocuments.json\u0029.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020object",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#method___construct"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003AnewDocument\u0028\u0029",
+            "name": "newDocument",
+            "summary": "Create\u0020the\u0020description\u0020of\u0020a\u0020trade\u0020document,\u0020for\u0020uploadDocument\u0028\u0029,\u0020with\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires\u003A\u0020workflowName\n\u0028ETDPreshipment\u0020or\u0020ETDPostshipment\u0029,\u0020name\u0020\u0028the\u0020file\u0020name\u0029,\u0020contentType\u0020\u0028application\/pdf,\u0020...\u0029\u0020and\u0020meta,\u0020with\nshipDocumentType\u0020\u0028COMMERCIAL_INVOICE,\u0020...\u0029,\u0020originCountryCode\u0020and\u0020destinationCountryCode.\u0020Any\u0020other\u0020field\u0020of\u0020the\u0020schema\ncan\u0020be\u0020added\u0020\u0028carrierCode,\u0020meta\u002D\u003EtrackingNumber,\u0020...\u0029.\u0020Fields\u0020set\u0020to\u0020null\u0020and\u0020empty\u0020lists\u0020are\u0020left\u0020out\u0020when\u0020the\u0020request\u0020is\nsent",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#method_newDocument"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003AnewImageDocument\u0028\u0029",
+            "name": "newImageDocument",
+            "summary": "Create\u0020the\u0020description\u0020of\u0020an\u0020image,\u0020for\u0020uploadImage\u0028\u0029,\u0020with\u0020the\u0020fields\u0020that\u0020the\u0020schema\u0020requires\u003A\u0020referenceId,\u0020name\u0020\u0028the\nfile\u0020name\u0029,\u0020contentType\u0020\u0028image\/png,\u0020...\u0029\u0020and\u0020meta,\u0020with\u0020imageType\u0020and\u0020imageIndex\u0020\u0028texts\u0020in\u0020this\u0020schema\u003B\u0020the\u0020encoded\u0020upload\nlists\u0020SIGNATURE\u0020or\u0020LETTERHEAD,\u0020and\u0020IMAGE_1\u0020to\u0020IMAGE_5\u0029.\u0020Fields\u0020set\u0020to\u0020null\u0020and\u0020empty\u0020lists\u0020are\u0020left\u0020out\u0020when\u0020the\u0020request\nis\u0020sent",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#method_newImageDocument"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003AuploadDocument\u0028\u0029",
+            "name": "uploadDocument",
+            "summary": "Upload\u0020a\u0020trade\u0020document\u0020\u0028commercial\u0020invoice,\u0020certificate\u0020of\u0020origin,\u0020...\u0029.\u0020THIS\u0020STORES\u0020THE\u0020DOCUMENT\u0020IN\u0020FEDEX.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#method_uploadDocument"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003AuploadDocuments\u0028\u0029",
+            "name": "uploadDocuments",
+            "summary": "Upload\u0020up\u0020to\u0020five\u0020trade\u0020documents\u0020of\u0020a\u0020shipment\u0020at\u0020once.\u0020THIS\u0020STORES\u0020THE\u0020DOCUMENTS\u0020IN\u0020FEDEX.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#method_uploadDocuments"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003AuploadImage\u0028\u0029",
+            "name": "uploadImage",
+            "summary": "Upload\u0020an\u0020image\u0020\u0028a\u0020letterhead\u0020or\u0020a\u0020signature\u0029\u0020to\u0020be\u0020used\u0020in\u0020the\u0020documents\u0020that\u0020FedEx\u0020generates.\u0020THIS\u0020STORES\u0020THE\u0020IMAGE\u0020IN\nFEDEX.\u0020The\u0020description\u0020and\u0020the\u0020rules\u0020are\u0020checked\u0020before\u0020they\u0020are\u0020sent,\u0020as\u0020in\u0020uploadDocument\u0028\u0029.\u0020The\u0020request\u0020is\u0020never\nrepeated\u0020by\u0020this\u0020library,\u0020except\u0020when\u0020FedEx\u0020answers\u0020that\u0020the\u0020token\u0020is\u0020not\u0020valid",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#method_uploadImage"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003AuploadEncodedImage\u0028\u0029",
+            "name": "uploadEncodedImage",
+            "summary": "Upload\u0020an\u0020image\u0020\u0028a\u0020letterhead\u0020or\u0020a\u0020signature\u0029\u0020encoded\u0020in\u0020Base64,\u0020in\u0020a\u0020JSON\u0020request.\u0020THIS\u0020STORES\u0020THE\u0020IMAGE\u0020IN\u0020FEDEX.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#method_uploadEncodedImage"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003AuploadEncodedDocuments\u0028\u0029",
+            "name": "uploadEncodedDocuments",
+            "summary": "Upload\u0020up\u0020to\u0020five\u0020trade\u0020documents\u0020of\u0020a\u0020shipment,\u0020encoded\u0020in\u0020Base64,\u0020in\u0020a\u0020JSON\u0020request.\u0020THIS\u0020STORES\u0020THE\u0020DOCUMENTS\u0020IN\u0020FEDEX.",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#method_uploadEncodedDocuments"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003Aurl\u0028\u0029",
+            "name": "url",
+            "summary": "Get\u0020the\u0020url\u0020of\u0020an\u0020endpoint,\u0020on\u0020the\u0020sandbox\u0020or\u0020the\u0020production\u0020host\u0020of\u0020this\u0020API",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#method_url"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003AencodePart\u0028\u0029",
+            "name": "encodePart",
+            "summary": "Check\u0020a\u0020JSON\u0020part\u0020of\u0020a\u0020multipart\u0020request\u0020and\u0020encode\u0020it",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#method_encodePart"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003AfilePart\u0028\u0029",
+            "name": "filePart",
+            "summary": "Make\u0020a\u0020file\u0020part\u0020of\u0020a\u0020multipart\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#method_filePart"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003AsendMultipart\u0028\u0029",
+            "name": "sendMultipart",
+            "summary": "Send\u0020a\u0020multipart\u0020request\u0020and\u0020check\u0020the\u0020response.\u0020The\u0020request\u0020is\u0020never\u0020repeated,\u0020except\u0020after\u0020a\u0020401",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#method_sendMultipart"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003AsendJson\u0028\u0029",
+            "name": "sendJson",
+            "summary": "Check\u0020a\u0020JSON\u0020request,\u0020send\u0020it\u0020and\u0020check\u0020the\u0020response.\u0020The\u0020request\u0020is\u0020never\u0020repeated,\u0020except\u0020after\u0020a\u0020401",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#method_sendJson"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003AvalidateAndParse\u0028\u0029",
+            "name": "validateAndParse",
+            "summary": "Validate\u0020the\u0020response\u0020received\u0020from\u0020FedEx.\u0020The\u0020response\u0020is\u0020given\u0020to\u0020the\u0020exception,\u0020so\u0020that\u0020nothing\u0020that\u0020FedEx\u0020answered\u0020is\nlost.\u0020As\u0020every\u0020operation\u0020stores\u0020data,\u0020the\u0020message\u0020says\u0020that\u0020it\u0020may\u0020have\u0020been\u0020done",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#method_validateAndParse"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003ASANDBOX_URL",
+            "name": "SANDBOX_URL",
+            "summary": "Host\u0020of\u0020the\u0020sandbox\u0020of\u0020this\u0020API,\u0020as\u0020in\u0020its\u0020documentation",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#constant_SANDBOX_URL"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003APRODUCTION_URL",
+            "name": "PRODUCTION_URL",
+            "summary": "Host\u0020of\u0020the\u0020production\u0020of\u0020this\u0020API,\u0020as\u0020in\u0020its\u0020documentation",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#constant_PRODUCTION_URL"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003AUPLOAD_ENDPOINT",
+            "name": "UPLOAD_ENDPOINT",
+            "summary": "Upload\u0020Document\u0020endpoint\u0020\u0028multipart\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#constant_UPLOAD_ENDPOINT"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003AMULTIUPLOAD_ENDPOINT",
+            "name": "MULTIUPLOAD_ENDPOINT",
+            "summary": "Upload\u0020Multiple\u0020Documents\u0020endpoint\u0020\u0028multipart\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#constant_MULTIUPLOAD_ENDPOINT"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003AIMAGE_ENDPOINT",
+            "name": "IMAGE_ENDPOINT",
+            "summary": "Upload\u0020Images\u0020endpoint\u0020\u0028multipart\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#constant_IMAGE_ENDPOINT"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003AENCODED_IMAGE_ENDPOINT",
+            "name": "ENCODED_IMAGE_ENDPOINT",
+            "summary": "Upload\u0020Encoded\u0020Image\u0020endpoint\u0020\u0028JSON\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#constant_ENCODED_IMAGE_ENDPOINT"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003AENCODED_MULTIUPLOAD_ENDPOINT",
+            "name": "ENCODED_MULTIUPLOAD_ENDPOINT",
+            "summary": "Upload\u0020Multiple\u0020Encoded\u0020Documents\u0020endpoint\u0020\u0028JSON\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#constant_ENCODED_MULTIUPLOAD_ENDPOINT"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003AMAX_FILES",
+            "name": "MAX_FILES",
+            "summary": "The\u0020most\u0020files\u0020that\u0020can\u0020be\u0020uploaded\u0020at\u0020once\u0020\u0028maxItems\u0020of\u0020the\u0020metadata\u0020of\u0020the\u0020files\u0020in\u0020the\u0020schema\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#constant_MAX_FILES"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\FedexTradeDocuments\u003A\u003A\u0024auth",
+            "name": "auth",
+            "summary": "Fedex\u0020Authorization\u0020class,\u0020which\u0020tells\u0020whether\u0020the\u0020sandbox\u0020or\u0020the\u0020production\u0020host\u0020is\u0020used",
+            "url": "classes/Mariopereira-Fedex-Api-FedexTradeDocuments.html#property_auth"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexAddressValidationSchemas",
             "name": "FedexAddressValidationSchemas",
@@ -1131,6 +1656,81 @@ Search.appendIndex(
             "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Duties\u0020Taxes\u0020Estimates\u0020response",
             "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexDutyAndTaxSchemas.html#constant_RESPONSE"
         },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexEndOfDayCloseSchemas",
+            "name": "FedexEndOfDayCloseSchemas",
+            "summary": "Definitions\u0020of\u0020the\u0020requests\u0020and\u0020responses\u0020of\u0020the\u0020Ship\u0020End\u0020of\u0020Day\u0020Close\u0020API\u0020operations\u0020that\u0020FedexEndOfDayClose\u0020implements,\ngenerated\u0020from\u0020schemas\/close.json\u0020and\u0020written\u0020for\u0020SchemaValidator",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexEndOfDayCloseSchemas.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexEndOfDayCloseSchemas\u003A\u003Adefinitions\u0028\u0029",
+            "name": "definitions",
+            "summary": "Get\u0020the\u0020definitions\u0020of\u0020all\u0020the\u0020requests\u0020and\u0020responses.\u0020The\u0020names\u0020of\u0020the\u0020definitions,\u0020and\u0020of\u0020their\u0020fields,\u0020are\u0020the\u0020ones\u0020of\nschemas\/close.json,\u0020without\u0020differences.\u0020Neither\u0020request\u0020requires\u0020a\u0020field\u0020in\u0020the\u0020file\u003A\u0020the\u0020key\u0020inputs\u0020that\u0020the\ndocumentation\u0020lists\u0020\u0028the\u0020close\u0020date,\u0020the\u0020account\u0020number,\u0020the\u0020ground\u0020service\u0020category,\u0020the\u0020documents\u0029\u0020are\u0020checked\u0020by\u0020FedEx",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexEndOfDayCloseSchemas.html#method_definitions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexEndOfDayCloseSchemas\u003A\u003ACLOSE_REQUEST",
+            "name": "CLOSE_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Ground\u0020End\u0020Of\u0020Day\u0020Close\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexEndOfDayCloseSchemas.html#constant_CLOSE_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexEndOfDayCloseSchemas\u003A\u003ACLOSE_RESPONSE",
+            "name": "CLOSE_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Ground\u0020End\u0020Of\u0020Day\u0020Close\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexEndOfDayCloseSchemas.html#constant_CLOSE_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexEndOfDayCloseSchemas\u003A\u003AREPRINT_REQUEST",
+            "name": "REPRINT_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Reprint\u0020End\u0020of\u0020the\u0020day\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexEndOfDayCloseSchemas.html#constant_REPRINT_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexEndOfDayCloseSchemas\u003A\u003AREPRINT_RESPONSE",
+            "name": "REPRINT_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Reprint\u0020End\u0020of\u0020the\u0020day\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexEndOfDayCloseSchemas.html#constant_REPRINT_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexGlobalTradeSchemas",
+            "name": "FedexGlobalTradeSchemas",
+            "summary": "Definitions\u0020of\u0020the\u0020request\u0020and\u0020the\u0020response\u0020of\u0020the\u0020Global\u0020Trade\u0020API\u0020operation\u0020that\u0020FedexGlobalTrade\u0020implements,\u0020generated\nfrom\u0020schemas\/global\u002Dtrade.json\u0020and\u0020written\u0020for\u0020SchemaValidator",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexGlobalTradeSchemas.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexGlobalTradeSchemas\u003A\u003Adefinitions\u0028\u0029",
+            "name": "definitions",
+            "summary": "Get\u0020the\u0020definitions\u0020of\u0020the\u0020request\u0020and\u0020the\u0020response.\u0020The\u0020names\u0020of\u0020the\u0020definitions,\u0020and\u0020of\u0020their\u0020fields,\u0020are\u0020the\u0020ones\u0020of\nschemas\/global\u002Dtrade.json,\u0020with\u0020this\u0020difference\u003A\n\u0020\u002D\u0020the\u0020value\u0020of\u0020the\u0020weight\u0020of\u0020a\u0020commodity\u0020\u0028Weight.value\u0029\u0020is\u0020optional,\u0020although\u0020the\u0020file\u0020requires\u0020it\u003A\u0020most\u0020of\u0020the\n\u0020\u0020\u0020requests\u0020of\u0020the\u0020collection\u0020of\u0020FedEx\u0020leave\u0020it\u0020out,\u0020and\u0020FedEx\u0020decides.\u0020Weight\u0020is\u0020also\u0020the\u0020definition\u0020of\u0020the\u0020total\u0020weight\n\u0020\u0020\u0020of\u0020the\u0020request,\u0020so\u0020its\u0020value\u0020is\u0020optional\u0020too",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexGlobalTradeSchemas.html#method_definitions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexGlobalTradeSchemas\u003A\u003AREQUEST",
+            "name": "REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Retrieve\u0020Regulatory\u0020Details\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexGlobalTradeSchemas.html#constant_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexGlobalTradeSchemas\u003A\u003ARESPONSE",
+            "name": "RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Retrieve\u0020Regulatory\u0020Details\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexGlobalTradeSchemas.html#constant_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexHarmonizedCodeSchemas",
+            "name": "FedexHarmonizedCodeSchemas",
+            "summary": "Definitions\u0020of\u0020the\u0020request\u0020and\u0020the\u0020response\u0020of\u0020the\u0020Harmonized\u0020System\u0020\u0028HS\u0029\u0020Code\u0020Classification\u0020API\u0020operation\u0020that\nFedexHarmonizedCode\u0020implements,\u0020generated\u0020from\u0020schemas\/harmonized\u002Dcode.json\u0020and\u0020written\u0020for\u0020SchemaValidator",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexHarmonizedCodeSchemas.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexHarmonizedCodeSchemas\u003A\u003Adefinitions\u0028\u0029",
+            "name": "definitions",
+            "summary": "Get\u0020the\u0020definitions\u0020of\u0020the\u0020request\u0020and\u0020the\u0020response.\u0020The\u0020names\u0020of\u0020the\u0020definitions,\u0020and\u0020of\u0020their\u0020fields,\u0020are\u0020the\u0020ones\u0020of\nschemas\/harmonized\u002Dcode.json,\u0020with\u0020these\u0020differences,\u0020decided\u0020with\u0020the\u0020owner\u003A\n\u0020\u002D\u0020HsClassifyVO\u0020requires\u0020both\u0020destinationCountryCodes\u0020and\u0020originCountryCode\u0020in\u0020the\u0020file,\u0020but\u0020the\u0020documentation\u0020says\u0020that\n\u0020\u0020\u0020either\u0020one\u0020is\u0020required,\u0020and\u0020the\u0020minimum\u0020examples\u0020of\u0020the\u0020file\u0020send\u0020only\u0020one\u003A\u0020both\u0020are\u0020optional,\u0020and\u0020every\u0020commodity\u0020has\n\u0020\u0020\u0020to\u0020have\u0020at\u0020least\u0020one\u0020of\u0020them\u0020\u0028see\u0020hasACountry\u0028\u0029\u0029\n\u0020\u002D\u0020the\u0020request\u0020requires\u0020at\u0020least\u0020one\u0020commodity\u0020\u0028hsClassify,\u0020which\u0020the\u0020file\u0020does\u0020not\u0020require\u0029\u003A\u0020the\u0020documentation\u0020requires\n\u0020\u0020\u0020the\u0020description\u0020and\u0020a\u0020country\u0020of\u0020a\u0020commodity\n\u0020\u002D\u0020the\u0020responses\u0020have\u0020at\u0020most\u0020four\u0020subheading\u0020options\u0020and\u0020four\u0020tariff\u0020alternates\u0020in\u0020the\u0020file\u003A\u0020the\u0020number\u0020is\u0020not\u0020checked",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexHarmonizedCodeSchemas.html#method_definitions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexHarmonizedCodeSchemas\u003A\u003AhasACountry\u0028\u0029",
+            "name": "hasACountry",
+            "summary": "Check\u0020that\u0020a\u0020commodity\u0020of\u0020the\u0020request\u0020has\u0020a\u0020destination\u0020country\u0020or\u0020an\u0020origin\u0020country\u0020\u0028the\u0020check\u0020of\u0020each\u0020item\u0020of\u0020hsClassify\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexHarmonizedCodeSchemas.html#method_hasACountry"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexHarmonizedCodeSchemas\u003A\u003AREQUEST",
+            "name": "REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Search\u0020Harmonized\u0020Code\u0020Data\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexHarmonizedCodeSchemas.html#constant_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexHarmonizedCodeSchemas\u003A\u003ARESPONSE",
+            "name": "RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Search\u0020Harmonized\u0020Code\u0020Data\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexHarmonizedCodeSchemas.html#constant_RESPONSE"
+        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexLocationsSearchSchemas",
             "name": "FedexLocationsSearchSchemas",
             "summary": "Definitions\u0020of\u0020the\u0020request\u0020and\u0020the\u0020response\u0020of\u0020the\u0020Locations\u0020Search\u0020API\u0020operation\u0020that\u0020FedexLocationsSearch\u0020implements,\u0020taken\nfrom\u0020schemas\/locations.json\u0020and\u0020written\u0020for\u0020SchemaValidator",
@@ -1150,6 +1750,131 @@ Search.appendIndex(
             "name": "RESPONSE",
             "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020response",
             "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexLocationsSearchSchemas.html#constant_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas",
+            "name": "FedexOpenShipSchemas",
+            "summary": "Definitions\u0020of\u0020the\u0020requests\u0020and\u0020responses\u0020of\u0020the\u0020Open\u0020Ship\u0020API\u0020operations\u0020that\u0020FedexOpenShip\u0020implements,\u0020generated\u0020from\nschemas\/open\u002Dship.json\u0020and\u0020written\u0020for\u0020SchemaValidator.",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003Adefinitions\u0028\u0029",
+            "name": "definitions",
+            "summary": "Get\u0020the\u0020definitions\u0020of\u0020all\u0020the\u0020requests\u0020and\u0020responses,\u0020down\u0020to\u0020the\u0020last\u0020field.\u0020The\u0020names\u0020of\u0020the\u0020definitions,\u0020and\nof\u0020their\u0020fields,\u0020are\u0020the\u0020ones\u0020of\u0020schemas\/open\u002Dship.json,\u0020with\u0020these\u0020differences\u003A\n\u0020\u002D\u0020the\u0020ten\u0020requests\u0020\u0028FullSchema\u002DcreateOpenShipment,\u0020...\u0029\u0020are\u0020named\u0020with\u0020an\u0020underscore\u0020instead\u0020of\u0020the\u0020hyphen\u0020\u0028the\n\u0020\u0020\u0020validator\u0020does\u0020not\u0020accept\u0020a\u0020hyphen\u0020in\u0020a\u0020name\u0029\n\u0020\u002D\u0020what\u0020the\u0020file\u0020writes\u0020inline\u0020or\u0020as\u0020an\u0020overlay\u0020of\u0020another\u0020definition\u0020\u0028\u0022this\u0020definition,\u0020but\u0020these\u0020keys\u0020are\n\u0020\u0020\u0020required\u0022\u0029\u0020is\u0020a\u0020definition\u0020of\u0020its\u0020own,\u0020named\u0020after\u0020the\u0020definition\u0020and\u0020the\u0020field\u0020that\u0020contain\u0020it\n\u0020\u002D\u0020FullSchema\u002DRetrieveOpenShipment\u0020requires\u0020trackingId,\u0020which\u0020it\u0020never\u0020defines\u003A\u0020it\u0020is\u0020accepted\u0020as\u0020an\u0020optional\u0020field\n\u0020\u0020\u0020of\u0020any\u0020type\n\u0020\u002D\u0020the\u0020values\u0020of\u0020AlcoholDetail.alcoholRecipientType\u0020are\u0020LICENSEE\u0020and\u0020CONSUMER,\u0020as\u0020in\u0020schemas\/ship.json\u0020\u0028the\u0020file\u0020has\n\u0020\u0020\u0020CONSUMERstomer,\u0020a\u0020typo\u003B\u0020decided\u0020with\u0020the\u0020owner\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#method_definitions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003AshallowDefinitions\u0028\u0029",
+            "name": "shallowDefinitions",
+            "summary": "Get\u0020the\u0020definitions\u0020of\u0020the\u0020top\u0020level\u0020of\u0020all\u0020the\u0020requests\u0020and\u0020responses\u003A\u0020the\u0020roots\u0020of\u0020ROOTS\u0020with\u0020the\u0020same\u0020fields\nand\u0020the\u0020same\u0020required\u0020fields,\u0020where\u0020a\u0020field\u0020that\u0020holds\u0020an\u0020object\u0020is\u0020only\u0020checked\u0020to\u0020be\u0020an\u0020object,\u0020and\u0020a\u0020field\u0020that\nholds\u0020a\u0020list\u0020is\u0020only\u0020checked\u0020to\u0020be\u0020a\u0020list.\u0020The\u0020values\u0020that\u0020are\u0020text,\u0020numbers\u0020or\u0020booleans,\u0020and\u0020the\u0020enums\u0020of\u0020the\u0020top\nlevel,\u0020are\u0020checked\u0020as\u0020in\u0020definitions\u0028\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#method_shallowDefinitions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003Ashallow\u0028\u0029",
+            "name": "shallow",
+            "summary": "The\u0020shallow\u0020form\u0020of\u0020the\u0020definition\u0020of\u0020a\u0020field",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#method_shallow"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003ACREATE_REQUEST",
+            "name": "CREATE_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Create\u0020Open\u0020Shipment\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_CREATE_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003ACREATE_RESPONSE",
+            "name": "CREATE_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Create\u0020Open\u0020Shipment\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_CREATE_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003AMODIFY_REQUEST",
+            "name": "MODIFY_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Modify\u0020Open\u0020Shipment\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_MODIFY_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003AMODIFY_RESPONSE",
+            "name": "MODIFY_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Modify\u0020Open\u0020Shipment\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_MODIFY_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003ACONFIRM_REQUEST",
+            "name": "CONFIRM_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Confirm\u0020Open\u0020Shipment\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_CONFIRM_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003ACONFIRM_RESPONSE",
+            "name": "CONFIRM_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Confirm\u0020Open\u0020Shipment\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_CONFIRM_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003AMODIFY_PACKAGE_REQUEST",
+            "name": "MODIFY_PACKAGE_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Modify\u0020Open\u0020Shipment\u0020Packages\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_MODIFY_PACKAGE_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003AMODIFY_PACKAGE_RESPONSE",
+            "name": "MODIFY_PACKAGE_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Modify\u0020Open\u0020Shipment\u0020Packages\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_MODIFY_PACKAGE_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003AADD_PACKAGES_REQUEST",
+            "name": "ADD_PACKAGES_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Add\u0020Open\u0020Shipment\u0020Packages\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_ADD_PACKAGES_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003AADD_PACKAGES_RESPONSE",
+            "name": "ADD_PACKAGES_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Add\u0020Open\u0020Shipment\u0020Packages\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_ADD_PACKAGES_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003ADELETE_PACKAGES_REQUEST",
+            "name": "DELETE_PACKAGES_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Delete\u0020Open\u0020Shipment\u0020Packages\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_DELETE_PACKAGES_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003ADELETE_PACKAGES_RESPONSE",
+            "name": "DELETE_PACKAGES_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Delete\u0020Open\u0020Shipment\u0020Packages\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_DELETE_PACKAGES_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003ARETRIEVE_PACKAGE_REQUEST",
+            "name": "RETRIEVE_PACKAGE_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Retrieve\u0020Open\u0020Shipment\u0020Packages\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_RETRIEVE_PACKAGE_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003ARETRIEVE_PACKAGE_RESPONSE",
+            "name": "RETRIEVE_PACKAGE_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Retrieve\u0020Open\u0020Shipment\u0020Packages\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_RETRIEVE_PACKAGE_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003ADELETE_REQUEST",
+            "name": "DELETE_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Delete\u0020Open\u0020Shipment\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_DELETE_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003ADELETE_RESPONSE",
+            "name": "DELETE_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Delete\u0020Open\u0020Shipment\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_DELETE_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003ARETRIEVE_REQUEST",
+            "name": "RETRIEVE_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Retrieve\u0020Open\u0020Shipment\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_RETRIEVE_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003ARETRIEVE_RESPONSE",
+            "name": "RETRIEVE_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Retrieve\u0020Open\u0020Shipment\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_RETRIEVE_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003ARESULTS_REQUEST",
+            "name": "RESULTS_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Get\u0020Open\u0020Shipment\u0020Results\u0020request",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_RESULTS_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003ARESULTS_RESPONSE",
+            "name": "RESULTS_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Get\u0020Open\u0020Shipment\u0020Results\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_RESULTS_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexOpenShipSchemas\u003A\u003AROOTS",
+            "name": "ROOTS",
+            "summary": "The\u0020roots\u0020of\u0020the\u0020file\u0020that\u0020FedexOpenShip\u0020implements\u003A\u0020the\u0020request\u0020and\u0020the\u0020response\u0020of\u0020each\u0020operation",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexOpenShipSchemas.html#constant_ROOTS"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexPickupSchemas",
             "name": "FedexPickupSchemas",
@@ -1230,6 +1955,26 @@ Search.appendIndex(
             "name": "RESPONSE",
             "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020response",
             "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexRateTransitTimesSchemas.html#constant_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexRegulatorySchemas",
+            "name": "FedexRegulatorySchemas",
+            "summary": "Definitions\u0020of\u0020the\u0020request\u0020and\u0020the\u0020response\u0020of\u0020the\u0020Regulatory\u0020API\u0020operation\u0020that\u0020FedexRegulatory\u0020implements,\u0020generated\u0020from\nschemas\/regulatory.json\u0020and\u0020written\u0020for\u0020SchemaValidator",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexRegulatorySchemas.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexRegulatorySchemas\u003A\u003Adefinitions\u0028\u0029",
+            "name": "definitions",
+            "summary": "Get\u0020the\u0020definitions\u0020of\u0020the\u0020request\u0020and\u0020the\u0020response.\u0020The\u0020names\u0020of\u0020the\u0020definitions,\u0020and\u0020of\u0020their\u0020fields,\u0020are\u0020the\u0020ones\u0020of\nschemas\/regulatory.json,\u0020with\u0020these\u0020differences,\u0020decided\u0020with\u0020the\u0020owner\u003A\n\u0020\u002D\u0020the\u0020request\u0020has\u0020from\u00201\u0020to\u002025\u0020profiles\u0020\u0028the\u0020file\u0020says\u0020at\u0020most\u002025\u0029,\u0020and\u0020every\u0020profile\u0020has\u0020at\u0020least\u0020one\u0020detail,\u0020as\u0020the\n\u0020\u0020\u0020documentation\u0020says\n\u0020\u002D\u0020three\u0020fields\u0020are\u0020integers\u0020with\u0020a\u0020maximum\u0020length\u0020in\u0020the\u0020file\u0020\u0028ProductDetails.gtinUpcCode\u002014,\u0020Contact.phoneExtension\u00205\u0020and\n\u0020\u0020\u0020LotDetails.lotNumberQualifier\u00201\u0029\u003A\u0020the\u0020length\u0020is\u0020not\u0020checked,\u0020FedEx\u0020checks\u0020it\u0020\u0028the\u0020validator\u0020would\u0020read\u0020it\u0020as\u0020a\u0020maximum\n\u0020\u0020\u0020value\u0029\n\u0020\u002D\u0020Contact.phoneNumber\u0020has\u0020no\u0020maximum\u0020length\u0020\u002815\u0020in\u0020the\u0020file\u0029\u003A\u0020an\u0020example\u0020of\u0020the\u0020file\u0020sends\u0020an\u0020international\u0020number\u0020of\u002017\n\u0020\u0020\u0020characters\n\u0020\u002D\u0020LotDetails.lotNumberQualifier\u0020also\u0020accepts\u0020the\u0020texts\u0020\u00271\u0027\u0020and\u0020\u00272\u0027,\u0020as\u0020an\u0020example\u0020of\u0020the\u0020file\u0020sends\u0020it",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexRegulatorySchemas.html#method_definitions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexRegulatorySchemas\u003A\u003AREQUEST",
+            "name": "REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Regulatory\u0020Profile\u0020request\u0020\u0028a\u0020list\u0020of\u0020profiles\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexRegulatorySchemas.html#constant_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexRegulatorySchemas\u003A\u003ARESPONSE",
+            "name": "RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Regulatory\u0020Profile\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexRegulatorySchemas.html#constant_RESPONSE"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexServiceAvailabilitySchemas",
             "name": "FedexServiceAvailabilitySchemas",
@@ -1345,6 +2090,71 @@ Search.appendIndex(
             "name": "RESULTS_RESPONSE",
             "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Retrieve\u0020Async\u0020Ship\u0020response",
             "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexShipSchemas.html#constant_RESULTS_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexTradeDocumentsSchemas",
+            "name": "FedexTradeDocumentsSchemas",
+            "summary": "Definitions\u0020of\u0020the\u0020requests\u0020and\u0020responses\u0020of\u0020the\u0020Trade\u0020Documents\u0020Upload\u0020API\u0020operations\u0020that\u0020FedexTradeDocuments\u0020implements,\ngenerated\u0020from\u0020schemas\/upload\u002Ddocuments.json\u0020and\u0020written\u0020for\u0020SchemaValidator.\u0020The\u0020multipart\u0020requests\u0020are\u0020checked\u0020part\u0020by\u0020part\u003A\nthe\u0020definitions\u0020are\u0020the\u0020ones\u0020of\u0020their\u0020JSON\u0020parts\u0020\u0028the\u0020files\u0020are\u0020not\u0020checked\u0020by\u0020a\u0020definition\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexTradeDocumentsSchemas.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexTradeDocumentsSchemas\u003A\u003Adefinitions\u0028\u0029",
+            "name": "definitions",
+            "summary": "Get\u0020the\u0020definitions\u0020of\u0020all\u0020the\u0020requests\u0020and\u0020responses.\u0020The\u0020names\u0020of\u0020the\u0020definitions,\u0020and\u0020of\u0020their\u0020fields,\u0020are\u0020the\u0020ones\u0020of\nschemas\/upload\u002Ddocuments.json,\u0020with\u0020these\u0020differences\u003A\n\u0020\u002D\u0020FullSchema\u002DImageUploadServiceInputVO_1\u0020and\u0020FullSchema\u002DBase64MultiDocumentRequest\u0020are\u0020named\u0020with\u0020an\u0020underscore\u0020instead\u0020of\n\u0020\u0020\u0020the\u0020hyphen\u0020\u0028the\u0020validator\u0020does\u0020not\u0020accept\u0020a\u0020hyphen\u0020in\u0020a\u0020name\u0029\n\u0020\u002D\u0020Document_1\u0020requires\u0020rules\u0020and\u0020workflowName,\u0020which\u0020the\u0020file\u0020never\u0020defines\u0020and\u0020its\u0020example\u0020does\u0020not\u0020send\u003A\u0020they\u0020are\n\u0020\u0020\u0020accepted\u0020as\u0020optional\u0020values\u0020of\u0020any\u0020type\u0020\u0028decided\u0020with\u0020the\u0020owner\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexTradeDocumentsSchemas.html#method_definitions"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexTradeDocumentsSchemas\u003A\u003AUPLOAD_DOCUMENT",
+            "name": "UPLOAD_DOCUMENT",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020document\u0020part\u0020of\u0020an\u0020Upload\u0020Document\u0020request\u0020\u0028multipart\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexTradeDocumentsSchemas.html#constant_UPLOAD_DOCUMENT"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexTradeDocumentsSchemas\u003A\u003AUPLOAD_RESPONSE",
+            "name": "UPLOAD_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Upload\u0020Document\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexTradeDocumentsSchemas.html#constant_UPLOAD_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexTradeDocumentsSchemas\u003A\u003AMULTIUPLOAD_DOCUMENT_INFORMATION",
+            "name": "MULTIUPLOAD_DOCUMENT_INFORMATION",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020documentInformation\u0020part\u0020of\u0020an\u0020Upload\u0020Multiple\u0020Documents\u0020request\u0020\u0028multipart\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexTradeDocumentsSchemas.html#constant_MULTIUPLOAD_DOCUMENT_INFORMATION"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexTradeDocumentsSchemas\u003A\u003AMULTIUPLOAD_RESPONSE",
+            "name": "MULTIUPLOAD_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Upload\u0020Multiple\u0020Documents\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexTradeDocumentsSchemas.html#constant_MULTIUPLOAD_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexTradeDocumentsSchemas\u003A\u003AIMAGE_DOCUMENT",
+            "name": "IMAGE_DOCUMENT",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020document\u0020part\u0020of\u0020an\u0020Upload\u0020Images\u0020request\u0020\u0028multipart\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexTradeDocumentsSchemas.html#constant_IMAGE_DOCUMENT"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexTradeDocumentsSchemas\u003A\u003AIMAGE_RULES",
+            "name": "IMAGE_RULES",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020rules\u0020part\u0020of\u0020an\u0020Upload\u0020Images\u0020request\u0020\u0028multipart\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexTradeDocumentsSchemas.html#constant_IMAGE_RULES"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexTradeDocumentsSchemas\u003A\u003AIMAGE_RESPONSE",
+            "name": "IMAGE_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Upload\u0020Images\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexTradeDocumentsSchemas.html#constant_IMAGE_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexTradeDocumentsSchemas\u003A\u003AENCODED_IMAGE_REQUEST",
+            "name": "ENCODED_IMAGE_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Upload\u0020Encoded\u0020Image\u0020request\u0020\u0028JSON\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexTradeDocumentsSchemas.html#constant_ENCODED_IMAGE_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexTradeDocumentsSchemas\u003A\u003AENCODED_IMAGE_RESPONSE",
+            "name": "ENCODED_IMAGE_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Upload\u0020Encoded\u0020Image\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexTradeDocumentsSchemas.html#constant_ENCODED_IMAGE_RESPONSE"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexTradeDocumentsSchemas\u003A\u003AENCODED_MULTIUPLOAD_REQUEST",
+            "name": "ENCODED_MULTIUPLOAD_REQUEST",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Upload\u0020Multiple\u0020Encoded\u0020Documents\u0020request\u0020\u0028JSON\u0029",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexTradeDocumentsSchemas.html#constant_ENCODED_MULTIUPLOAD_REQUEST"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Api\\Schemas\\FedexTradeDocumentsSchemas\u003A\u003AENCODED_MULTIUPLOAD_RESPONSE",
+            "name": "ENCODED_MULTIUPLOAD_RESPONSE",
+            "summary": "Name\u0020of\u0020the\u0020definition\u0020of\u0020the\u0020Upload\u0020Multiple\u0020Encoded\u0020Documents\u0020response",
+            "url": "classes/Mariopereira-Fedex-Api-Schemas-FedexTradeDocumentsSchemas.html#constant_ENCODED_MULTIUPLOAD_RESPONSE"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Auth\\FedexAuth",
             "name": "FedexAuth",
@@ -1716,6 +2526,16 @@ Search.appendIndex(
             "summary": "Initialize\u0020the\u0020exception",
             "url": "classes/Mariopereira-Fedex-Exception-FedexDutyAndTaxException.html#method___construct"
         },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexEndOfDayCloseException",
+            "name": "FedexEndOfDayCloseException",
+            "summary": "Exception\u0020thrown\u0020by\u0020the\u0020Ship\u0020End\u0020of\u0020Day\u0020Close\u0020API",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexEndOfDayCloseException.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexEndOfDayCloseException\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020exception",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexEndOfDayCloseException.html#method___construct"
+        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexException",
             "name": "FedexException",
             "summary": "Base\u0020exception\u0020of\u0020the\u0020package\u003A\u0020carries\u0020the\u0020details\u0020returned\u0020by\u0020FedEx,\u0020if\u0020any",
@@ -1806,6 +2626,26 @@ Search.appendIndex(
             "summary": "Supplied\u0020customer\u0020transaction\u0020id",
             "url": "classes/Mariopereira-Fedex-Exception-FedexException.html#property_customerTransactionId"
         },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexGlobalTradeException",
+            "name": "FedexGlobalTradeException",
+            "summary": "Exception\u0020thrown\u0020by\u0020the\u0020Global\u0020Trade\u0020API",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexGlobalTradeException.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexGlobalTradeException\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020exception",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexGlobalTradeException.html#method___construct"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexHarmonizedCodeException",
+            "name": "FedexHarmonizedCodeException",
+            "summary": "Exception\u0020thrown\u0020by\u0020the\u0020Harmonized\u0020System\u0020\u0028HS\u0029\u0020Code\u0020Classification\u0020API",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexHarmonizedCodeException.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexHarmonizedCodeException\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020exception",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexHarmonizedCodeException.html#method___construct"
+        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexLocationsSearchException",
             "name": "FedexLocationsSearchException",
             "summary": "Exception\u0020thrown\u0020by\u0020the\u0020Locations\u0020Search\u0020API",
@@ -1815,6 +2655,16 @@ Search.appendIndex(
             "name": "__construct",
             "summary": "Initialize\u0020the\u0020exception",
             "url": "classes/Mariopereira-Fedex-Exception-FedexLocationsSearchException.html#method___construct"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexOpenShipException",
+            "name": "FedexOpenShipException",
+            "summary": "Exception\u0020thrown\u0020by\u0020the\u0020Open\u0020Ship\u0020API",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexOpenShipException.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexOpenShipException\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020exception",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexOpenShipException.html#method___construct"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexPickupException",
             "name": "FedexPickupException",
@@ -1846,6 +2696,16 @@ Search.appendIndex(
             "summary": "Initialize\u0020the\u0020exception",
             "url": "classes/Mariopereira-Fedex-Exception-FedexRateTransitTimesException.html#method___construct"
         },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexRegulatoryException",
+            "name": "FedexRegulatoryException",
+            "summary": "Exception\u0020thrown\u0020by\u0020the\u0020Regulatory\u0020API",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexRegulatoryException.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexRegulatoryException\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020exception",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexRegulatoryException.html#method___construct"
+        },                {
             "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexServiceAvailabilityException",
             "name": "FedexServiceAvailabilityException",
             "summary": "Exception\u0020thrown\u0020by\u0020the\u0020Service\u0020Availability\u0020API",
@@ -1865,6 +2725,16 @@ Search.appendIndex(
             "name": "__construct",
             "summary": "Initialize\u0020the\u0020exception",
             "url": "classes/Mariopereira-Fedex-Exception-FedexShipException.html#method___construct"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexTradeDocumentsException",
+            "name": "FedexTradeDocumentsException",
+            "summary": "Exception\u0020thrown\u0020by\u0020the\u0020Trade\u0020Documents\u0020Upload\u0020API",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexTradeDocumentsException.html"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Exception\\FedexTradeDocumentsException\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Initialize\u0020the\u0020exception",
+            "url": "classes/Mariopereira-Fedex-Exception-FedexTradeDocumentsException.html#method___construct"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Http\\CurlTransport",
             "name": "CurlTransport",
@@ -1915,6 +2785,26 @@ Search.appendIndex(
             "name": "request",
             "summary": "Send\u0020a\u0020JSON\u0020request\u0020to\u0020FedEx\u0027s\u0020API",
             "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#method_request"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient\u003A\u003ArequestMultipart\u0028\u0029",
+            "name": "requestMultipart",
+            "summary": "Send\u0020a\u0020multipart\/form\u002Ddata\u0020request\u0020\u0028text\u0020fields\u0020and\u0020files\u0029\u0020to\u0020FedEx\u0027s\u0020API,\u0020as\u0020the\u0020document\u0020upload\u0020API\u0020needs",
+            "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#method_requestMultipart"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient\u003A\u003AmultipartBody\u0028\u0029",
+            "name": "multipartBody",
+            "summary": "Build\u0020a\u0020multipart\/form\u002Ddata\u0020body\u0020\u0028RFC\u00207578\u0029\u003A\u0020the\u0020text\u0020fields\u0020first,\u0020then\u0020the\u0020files",
+            "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#method_multipartBody"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient\u003A\u003AcheckPartText\u0028\u0029",
+            "name": "checkPartText",
+            "summary": "Check\u0020a\u0020text\u0020that\u0020goes\u0020into\u0020the\u0020headers\u0020of\u0020a\u0020part\u0020of\u0020a\u0020multipart\u0020body",
+            "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#method_checkPartText"
+        },                {
+            "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient\u003A\u003Adispatch\u0028\u0029",
+            "name": "dispatch",
+            "summary": "Send\u0020a\u0020request\u0020that\u0020is\u0020ready\u0020\u0028the\u0020url,\u0020the\u0020headers\u0020and\u0020the\u0020body\u0029,\u0020retrying\u0020once\u0020on\u0020auth\u0020failure,\u0020and\u0020with\u0020the\u0020retry\npolicy\u0020when\u0020it\u0020is\u0020safe\u0020to\u0020repeat",
+            "url": "classes/Mariopereira-Fedex-Http-FedexClient.html#method_dispatch"
         },                {
             "fqsen": "\\Mariopereira\\Fedex\\Http\\FedexClient\u003A\u003Aperform\u0028\u0029",
             "name": "perform",

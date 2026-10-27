@@ -12,23 +12,39 @@ use Mariopereira\Fedex\Api\FedexAddressValidation;
 use Mariopereira\Fedex\Api\FedexBasicTracking;
 use Mariopereira\Fedex\Api\FedexConsolidation;
 use Mariopereira\Fedex\Api\FedexDutyAndTax;
+use Mariopereira\Fedex\Api\FedexEndOfDayClose;
+use Mariopereira\Fedex\Api\FedexGlobalTrade;
+use Mariopereira\Fedex\Api\FedexHarmonizedCode;
 use Mariopereira\Fedex\Api\FedexLocationsSearch;
+use Mariopereira\Fedex\Api\FedexOpenShip;
 use Mariopereira\Fedex\Api\FedexPickup;
 use Mariopereira\Fedex\Api\FedexRateTransitTimes;
+use Mariopereira\Fedex\Api\FedexRegulatory;
 use Mariopereira\Fedex\Api\FedexServiceAvailability;
 use Mariopereira\Fedex\Api\FedexShip;
+use Mariopereira\Fedex\Api\FedexTradeDocuments;
 use Mariopereira\Fedex\Exception\FedexAddressValidationException;
 use Mariopereira\Fedex\Exception\FedexAuthException;
 use Mariopereira\Fedex\Exception\FedexBasicTrackingException;
 use Mariopereira\Fedex\Exception\FedexConsolidationException;
 use Mariopereira\Fedex\Exception\FedexDutyAndTaxException;
+use Mariopereira\Fedex\Exception\FedexEndOfDayCloseException;
 use Mariopereira\Fedex\Exception\FedexClientException;
 use Mariopereira\Fedex\Exception\FedexException;
+use Mariopereira\Fedex\Exception\FedexGlobalTradeException;
+use Mariopereira\Fedex\Exception\FedexHarmonizedCodeException;
 use Mariopereira\Fedex\Exception\FedexLocationsSearchException;
+use Mariopereira\Fedex\Exception\FedexOpenShipException;
 use Mariopereira\Fedex\Exception\FedexPickupException;
 use Mariopereira\Fedex\Exception\FedexRateTransitTimesException;
+use Mariopereira\Fedex\Exception\FedexRegulatoryException;
 use Mariopereira\Fedex\Exception\FedexServiceAvailabilityException;
 use Mariopereira\Fedex\Exception\FedexShipException;
+use Mariopereira\Fedex\Exception\FedexTradeDocumentsException;
+use Mariopereira\Fedex\Http\CurlTransport;
+use Mariopereira\Fedex\Http\FedexClient;
+use Mariopereira\Fedex\Http\FedexTransport;
+use Mariopereira\Fedex\Http\FedexTransportResponse;
 use Mariopereira\Fedex\Tests\Support\ConsolidationSpec;
 use Mariopereira\Fedex\Tests\Support\LoopbackServer;
 use Mariopereira\Fedex\Tests\Support\LoopbackTestCase;
@@ -1020,6 +1036,339 @@ final class ApiLoopbackTest extends LoopbackTestCase
         });
 
         $this->assertInstanceOf(FedexPickupException::class, $e);
+        $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
+        $this->assertSame([], self::$server->seen());
+    }
+
+    // ---------------------------------------------------------------- global trade
+
+    /**
+     * A regulatory details request on the wire has the method, the path, the body, the length and the content type
+     * @return void
+     */
+    public function testARegulatoryDetailsRequestOnTheWireHasTheMethodThePathTheBodyTheLengthAndTheContentType(): void
+    {
+        $api = self::api(FedexGlobalTrade::class, self::$server->port());
+
+        $result = $api->retrieveRegulatoryDetailsFor(['countryCode' => 'IN'], ['countryCode' => 'CA'], 'FDXE', ['shipDate' => '2026-11-03']);
+        $requests = self::$server->requests();
+        $headers = LoopbackServer::headerLines($requests[1]);
+
+        $this->assertSame(['POST /token-ok', 'POST /globaltrade/v1/shipments/regulatorydetails/retrieve'], self::$server->seen());
+        $this->assertSame('/globaltrade/v1/shipments/regulatorydetails/retrieve', $result->target);
+        $this->assertContains('Authorization: Bearer TOK', $headers);
+        $this->assertContains('X-locale: pt_PT', $headers);
+        $this->assertContains('Content-Type: application/json', $headers);
+        $this->assertNotEmpty(preg_grep(self::UUID_HEADER, $headers));
+        $this->assertContains('Content-Length: ' . strlen($requests[1]['body']), $headers);
+        $this->assertSame(['shipDate' => '2026-11-03', 'originAddress' => ['countryCode' => 'IN'], 'destinationAddress' => ['countryCode' => 'CA'], 'carrierCode' => 'FDXE'], json_decode($requests[1]['body'], true));
+    }
+
+    /**
+     * An invalid regulatory details request never reaches the network, not even the token request
+     * @return void
+     */
+    public function testAnInvalidRegulatoryDetailsRequestNeverReachesTheNetworkNotEvenTheTokenRequest(): void
+    {
+        $api = self::api(FedexGlobalTrade::class, self::$server->port());
+
+        $e = self::thrown(function () use ($api) {
+            $api->retrieveRegulatoryDetailsFor(['postalCode' => '1'], ['countryCode' => 'CA'], 'FDXE');
+        });
+
+        $this->assertInstanceOf(FedexGlobalTradeException::class, $e);
+        $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
+        $this->assertSame([], self::$server->seen());
+    }
+
+    // ---------------------------------------------------------------- end of day close
+
+    /**
+     * The close (PUT) and the reprint (POST) on the wire go to the path with its trailing slash, with the body, the length and the content type
+     * @return void
+     */
+    public function testTheCloseAndTheReprintOnTheWireGoToThePathWithItsTrailingSlash(): void
+    {
+        $calls = [
+            'PUT' => function (FedexEndOfDayClose $api) {
+                return $api->closeGroundFor('123456789', '2026-11-03');
+            },
+            'POST' => function (FedexEndOfDayClose $api) {
+                return $api->reprintReportsFor('123456789', '2026-11-03');
+            },
+        ];
+
+        foreach ($calls as $verb => $call) {
+            $api = self::api(FedexEndOfDayClose::class, self::$server->port());
+
+            $result = $call($api);
+            $requests = self::$server->requests();
+            $request = end($requests);
+            $headers = LoopbackServer::headerLines($request);
+
+            $this->assertSame('/ship/v1/endofday/', $result->target, $verb);
+            $this->assertSame($verb, $result->method);
+            $this->assertContains('Authorization: Bearer TOK', $headers, $verb);
+            $this->assertContains('X-locale: pt_PT', $headers, $verb);
+            $this->assertContains('Content-Type: application/json', $headers, $verb);
+            $this->assertNotEmpty(preg_grep(self::UUID_HEADER, $headers), $verb);
+            $this->assertContains('Content-Length: ' . strlen($request['body']), $headers, $verb);
+            $this->assertSame(['value' => '123456789'], json_decode($request['body'], true)['accountNumber'], $verb);
+        }
+    }
+
+    /**
+     * An invalid close never reaches the network, not even the token request
+     * @return void
+     */
+    public function testAnInvalidCloseNeverReachesTheNetworkNotEvenTheTokenRequest(): void
+    {
+        $api = self::api(FedexEndOfDayClose::class, self::$server->port());
+
+        $e = self::thrown(function () use ($api) {
+            $api->closeGround(['closeReqType' => 'CLOSE_IT']);
+        });
+
+        $this->assertInstanceOf(FedexEndOfDayCloseException::class, $e);
+        $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
+        $this->assertSame([], self::$server->seen());
+    }
+
+    // ---------------------------------------------------------------- harmonized code
+
+    /**
+     * A harmonized code search on the wire has the body, the length, and the two content types
+     * @return void
+     */
+    public function testAHarmonizedCodeSearchOnTheWireHasTheBodyTheLengthAndTheTwoContentTypes(): void
+    {
+        $api = self::api(FedexHarmonizedCode::class, self::$server->port());
+
+        $result = $api->searchFor('Athletic running shoes', ['US'], 'IN');
+        $requests = self::$server->requests();
+        $headers = LoopbackServer::headerLines($requests[1]);
+
+        $this->assertSame(['POST /token-ok', 'POST /commodity/v2/hscodes/search'], self::$server->seen());
+        $this->assertSame('/commodity/v2/hscodes/search', $result->target);
+        $this->assertContains('Authorization: Bearer TOK', $headers);
+        $this->assertContains('X-locale: pt_PT', $headers);
+        $this->assertContains('Content-Type: application/json', $headers);
+        $this->assertContains('x-content-type: application/json', $headers);
+        $this->assertNotEmpty(preg_grep(self::UUID_HEADER, $headers));
+        $this->assertContains('Content-Length: ' . strlen($requests[1]['body']), $headers);
+        $this->assertSame(['hsClassify' => [['commodityDescription' => 'Athletic running shoes', 'destinationCountryCodes' => ['US'], 'originCountryCode' => 'IN']]], json_decode($requests[1]['body'], true));
+    }
+
+    /**
+     * A harmonized code search without a country never reaches the network, not even the token request
+     * @return void
+     */
+    public function testAHarmonizedCodeSearchWithoutACountryNeverReachesTheNetworkNotEvenTheTokenRequest(): void
+    {
+        $api = self::api(FedexHarmonizedCode::class, self::$server->port());
+
+        $e = self::thrown(function () use ($api) {
+            $api->searchFor('Athletic running shoes');
+        });
+
+        $this->assertInstanceOf(FedexHarmonizedCodeException::class, $e);
+        $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
+        $this->assertSame([], self::$server->seen());
+    }
+
+    // ---------------------------------------------------------------- regulatory
+
+    /**
+     * Storing a profile on the wire sends a JSON list, with the length and the content type
+     * @return void
+     */
+    public function testStoringAProfileOnTheWireSendsAJsonList(): void
+    {
+        $api = self::api(FedexRegulatory::class, self::$server->port());
+        $profile = ['regulationCode' => 'EU_DE_MINIMIS', 'productId' => 'TSHIRT-L-001', 'productIdType' => 'SKU', 'countryOfImport' => 'FR', 'details' => [['merchantProductId' => '12345']]];
+
+        $result = $api->createProfile($profile);
+        $requests = self::$server->requests();
+        $headers = LoopbackServer::headerLines($requests[1]);
+
+        $this->assertSame(['POST /token-ok', 'POST /regulatory/v1/profiles'], self::$server->seen());
+        $this->assertSame('/regulatory/v1/profiles', $result->target);
+        $this->assertContains('Authorization: Bearer TOK', $headers);
+        $this->assertContains('X-locale: pt_PT', $headers);
+        $this->assertContains('Content-Type: application/json', $headers);
+        $this->assertNotEmpty(preg_grep(self::UUID_HEADER, $headers));
+        $this->assertContains('Content-Length: ' . strlen($requests[1]['body']), $headers);
+        $this->assertSame('[', $requests[1]['body'][0]);
+        $this->assertSame([$profile], json_decode($requests[1]['body'], true));
+    }
+
+    /**
+     * A profile without details never reaches the network, not even the token request
+     * @return void
+     */
+    public function testAProfileWithoutDetailsNeverReachesTheNetworkNotEvenTheTokenRequest(): void
+    {
+        $api = self::api(FedexRegulatory::class, self::$server->port());
+
+        $e = self::thrown(function () use ($api) {
+            $api->createProfile(['regulationCode' => 'CPSC', 'productId' => 'X', 'productIdType' => 'SKU', 'countryOfImport' => 'US', 'details' => []]);
+        });
+
+        $this->assertInstanceOf(FedexRegulatoryException::class, $e);
+        $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
+        $this->assertSame([], self::$server->seen());
+    }
+
+    // ---------------------------------------------------------------- trade documents
+
+    /**
+     * A FedexTradeDocuments whose client sends to the loopback server: the host of the sandbox of the document API is
+     * rewritten to the server (RewriteTransport only knows the hosts of the other APIs), and any url that would not go to the
+     * server is refused, so that nothing reaches FedEx
+     * @return FedexTradeDocuments
+     */
+    private static function documentsApi(): FedexTradeDocuments
+    {
+        [$auth] = self::chain(self::$server->port(), self::$server->port());
+        $transport = new class(self::$server->port()) implements FedexTransport {
+            /**
+             * The port of the loopback server
+             * @var int
+             */
+            private $port;
+
+            /**
+             * Initialize the object
+             * @param int $port The port of the loopback server
+             */
+            public function __construct(int $port)
+            {
+                $this->port = $port;
+            }
+
+            /**
+             * Send the request to the loopback server with the real cURL
+             * @param string $method HTTP method
+             * @param string $url Full url
+             * @param string[] $headers Header lines
+             * @param string|null $body Request body
+             * @param int $timeout Total timeout in seconds
+             * @param int $connectTimeout Connect timeout in seconds
+             * @return FedexTransportResponse
+             */
+            public function send(string $method, string $url, array $headers, ?string $body, int $timeout, int $connectTimeout) : FedexTransportResponse
+            {
+                $url = str_replace(FedexTradeDocuments::SANDBOX_URL, 'http://127.0.0.1:' . $this->port . '/', $url);
+
+                if (strpos($url, 'http://127.0.0.1:' . $this->port . '/') !== 0) {
+                    throw new \RuntimeException('Not a url of the loopback server: ' . $url);
+                }
+
+                return (new CurlTransport())->send($method, $url, $headers, $body, $timeout, $connectTimeout);
+            }
+        };
+
+        return new FedexTradeDocuments($auth, 'pt_PT', 30, 10, new FedexClient($auth, 'pt_PT', 30, 10, $transport));
+    }
+
+    /**
+     * An upload of a document on the wire is a multipart body with the description, then the file as it is, with its length
+     * @return void
+     */
+    public function testAnUploadOfADocumentOnTheWireIsAMultipartBodyWithTheDescriptionThenTheFile(): void
+    {
+        $api = self::documentsApi();
+        $document = FedexTradeDocuments::newDocument();
+        $document['workflowName'] = 'ETDPreshipment';
+        $document['name'] = 'invoice.pdf';
+        $document['contentType'] = 'application/pdf';
+        $document['meta'] = ['shipDocumentType' => 'COMMERCIAL_INVOICE', 'originCountryCode' => 'US', 'destinationCountryCode' => 'IN'];
+        $content = "%PDF-1.4\r\n\0 end"; // the echo of the server is JSON: the bytes must be valid UTF-8
+
+        $result = $api->uploadDocument($document, 'invoice.pdf', $content, 'application/pdf');
+        $requests = self::$server->requests();
+        $headers = LoopbackServer::headerLines($requests[1]);
+        $type = array_values(preg_grep('/^Content-Type: /', $headers));
+
+        $this->assertSame(['POST /token-ok', 'POST /documents/v1/etds/upload'], self::$server->seen());
+        $this->assertSame('/documents/v1/etds/upload', $result->target);
+        $this->assertContains('Authorization: Bearer TOK', $headers);
+        $this->assertContains('X-locale: pt_PT', $headers);
+        $this->assertNotEmpty(preg_grep(self::UUID_HEADER, $headers));
+        $this->assertCount(1, $type);
+        $this->assertMatchesRegularExpression('/^Content-Type: multipart\/form-data; boundary=----FedexBoundary[0-9a-f]{32}$/', $type[0]);
+        $boundary = substr($type[0], strpos($type[0], 'boundary=') + 9);
+        $this->assertSame(FedexClient::multipartBody($boundary, ['document' => json_encode($document)], [['name' => 'attachment', 'filename' => 'invoice.pdf', 'contentType' => 'application/pdf', 'content' => $content]]), $requests[1]['body']);
+        $this->assertContains('Content-Length: ' . strlen($requests[1]['body']), $headers);
+    }
+
+    /**
+     * An upload with a description that is not valid, or an empty file, never reaches the network, not even the token request
+     * @return void
+     */
+    public function testAnInvalidUploadNeverReachesTheNetworkNotEvenTheTokenRequest(): void
+    {
+        $api = self::documentsApi();
+
+        foreach ([['invoice.pdf', 'x'], ['invoice.pdf', '']] as $i => [$name, $content]) {
+            $document = ($i === 0) ? FedexTradeDocuments::newDocument() : ['workflowName' => 'ETDPreshipment', 'name' => $name, 'contentType' => 'application/pdf', 'meta' => ['shipDocumentType' => 'COMMERCIAL_INVOICE', 'originCountryCode' => 'US', 'destinationCountryCode' => 'IN']];
+            $e = self::thrown(function () use ($api, $document, $name, $content) {
+                $api->uploadDocument($document, $name, $content, 'application/pdf');
+            });
+
+            $this->assertInstanceOf(FedexTradeDocumentsException::class, $e);
+            $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
+        }
+
+        $this->assertSame([], self::$server->seen());
+    }
+
+    // ---------------------------------------------------------------- open ship
+
+    /**
+     * The creation and the confirmation of an open shipment on the wire: the paths (the confirmation with its trailing
+     * slash), the methods, the headers, the body and its length
+     * @return void
+     */
+    public function testTheCreationAndTheConfirmationOfAnOpenShipmentOnTheWire(): void
+    {
+        $api = self::api(FedexOpenShip::class, self::$server->port());
+        $create = ['accountNumber' => ['value' => '123456789'], 'index' => 'Test1234', 'requestedShipment' => ['serviceType' => 'FEDEX_GROUND']];
+        $confirm = ['accountNumber' => ['value' => '123456789'], 'index' => 'Test1234', 'labelResponseOptions' => 'URL_ONLY', 'labelSpecification' => ['imageType' => 'PDF']];
+
+        $created = $api->createOpenShipment($create);
+        $confirmed = $api->confirmOpenShipment($confirm);
+        $requests = self::$server->requests();
+
+        $this->assertSame(['POST /token-ok', 'POST /ship/v1/openshipments/create', 'POST /ship/v1/openshipments/'], self::$server->seen());
+        $this->assertSame('/ship/v1/openshipments/create', $created->target);
+        $this->assertSame('/ship/v1/openshipments/', $confirmed->target);
+
+        foreach ([1 => $create, 2 => $confirm] as $i => $body) {
+            $headers = LoopbackServer::headerLines($requests[$i]);
+
+            $this->assertContains('Authorization: Bearer TOK', $headers);
+            $this->assertContains('X-locale: pt_PT', $headers);
+            $this->assertContains('Content-Type: application/json', $headers);
+            $this->assertNotEmpty(preg_grep(self::UUID_HEADER, $headers));
+            $this->assertContains('Content-Length: ' . strlen($requests[$i]['body']), $headers);
+            $this->assertSame($body, json_decode($requests[$i]['body'], true));
+        }
+    }
+
+    /**
+     * A confirmation without its label specification never reaches the network, not even the token request
+     * @return void
+     */
+    public function testAnInvalidOpenShipRequestNeverReachesTheNetworkNotEvenTheTokenRequest(): void
+    {
+        $api = self::api(FedexOpenShip::class, self::$server->port());
+
+        $e = self::thrown(function () use ($api) {
+            $api->confirmOpenShipment(['accountNumber' => ['value' => '123456789'], 'index' => 'Test1234', 'labelResponseOptions' => 'URL_ONLY']);
+        });
+
+        $this->assertInstanceOf(FedexOpenShipException::class, $e);
         $this->assertSame(FedexException::EC_BAD_PARAMETER, $e->getCode());
         $this->assertSame([], self::$server->seen());
     }

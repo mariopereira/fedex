@@ -17,6 +17,12 @@ A PHP interface to the FedEx APIs.
 | Service Availability: Retrieve Services and Transit Times (`/availability/v1/transittimes`), Retrieve Services and Packaging Options (`/availability/v1/packageandserviceoptions`) and Retrieve Special Service Options (`/availability/v1/specialserviceoptions`) | `FedexServiceAvailability` | Implemented. Checked against the FedEx schema in `schemas/` (a number may also be given as a text that is a number, as the samples of the schema do), never called against the live API |
 | Rates and Transit Times: Retrieve Rates and Transit Times (`/rate/v1/rates/quotes`) | `FedexRateTransitTimes` | Implemented. Checked against the FedEx schema in `schemas/` (a number may also be a text that is a number and a postal code an integer, and keys that the schema does not define are accepted, because the samples of the schema do all that), never called against the live API |
 | Pickup: Create Pickup (`/pickup/v1/pickups`), Check Pickup Availability (`/pickup/v1/pickups/availabilities`) and Cancel Pickup (`PUT /pickup/v1/pickups/cancel`) | `FedexPickup` | Implemented. Checked against the FedEx schema in `schemas/`, never called against the live API |
+| Global Trade: Retrieve Regulatory Details (`/globaltrade/v1/shipments/regulatorydetails/retrieve`) | `FedexGlobalTrade` | Implemented. Checked against the FedEx schema in `schemas/`, never called against the live API |
+| Ship End of Day Close: Ground End Of Day Close (`PUT /ship/v1/endofday/`) and Reprint End of the day (`/ship/v1/endofday/`) | `FedexEndOfDayClose` | Implemented. Checked against the FedEx schema in `schemas/`, never called against the live API |
+| Harmonized System (HS) Code Classification: Search Harmonized Code Data (`/commodity/v2/hscodes/search`) | `FedexHarmonizedCode` | Implemented. Checked against the FedEx schema in `schemas/` (either the destination or the origin country of a commodity is enough, as the documentation says), never called against the live API |
+| Regulatory: Regulatory Profile (`/regulatory/v1/profiles`) | `FedexRegulatory` | Implemented. Checked against the FedEx schema in `schemas/`, never called against the live API |
+| Open Ship: Create Open Shipment (`/ship/v1/openshipments/create`), Modify Open Shipment (`PUT /ship/v1/openshipments/`), Confirm Open Shipment (`/ship/v1/openshipments/`), Modify Open Shipment Packages (`PUT /ship/v1/openshipments/packages`), Add Open Shipment Packages (`/ship/v1/openshipments/packages`), Delete Open Shipment Packages (`PUT /ship/v1/openshipments/packages/delete`), Retrieve Open Shipment Packages (`/ship/v1/openshipments/packages/retrieve`), Delete Open Shipment (`PUT /ship/v1/openshipments/delete`), Retrieve Open Shipment (`/ship/v1/openshipments/retrieve`) and Get Open Shipment Results (`/ship/v1/openshipments/results`) | `FedexOpenShip` | Implemented. Checked against the FedEx schema in `schemas/` (the top level of each request: FedEx's collection contradicts the schema below that), never called against the live API |
+| Trade Documents Upload: Upload Document (`/documents/v1/etds/upload`), Upload Multiple Documents (`/documents/v1/etds/multiupload`), Upload Images (`/documents/v1/lhsimages/upload`), Upload Encoded Image (`/documents/v1/lhsimages/encodedupload`) and Upload Multiple Encoded Documents (`/documents/v1/etds/encodedmultiupload`), on the hosts of this API | `FedexTradeDocuments` | Implemented. Checked against the FedEx schema in `schemas/` (the upload of an image sends the description and the rules as two parts, as the schema describes them), never called against the live API |
 
 ## Requirements
 
@@ -528,6 +534,260 @@ $pickup->cancelByConfirmation('123456789', $code, '2026-11-03');
 * The eight samples of the schema are all accepted by these checks.
 * Never called against the live FedEx API: the schema is the only reference.
 
+### Global trade
+
+`FedexGlobalTrade` retrieves the regulatory documents that a shipment needs, and the advisories that apply to it, before it is shipped (Global Trade API, `schemas/global-trade.json`). It only asks FedEx and changes nothing, so a request that failed with a timeout or a busy server can be retried (see [Retries](#retries)).
+
+```php
+use Mariopereira\Fedex\Api\FedexGlobalTrade;
+
+$globalTrade = new FedexGlobalTrade($auth);
+
+// between two countries, with a carrier and any other field of the request
+$result = $globalTrade->retrieveRegulatoryDetailsFor(['countryCode' => 'IN'], ['countryCode' => 'CA'], 'FDXE', [
+    'customsClearanceDetail' => ['commodities' => [['harmonizedCode' => '580122']]],
+]);
+
+foreach ($result->output->userMessages as $message) {
+    echo $message->text, "\n";
+}
+
+// or with the whole request
+$request = FedexGlobalTrade::newRequest();
+$request['originAddress']['countryCode'] = 'IN';
+$request['destinationAddress']['countryCode'] = 'CA';
+$request['carrierCode'] = 'FDXE';
+
+$result = $globalTrade->retrieveRegulatoryDetails($request);
+```
+
+* The request is checked before it is sent, as in the other APIs (see [Request validation](#request-validation)): the types and the allowed values of the fields are the ones of the schema, and the required fields must be present: the country code of the origin and of the destination, and the carrier. Nothing is sent when the request is not valid.
+* The value of a weight (of a commodity, and the total weight) is optional, although the schema requires it: most requests of FedEx's collection leave it out (they send `values`, a typo, which is sent as it is). The units of a weight are still required.
+* The sample of the schema leaves the amount of the customs value blank (`''`), which the loose checks accept.
+* `retrieveRegulatoryDetailsFor()` refuses `originAddress`, `destinationAddress` and `carrierCode` in its `$options`: they are set by the method.
+* The response is checked against the schema too, and an invalid response throws a `FedexGlobalTradeException` with the response in `getData()`. A field that FedEx adds is accepted. The schema has no sample of a response.
+* Never called against the live FedEx API: the schema is the only reference.
+
+### End of day close
+
+`FedexEndOfDayClose` closes the FedEx Ground shipments of the day, which gives the Ground Manifest to print and hand to the FedEx driver before the shipments are tendered, and reprints the reports of a close (Ship End of Day Close API, `schemas/close.json`).
+
+```php
+use Mariopereira\Fedex\Api\FedexEndOfDayClose;
+
+$endOfDay = new FedexEndOfDayClose($auth);
+
+// close the ground shipments of the day (this closes them in FedEx)
+$result = $endOfDay->closeGroundFor('123456789', '2026-11-03', [
+    'closeDocumentSpecification' => ['closeDocumentTypes' => ['MANIFEST']],
+]);
+
+foreach ($result->output->closeDocuments as $document) {
+    echo $document->type, "\n";
+}
+
+// reprint the reports of the closes of a day (up to three days back)
+$result = $endOfDay->reprintReportsFor('123456789', '2026-11-03');
+
+// or with the whole request, for example to reprint by tracking number
+$request = FedexEndOfDayClose::newReprintRequest();
+$request['accountNumber']['value'] = '123456789';
+$request['reprintOption'] = 'BY_TRACKING_NUMBER';
+$request['trackingNumber'] = '794953555571';
+
+$result = $endOfDay->reprintReports($request);
+```
+
+* **`closeGround()` closes the shipments in FedEx.** It is never retried (see [Retries](#retries)), except when FedEx answers 401 and the request is sent again with a fresh token. If it fails after it was sent (a timeout, a network failure, or a response that is not valid), the exception says so: the close may have been done, so check it before trying again. The reprint changes nothing, so it is retried like the other read-only operations.
+* The close is a `PUT` and the reprint a `POST`, both to `/ship/v1/endofday/` (with the trailing slash of the schema).
+* The request is checked before it is sent, as in the other APIs (see [Request validation](#request-validation)). The schema requires no field in either request, so only the types and the allowed values are checked (`closeReqType`, `groundServiceCategory`, `reprintOption`, the document types and formats); FedEx checks the rest. The templates and the `...For()` methods fill in the key inputs that the documentation lists: the request type (`GCDR` to close, `RGCDR` to reprint), the ground service category (`GROUND`), the account number and the close date.
+* `closeGroundFor()` and `reprintReportsFor()` refuse, in their `$options`, the fields that they set themselves.
+* The samples of the schema send the account number as an integer, which the loose checks accept. 14 of the 15 requests of FedEx's collection are accepted; the other one is a negative test (an empty `reprintOption`).
+* The response is checked against the schema too, and an invalid response throws a `FedexEndOfDayCloseException` with the response in `getData()`. A field that FedEx adds is accepted. The schema has no sample of a response.
+* Never called against the live FedEx API: the schema is the only reference.
+
+### Harmonized code
+
+`FedexHarmonizedCode` suggests the Harmonized System (HS) codes of commodities, from their description and their destination or origin country (HS Code Classification API, `schemas/harmonized-code.json`). The search is powered by artificial intelligence, and FedEx says that its results are only suggestions: validate them before using them in a shipment. It changes nothing, so a request that failed with a timeout or a busy server can be retried (see [Retries](#retries)).
+
+```php
+use Mariopereira\Fedex\Api\FedexHarmonizedCode;
+
+$hsCodes = new FedexHarmonizedCode($auth);
+
+// one commodity, with its destination countries and its origin country (either one is enough)
+$result = $hsCodes->searchFor('Footwear with outer soles of rubber or plastics. Sports footwear', ['US', 'CA'], 'IN', [
+    'material' => 'leather',
+]);
+
+foreach ($result->output->hsClassifications as $classification) {
+    foreach ($classification->subheadingOptions as $option) {
+        echo $classification->countryCode, ' ', $option->code, ' ', $option->confidenceScore, "\n";
+    }
+}
+
+// or several commodities in one request
+$request = FedexHarmonizedCode::newRequest();
+$shoes = FedexHarmonizedCode::newClassification();
+$shoes['commodityDescription'] = 'custom shoes';
+$shoes['destinationCountryCodes'][] = 'GB';
+$request['hsClassify'][] = $shoes;
+
+$result = $hsCodes->searchHarmonizedCodes($request);
+```
+
+* The request is checked before it is sent, as in the other APIs (see [Request validation](#request-validation)): the types, the lengths (the name 256, the description 512, the country codes 2, the product id 100) and the required fields of the schema. Nothing is sent when the request is not valid.
+* The schema requires both the destination countries and the origin country of a commodity, but the documentation says that either one is required, and the minimum examples of the schema send only one: so either one is enough, and a commodity without either is refused. At least one commodity is required (the schema does not say so, but the documentation requires the description and a country of a commodity).
+* The schema asks for the header `x-content-type: application/json`, which is sent besides `Content-Type`.
+* The response is checked against the schema too, and an invalid response throws a `FedexHarmonizedCodeException` with the response in `getData()`. A field that FedEx adds is accepted. The four request examples and the three response examples of the schema are all accepted by these checks.
+* Never called against the live FedEx API: the schema is the only reference.
+
+### Regulatory
+
+`FedexRegulatory` stores the regulatory compliance data of products, so that shipments can reference it in `commodities[].regulatoryDetails[]`: CPSC certificates of compliance for imports into the United States, and the product identifiers of EU de minimis consignments (Regulatory API, `schemas/regulatory.json`).
+
+```php
+use Mariopereira\Fedex\Api\FedexRegulatory;
+
+$regulatory = new FedexRegulatory($auth);
+
+$profile = FedexRegulatory::newProfile();
+$profile['regulationCode'] = 'EU_DE_MINIMIS';
+$profile['productId'] = 'TSHIRT-L-001';
+$profile['productIdType'] = 'SKU';
+$profile['countryOfImport'] = 'FR';
+$profile['details'][] = ['standardManufacturerProductId' => 'GTIN 00000006', 'merchantProductId' => '12345'];
+
+// one profile (this stores it in FedEx)
+$result = $regulatory->createProfile($profile);
+echo $result->output->message, "\n";
+
+// or up to 25 profiles in one request
+$tShirtM = array_replace($profile, ['productId' => 'TSHIRT-M-001']);
+$result = $regulatory->createProfiles([$profile, $tShirtM]);
+```
+
+* **This stores data in FedEx.** It is never retried (see [Retries](#retries)), except when FedEx answers 401 and the request is sent again with a fresh token. If it fails after it was sent (a timeout, a network failure, or a response that is not valid), the exception says so: the profiles may have been stored, so check it before trying again.
+* The request is a JSON list of profiles. It is checked before it is sent, as in the other APIs (see [Request validation](#request-validation)): from 1 to 25 profiles, each one with its regulation (`CPSC` or `EU_DE_MINIMIS`), its product id and its type, its country of import and at least one detail, and the types, the lengths and the allowed values of the schema. What each regulation needs in its details is checked by FedEx. Nothing is sent when the request is not valid.
+* Three integer fields have a length in the schema (`gtinUpcCode` 14, `phoneExtension` 5, `lotNumberQualifier` 1): it is not checked, FedEx checks it. A GTIN with leading zeros can be given as text (`'00012345678905'`). The contact's `phoneNumber` has no length limit, because an example of the schema sends an international number longer than the 15 characters of the schema, and `lotNumberQualifier` also takes the texts `'1'` and `'2'`.
+* The response is checked against the schema too, and an invalid response throws a `FedexRegulatoryException` with the response in `getData()`. A field that FedEx adds is accepted. The six request examples of the schema are all accepted.
+* Never called against the live FedEx API: the schema is the only reference.
+
+### Trade documents upload
+
+`FedexTradeDocuments` uploads the customs documents of an electronic trade documents (ETD) shipment, before or after it is shipped, and the letterhead and signature images used in the documents that FedEx generates (Trade Documents Upload API, `schemas/upload-documents.json`).
+
+```php
+use Mariopereira\Fedex\Api\FedexTradeDocuments;
+
+$documents = new FedexTradeDocuments($auth);
+
+// one document (this stores it in FedEx)
+$document = FedexTradeDocuments::newDocument();
+$document['workflowName'] = 'ETDPreshipment';
+$document['name'] = 'invoice.pdf';
+$document['contentType'] = 'application/pdf';
+$document['meta']['shipDocumentType'] = 'COMMERCIAL_INVOICE';
+$document['meta']['originCountryCode'] = 'US';
+$document['meta']['destinationCountryCode'] = 'IN';
+
+$result = $documents->uploadDocument($document, 'invoice.pdf', file_get_contents('invoice.pdf'), 'application/pdf');
+echo $result->output->meta->docId, "\n";
+
+// up to five documents of a shipment at once: the information, then each file as [file name, content, media type]
+$result = $documents->uploadDocuments([
+    'workflowName' => 'ETDPreshipment',
+    'carrierCode' => 'FDXE',
+    'originCountryCode' => 'US',
+    'destinationCountryCode' => 'CA',
+    'metaData' => [
+        ['fileName' => 'invoice.pdf', 'contentType' => 'application/pdf', 'shipDocumentType' => 'COMMERCIAL_INVOICE'],
+    ],
+], [
+    ['invoice.pdf', file_get_contents('invoice.pdf'), 'application/pdf'],
+]);
+
+// a letterhead or a signature
+$image = FedexTradeDocuments::newImageDocument();
+$image['referenceId'] = '1234';
+$image['name'] = 'signature.png';
+$image['contentType'] = 'image/png';
+$image['meta']['imageType'] = 'SIGNATURE';
+$image['meta']['imageIndex'] = 'IMAGE_1';
+
+$result = $documents->uploadImage($image, ['workflowName' => 'LetterheadSignature'], 'signature.png', file_get_contents('signature.png'), 'image/png');
+```
+
+* **Every upload stores data in FedEx.** None is retried (see [Retries](#retries)), except when FedEx answers 401 and the request is sent again with a fresh token. If one fails after it was sent (a timeout, a network failure, or a response that is not valid), the exception says so: the files may have been stored, so check it before trying again.
+* This API has its own hosts, `https://documentapitest.prod.fedex.com/sandbox/` in the sandbox and `https://documentapi.prod.fedex.com/` in production (from the documentation of the API); the token is the same as for the other APIs.
+* `uploadDocument()`, `uploadDocuments()` and `uploadImage()` send a `multipart/form-data` request: the description as JSON parts, then the files as they are. `uploadEncodedImage()` and `uploadEncodedDocuments()` send a JSON request with the files encoded in Base64, named as in the schema.
+* The upload of an image sends three parts, `document`, `rules` and `attachment`, as the schema describes them. The example of the documentation sends the description and the rules in one `document` part instead: it has not been confirmed which of the two FedEx expects.
+* The JSON parts and the JSON requests are checked before they are sent, as in the other APIs (see [Request validation](#request-validation)). From one to five files can be uploaded at once, an empty file is refused, and a file name or a media type with a quote or a line break is refused by `FedexClient`. Nothing is sent when something is not valid.
+* The examples of the multipart requests of the schema: the ones of the upload of a document are accepted; the ones of the upload of several documents are not valid JSON (a closing brace is missing, and one of them has a value without a key), and are accepted once fixed. The examples of the two JSON requests are accepted. The minimum sample payloads of the upload of several documents give the metadata of one file in separate entries, and are refused, as the schema says.
+* The response is checked against the schema too, and an invalid response throws a `FedexTradeDocumentsException` with the response in `getData()`. A field that FedEx adds is accepted.
+* Never called against the live FedEx API: the schema and the documentation are the only references.
+
+### Open ship
+
+`FedexOpenShip` implements the Open Ship API (`schemas/open-ship.json`): a shipment that stays open while its packages are added, modified or deleted over several requests, and is confirmed when it is complete, which generates its labels.
+
+```php
+use Mariopereira\Fedex\Api\FedexOpenShip;
+
+$openShip = new FedexOpenShip($auth);
+
+// create the open shipment (this changes data in FedEx)
+$request = FedexOpenShip::newCreateRequest();
+$request['accountNumber']['value'] = '123456789';
+$request['index'] = 'Test1234'; // the id of the open shipment in the next requests
+$request['requestedShipment'] = [/* shipper, recipients, service, packaging, payment, ...: see the schema */];
+$openShip->createOpenShipment($request);
+
+// add packages
+$request = FedexOpenShip::newAddPackagesRequest();
+$request['accountNumber']['value'] = '123456789';
+$request['index'] = 'Test1234';
+$request['requestedPackageLineItems'] = [['weight' => ['units' => 'LB', 'value' => 20]]];
+$openShip->addPackages($request);
+
+// confirm it: FedEx generates the labels
+$request = FedexOpenShip::newConfirmRequest();
+$request['accountNumber']['value'] = '123456789';
+$request['index'] = 'Test1234';
+$request['labelResponseOptions'] = 'URL_ONLY';
+$request['labelSpecification'] = ['labelStockType' => 'PAPER_85X11_TOP_HALF_LABEL', 'imageType' => 'PDF'];
+$result = $openShip->confirmOpenShipment($request);
+
+// a shipment of many packages is confirmed asynchronously: its results come with the job id
+if (isset($result->output->jobId)) {
+    $result = $openShip->getResultsByJobId('123456789', $result->output->jobId, 'CONFIRM');
+}
+
+$problems = FedexOpenShip::checkRequest('confirm', $request); // what does not match the whole schema, nothing is sent
+```
+
+| Operation | Request | Method |
+| --- | --- | --- |
+| Create Open Shipment | `newCreateRequest()` | `createOpenShipment()` |
+| Modify Open Shipment | `newModifyRequest()` | `modifyOpenShipment()` |
+| Confirm Open Shipment | `newConfirmRequest()` | `confirmOpenShipment()` |
+| Modify Open Shipment Packages | `newModifyPackageRequest()` | `modifyPackage()` |
+| Add Open Shipment Packages | `newAddPackagesRequest()` | `addPackages()` |
+| Delete Open Shipment Packages | `newDeletePackagesRequest()` | `deletePackages()` |
+| Retrieve Open Shipment Packages | `newRetrievePackageRequest()` | `retrievePackage()` |
+| Delete Open Shipment | `newDeleteRequest()` | `deleteOpenShipment()` and `deleteByIndex()` |
+| Retrieve Open Shipment | `newRetrieveRequest()` | `retrieveOpenShipment()` and `retrieveByIndex()` |
+| Get Open Shipment Results | `newResultsRequest()` | `getResults()` and `getResultsByJobId()` |
+
+* **Creating, modifying, confirming and deleting an open shipment, and adding, modifying and deleting its packages, change real data in FedEx, and confirming generates the labels.** The package never repeats those requests, except when FedEx answers that the access token is not valid (nothing was processed then). If an exception is thrown after the request was sent (a timeout, a network failure, or a response that is not valid), the operation may have been done: check it in FedEx before trying again. Only the retrieval of an open shipment, the retrieval of a package and the results change nothing, so only those can be retried (see [Retries](#retries)).
+* **A request is checked at its top level only**, as in [Consolidation](#consolidation). FedEx's own collection (`schemas/collections/open-ship.json`) contradicts the schema in the nested objects: checked against the whole of the schema, most of its creations and modifications would be refused (they leave out `requestedShipment.labelSpecification` or `customsClearanceDetail.commercialInvoice`, which the schema requires). So the required fields, the types and the allowed values of the top level are checked, and each nested object or list is sent as it comes: FedEx checks the rest and answers with its errors. Nothing is sent when the top level is not valid. 325 of the 327 requests of the collection that can be sent pass this check; the other two leave out `index`, which the schema requires (one of them is a negative test). The two sample payloads of the schema pass it too.
+* **`FedexOpenShip::checkRequest()` and `checkResponse()` check the whole of the schema** and return the problems, each with the path of the field, without stopping anything (nothing is sent). The operation is one of `create`, `modify`, `confirm`, `modifyPackage`, `addPackages`, `deletePackages`, `retrievePackage`, `delete`, `retrieve` and `results`. A problem that they report is not necessarily one that FedEx refuses.
+* The modification and the confirmation are sent to `/ship/v1/openshipments/`, with the trailing slash of the schema and of the documentation (the collection leaves it out).
+* A confirmation of about 40 packages or more is processed asynchronously: the response gives a `jobId`, and `getResults()` or `getResultsByJobId()` (with `CONFIRM`, or `CREATE` and `MODIFY` for those operations) give the labels or the errors when they are ready.
+* The response is checked at its top level, and an invalid response throws a `FedexOpenShipException` with the response in `getData()`. A field that FedEx adds is accepted.
+* The schema has two defects, handled like this in the whole check: the retrieval of an open shipment requires a `trackingId` that it never defines, so it is accepted with any value and is not required; and the values of `alcoholRecipientType` are `LICENSEE` and `CONSUMER`, as in the Ship API (the schema has `CONSUMERstomer`).
+* Never called against the live FedEx API: the schema, the documentation and the collection are the only references.
+
 ### Request validation
 
 Every API checks its request before sending it, against the schema of FedEx, and sends nothing when the request is not valid. FedEx's own examples contradict its schemas in many places, so the checks of the requests are looser than the schemas, in the same way for every API:
@@ -573,7 +833,7 @@ $locations = new FedexLocationsSearch($auth, 'en_US', 30, 10, $client);
 
 * A request is retried when FedEx answers 429, 503 or 504, or when it could not be completed (network failure, timeout, ...). Any other failure is thrown at once.
 * The wait before the attempt *n* is a random number of milliseconds between 0 and `min(longest delay, base delay * 2^(n-1))`. When the attempts are over, the last failure is thrown as usual.
-* Only the operations that do not change data in FedEx are retried: postal code validation, locations search, address validation, the availability of a pickup (`FedexPickup::checkPickupAvailability()`), `FedexShip::validate()` and the async results of `FedexShip`. `create()`, `cancel()`, `createTag()` and `cancelTag()` of `FedexShip`, and `createPickup()` and `cancelPickup()` of `FedexPickup`, are never retried, because repeating them could create or cancel a shipment, a tag or a pickup twice.
+* Only the operations that do not change data in FedEx are retried: postal code validation, locations search, address validation, the availability of a pickup (`FedexPickup::checkPickupAvailability()`), the regulatory details of `FedexGlobalTrade`, the reprint of `FedexEndOfDayClose`, the search of `FedexHarmonizedCode`, `FedexShip::validate()`, the async results of `FedexShip`, and the retrievals and the results of `FedexOpenShip`. `create()`, `cancel()`, `createTag()` and `cancelTag()` of `FedexShip`, `createPickup()` and `cancelPickup()` of `FedexPickup`, `closeGround()` of `FedexEndOfDayClose`, `createProfiles()` and `createProfile()` of `FedexRegulatory`, every upload of `FedexTradeDocuments`, and the seven operations of `FedexOpenShip` that change data, are never retried, because repeating them could create or cancel a shipment, a tag or a pickup twice, close the shipments again, store the profiles or the documents again, or change an open shipment twice.
 * When the failure comes with a valid `Retry-After` header (a number of seconds, or an HTTP date), the wait is the longer of the header and the backoff, so that a retry is never sent before FedEx asked. If the header asks for more than the fourth argument of `setRetryPolicy()` (30 seconds by default), the retries stop and the failure is thrown, instead of holding the request for that long. With `0` the header is ignored and only the backoff is used. A header that is not valid is ignored. This is the behaviour of the HTTP standard (RFC 9110): the FedEx schemas that came with the package do not mention the header, so it has not been confirmed that FedEx sends it.
 * The failure keeps the header, so that your code can use it too: `FedexClientException::getRetryAfter()` gives the seconds that FedEx asked to wait, or `null`.
 * To retry your own calls to `FedexClient::request()`, pass `true` as its last argument, and only for requests that are safe to repeat.
